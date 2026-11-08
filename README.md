@@ -39,17 +39,17 @@ All forms are explicitly authorized demonstrations. No submitted values are sent
 
 ## Animation
 
-The SVG starts in a complete static state. GSAP adds per-contour light trails, acceleration and an inward expanding boundary mask, then restores the static fill. Skip, reduced motion and a bounded recovery timeout use the same final-state function. The intro is not a blocking overlay. It plays once per tab session; the isolated prototype can replay it.
+The SVG starts in a complete static state. GSAP adds a steady contour halo, then blends the original solid silhouettes from black into their final colors. Expanding stroke masks were removed because Safari on macOS and iOS rendered dark seams inside narrow curves during the reveal. Completion, skip, reduced motion and the recovery timeout switch to a separate effect-free static layer and hide the animated layers. The intro is not a blocking overlay. It plays once per tab session; the isolated prototype can replay it.
 
-The default 0.25× sequence runs for 3 seconds and holds black interiors with faint steady outlines/halo for 1 second (the hold is independent of playback speed), then adds brighter traveling highlights and short fading tails, accelerates across a 1.2-second contour phase to the same explicit top speed as the former 14-second contour version, reaching it after 0.9 seconds and maintaining it through the outline crossfade, fills inward and removes the halo completely. Prototype geometry uses Inter 900 for TEDx and Inter 400 for the university name. Hold and motion review captures are in review/animation-hold.jpg and review/animation-moving.jpg.
+At the default 0.25× setting, the sequence lasts 3 seconds: 1 second of black interiors/steady glow, then overlapping glow buildup and inward fill, followed by a glow-free solid finish. Prototype geometry uses Inter 900 for TEDx and Inter 700 for the university name. Old review screenshots may show superseded versions.
 
-The landing now opens with only the wordmark in a full-height stage. Metadata, central message and actions begin below the first viewport. Its fixed header slides/fades into view after scrolling starts and hides again at the top; supporting pages retain a normal visible header. The development badge also stays hidden on the initial screen. Screenshots: review/landing-opening.jpg, review/landing-opening-mobile.jpg and review/landing-scrolled.jpg. Desktop/mobile checks confirmed the supporting section starts exactly below the first viewport, with no horizontal overflow, and that the mobile menu works after the header enters.
+The landing now opens with only the wordmark in a full-height stage. Metadata, central message and actions begin below the first viewport. Its fixed header slides/fades into view alongside the scroll hint when the wordmark completes and stays visible afterward; supporting pages retain a normal visible header. The development badge also stays hidden on the initial screen. Screenshots: review/landing-opening.jpg, review/landing-opening-mobile.jpg and review/landing-scrolled.jpg. Desktop/mobile checks confirmed the supporting section starts exactly below the first viewport, with no horizontal overflow, and that the mobile menu works after the header enters.
 
 ## Repository and hosting
 
 The website repository is https://github.com/JorgeRguezz/TEDxUPM. GitHub source synchronization is authorized. Planning documents and source PDFs remain in the parent local workspace. Generated builds, dependencies, local hosting metadata and review screenshots are excluded from Git.
 
-**Hosting remains local-only.** Authorization to push source to GitHub does not authorize deployment. Do not synchronize with Sites hosting or publish the website unless the organizer requests it. Any `.openai/hosting.json` in the local checkout is ignored local metadata; preserve it locally without committing it.
+**Vercel deployment is authorized.** Deploy this repository from its root (the `web/` directory in the local workspace). Do not synchronize with Sites hosting. Any `.openai/hosting.json` in the local checkout is ignored local metadata; preserve it locally without committing it.
 
 ## First-pass verification
 
@@ -61,8 +61,14 @@ The website repository is https://github.com/JorgeRguezz/TEDxUPM. GitHub source 
 
 The completed landing intro now reveals a bottom-centered red circle with a white down arrow, using the actual wordmark completion callback. It has a soft glow and a thin red single-line SCROLL DOWN label above it. It is non-clickable, grows into view, then expands/fades away on the first scroll; reduced motion uses a static hint that hides on scroll. Scrolling before completion suppresses it.
 
-A 3 px TED-red progress line runs along the landing header's bottom edge and fills with total page scroll. The header and line remain hidden on the untouched opening screen. Browser checks confirmed zero progress at the top, intermediate fill while scrolling, full fill at the footer, and the completed intro's centered arrow reveal. The scroll prompt was absent while the intro was still running.
+A 3 px TED-red progress line runs along the landing header's bottom edge and fills with total page scroll. The header and line remain hidden during the wordmark intro and enter when it completes, even before scrolling. Browser checks confirmed zero progress at the top, intermediate fill while scrolling, full fill at the footer, and the completed intro's centered arrow reveal. The scroll prompt was absent while the intro was still running.
 
 The scroll label uses Inter 200 with no wrapping. The hint sits 48 px plus the bottom safe-area inset above the viewport edge to keep its circle and glow fully visible.
 
 All page footers include: designed by Jorge Rodríguez, TelecoEmprende.
+
+### Vercel
+
+Production: https://tedxupm.vercel.app (project `tedxupm`, deployed from the local source with Vercel CLI). Git-based automatic deployment has not been connected.
+
+The committed `vercel.json` selects Vite, `npm run build`, and `dist`, with clean trailing-slash URLs for the prerendered routes. For a GitHub import, the repository root is the application root; no `web/` Root Directory override is needed. Run `npx vercel --prod` from this directory for CLI deployment. Set `SITE_ORIGIN` for a custom canonical origin; otherwise Vercel’s production project hostname is used automatically. Forms remain demonstrations and pages remain noindex until the public-launch review is complete.

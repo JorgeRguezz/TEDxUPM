@@ -42,7 +42,13 @@ export const copy = {
     eventLabel: '01 / EL ENCUENTRO', eventTitle: 'La próxima gran idea puede empezar con una conversación.',
     eventBody: 'Un lugar para mirar más allá de tu disciplina. Para escuchar otras formas de pensar, hacer preguntas nuevas y encontrar personas con las que seguir la conversación.',
     eventFoot: 'Estudiantes, alumni, investigadores, emprendedores y personas con curiosidad. Un encuentro abierto al público.',
-    disciplines: [['Ciencia y tecnología', 'Nuevas preguntas. Posibilidades que se amplían.'], ['Ideas y emprendimiento', 'De imaginar algo a empezar a construirlo.'], ['Personas y liderazgo', 'Las capacidades humanas que nos hacen avanzar.'], ['Cultura y sociedad', 'Otras formas de entender lo que nos rodea.']],
+    // Draft placeholder descriptions for the topic accordion; editorial review pending.
+    disciplines: [
+      ['Ciencia y tecnología', 'Cada descubrimiento abre nuevas preguntas. Exploramos cómo la investigación, la ingeniería y las tecnologías emergentes pueden transformar nuestra vida cotidiana, ampliar lo que creemos posible y ayudarnos a afrontar los retos de un mundo en constante cambio.'],
+      ['Ideas y emprendimiento', 'Las ideas cobran vida cuando alguien se atreve a dar el primer paso. Un espacio para explorar la creatividad, la experimentación y el aprendizaje que acompañan a quienes convierten una inquietud en un proyecto capaz de aportar valor a los demás.'],
+      ['Personas y liderazgo', 'Detrás de cada avance hay personas que escuchan, colaboran y movilizan a otras. Reflexionamos sobre la empatía, el propósito y la capacidad de liderar desde lo cotidiano para construir equipos, abrir oportunidades y generar un impacto compartido.'],
+      ['Cultura y sociedad', 'Nuestra forma de mirar el mundo está hecha de historias, experiencias y perspectivas diversas. Abrimos la conversación sobre cómo convivimos, qué nos conecta y cómo la cultura puede ayudarnos a cuestionar lo establecido e imaginar futuros más inclusivos.'],
+    ],
     topicsNote: 'Territorios de conversación propuestos. Los temas de las charlas se anunciarán con el programa.',
     experienceLabel: '02 / ENTRE LAS CHARLAS', experienceTitle: 'Las ideas no terminan en el escenario.',
     experienceBody: 'El auditorio abre la conversación. En la Sala de la Máquina, el encuentro continúa: nuevas conexiones, experiencias participativas y tiempo para compartir lo que te ha hecho pensar.',
@@ -89,7 +95,13 @@ export const copy = {
     eventLabel: '01 / THE GATHERING', eventTitle: 'The next big idea could begin with a conversation.',
     eventBody: 'A place to look beyond your discipline. To hear different ways of thinking, ask new questions and meet people to continue the conversation with.',
     eventFoot: 'Students, alumni, researchers, entrepreneurs and curious people. An event open to the public.',
-    disciplines: [['Science and technology', 'New questions. Expanding possibilities.'], ['Ideas and entrepreneurship', 'From imagining something to starting to build it.'], ['People and leadership', 'The human skills that move us forward.'], ['Culture and society', 'Different ways of understanding the world around us.']],
+    // Draft placeholder descriptions for the topic accordion; editorial review pending.
+    disciplines: [
+      ['Science and technology', 'Every discovery opens up new questions. We explore how research, engineering and emerging technologies can transform everyday life, expand our sense of what is possible and help us face the challenges of a world that never stands still.'],
+      ['Ideas and entrepreneurship', 'Ideas come to life when someone takes the first step. A space to explore the creativity, experimentation and learning behind turning a spark of curiosity into a project that can create value for others.'],
+      ['People and leadership', 'Behind every step forward are people who listen, collaborate and inspire others to act. We reflect on empathy, purpose and everyday leadership as ways to build teams, open opportunities and create an impact together.'],
+      ['Culture and society', 'The way we see the world is shaped by stories, experiences and diverse perspectives. We open a conversation about how we live together, what connects us and how culture can help us question assumptions and imagine more inclusive futures.'],
+    ],
     topicsNote: 'Proposed areas of conversation. Talk topics will be announced with the programme.',
     experienceLabel: '02 / BETWEEN THE TALKS', experienceTitle: 'Ideas don’t end at the edge of the stage.',
     experienceBody: 'The auditorium starts the conversation. In Sala de la Máquina, it continues: new connections, participatory experiences and time to share what made you think.',

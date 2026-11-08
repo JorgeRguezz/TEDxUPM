@@ -5,5 +5,7 @@ dist/
 !.env.example
 *.local
 .openai/
+.vercel/
 review/
 .DS_Store
+.vercel

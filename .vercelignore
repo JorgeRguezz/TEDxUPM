@@ -1,0 +1,7 @@
+.git
+.openai
+review
+.env*
+dist
+.prerender
+node_modules

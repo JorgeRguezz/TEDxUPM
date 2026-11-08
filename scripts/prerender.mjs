@@ -3,7 +3,8 @@ import { resolve } from 'node:path';
 import { render } from '../.prerender/entry-server.js';
 
 const template = await readFile('dist/index.html', 'utf8');
-const origin = process.env.SITE_ORIGIN || 'https://tedx-madrid-2027-development.dappledgrove2.chatgpt.site';
+const vercelHost = process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL;
+const origin = (process.env.SITE_ORIGIN || (vercelHost ? `https://${vercelHost}` : 'http://127.0.0.1:5173')).replace(/\/$/, '');
 for (const locale of ['es', 'en']) {
   for (const page of ['', 'about/', 'partners/', 'prototype/']) {
     const path = `/${locale}/${page}`;

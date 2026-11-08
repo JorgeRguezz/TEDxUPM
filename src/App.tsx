@@ -2,8 +2,11 @@ import { useCallback, useEffect, useRef, useState, type MouseEvent } from 'react
 import { copy, event, href, routeInfo, schedule, type Locale, type Page } from './data/event';
 import { Wordmark } from './components/Wordmark';
 import { DemoForm } from './components/DemoForm';
+import { TopicAccordion } from './components/TopicAccordion';
+import { FaqAccordion } from './components/FaqAccordion';
+import { Arrow } from './components/Arrow';
+import { TedxMark } from './components/TedxMark';
 
-const Arrow = () => <span aria-hidden="true">↗</span>;
 const Label = ({ children }: { children: React.ReactNode }) => <p className="eyebrow">{children}</p>;
 
 export function App({ initialPath }: { initialPath: string }) {
@@ -12,8 +15,11 @@ export function App({ initialPath }: { initialPath: string }) {
   const c = copy[locale];
   const [menuOpen, setMenuOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
+  const [introComplete, setIntroComplete] = useState(false);
+  const finishLandingIntro = useCallback(() => setIntroComplete(true), []);
   const immersiveOpening = page === 'home';
-  const headerVisible = !immersiveOpening || hasScrolled;
+  const headerVisible = !immersiveOpening || introComplete;
+  const badgeVisible = !immersiveOpening || hasScrolled;
   const progressFill = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
@@ -82,7 +88,7 @@ export function App({ initialPath }: { initialPath: string }) {
   return <>
     <a className="skip-link" href="#main">{c.skip}</a>
     <header className={`site-header${immersiveOpening ? ' site-header--landing' : ''}${headerVisible ? ' is-visible' : ''}`} inert={!headerVisible} aria-hidden={!headerVisible}>
-      <a className="brand-small" href={href(locale)} aria-label={event.name}><strong>TED<span className="brand-x">x</span></strong><span>Universidad<br />Politecnica Madrid</span></a>
+      <a className="brand-small" href={href(locale)} aria-label={event.name}><TedxMark /><span>Universidad<br />Politecnica Madrid</span></a>
       <nav className="desktop-nav" aria-label={locale === 'es' ? 'Navegación principal' : 'Main navigation'}>{nav.map(([label, url]) => <a key={url} href={url} aria-current={(url === href(locale, page) && page !== 'home') ? 'page' : undefined}>{label}</a>)}</nav>
       <div className="header-tools"><div className="locale-switch" aria-label={locale === 'es' ? 'Idioma' : 'Language'}>{(['es', 'en'] as Locale[]).map(l => <a key={l} lang={l} href={href(l, page)} onClick={e => switchLocale(e, l)} aria-current={locale === l ? 'true' : undefined}>{l.toUpperCase()}</a>)}</div>
         <a className="header-cta" href={`${href(locale)}#updates`}>{c.updates}<Arrow /></a>
@@ -92,28 +98,65 @@ export function App({ initialPath }: { initialPath: string }) {
       {immersiveOpening && <div className="reading-progress" aria-hidden="true"><span ref={progressFill} className="reading-progress-fill" /></div>}
     </header>
     <main id="main">
-      {page === 'home' ? <Home locale={locale} /> : page === 'partners' ? <Partners locale={locale} /> : page === 'about' ? <About locale={locale} /> : <Prototype locale={locale} />}
+      {page === 'home' ? <Home locale={locale} onIntroComplete={finishLandingIntro} /> : page === 'partners' ? <Partners locale={locale} /> : page === 'about' ? <About locale={locale} /> : <Prototype locale={locale} />}
     </main>
     <Footer locale={locale} />
-    <div className={`development-badge${!headerVisible ? ' development-badge--quiet' : ''}`} aria-hidden={!headerVisible}><span className="status-dot" />{c.demo}</div>
+    <div className={`development-badge${!badgeVisible ? ' development-badge--quiet' : ''}`} aria-hidden={!badgeVisible}><span className="status-dot" />{c.demo}</div>
   </>;
 }
 
-function Home({ locale }: { locale: Locale }) {
+function Home({ locale, onIntroComplete }: { locale: Locale; onIntroComplete: () => void }) {
   const c = copy[locale];
+  const introduction = useRef<HTMLElement>(null);
+  const introFinished = useRef(false);
   const [scrollHint, setScrollHint] = useState<'waiting' | 'visible' | 'leaving' | 'hidden'>('waiting');
-  const finishIntro = useCallback(() => {
-    setScrollHint(current => current === 'waiting' ? (window.scrollY > 4 ? 'hidden' : 'visible') : current);
-  }, []);
   useEffect(() => {
-    const dismissHint = () => {
-      if (window.scrollY <= 4) return;
-      setScrollHint(current => current === 'visible' ? 'leaving' : current === 'waiting' ? 'hidden' : current);
-      window.removeEventListener('scroll', dismissHint);
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (motion.matches || !('IntersectionObserver' in window)) return;
+    const blocks = Array.from(introduction.current?.querySelectorAll<HTMLElement>('[data-intro-reveal]') ?? []);
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.remove('intro-reveal--pending');
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -32px 0px' });
+    blocks.forEach(block => {
+      block.classList.add('intro-reveal--pending');
+      observer.observe(block);
+    });
+    const revealAll = () => {
+      if (!motion.matches) return;
+      observer.disconnect();
+      blocks.forEach(block => block.classList.remove('intro-reveal--pending'));
     };
-    window.addEventListener('scroll', dismissHint, { passive: true });
-    dismissHint();
-    return () => window.removeEventListener('scroll', dismissHint);
+    motion.addEventListener('change', revealAll);
+    return () => {
+      observer.disconnect();
+      motion.removeEventListener('change', revealAll);
+      blocks.forEach(block => block.classList.remove('intro-reveal--pending'));
+    };
+  }, []);
+  const finishIntro = useCallback(() => {
+    introFinished.current = true;
+    onIntroComplete();
+    setScrollHint(window.scrollY > 4 ? 'hidden' : 'visible');
+  }, [onIntroComplete]);
+  useEffect(() => {
+    let previouslyAtTop: boolean | undefined;
+    const updateHint = () => {
+      const atTop = window.scrollY <= 4;
+      if (atTop === previouslyAtTop) return;
+      previouslyAtTop = atTop;
+      if (atTop) {
+        if (introFinished.current) setScrollHint('visible');
+      } else {
+        setScrollHint(current => current === 'visible' ? 'leaving' : current === 'waiting' ? 'hidden' : current);
+      }
+    };
+    window.addEventListener('scroll', updateHint, { passive: true });
+    updateHint();
+    return () => window.removeEventListener('scroll', updateHint);
   }, []);
   return <>
     <section className="hero hero-opening section-dark" aria-label={event.name}>
@@ -122,26 +165,26 @@ function Home({ locale }: { locale: Locale }) {
         className={`scroll-prompt${scrollHint === 'leaving' ? ' scroll-prompt--leaving' : ''}`}
         aria-hidden="true"
         onAnimationEnd={e => {
-          if (e.target === e.currentTarget && e.animationName === 'scroll-prompt-exit') setScrollHint('hidden');
+          if (e.target === e.currentTarget && e.animationName === 'scroll-prompt-exit') setScrollHint(current => current === 'leaving' ? 'hidden' : current);
         }}
       >
         <span className="scroll-prompt-label">SCROLL DOWN</span>
         <span className="scroll-prompt-bubble"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4v15m-6-6 6 6 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
       </div>}
     </section>
-    <section id="introduction" className="hero-details section-dark" aria-labelledby="hero-message">
+    <section ref={introduction} id="introduction" className="hero-details section-dark" aria-labelledby="hero-message">
       <noscript><nav className="no-script-nav"><a href={href(locale === 'es' ? 'en' : 'es')}>{locale === 'es' ? 'English' : 'Español'}</a><a href={href(locale, 'partners')}>{c.partners}</a><a href={href(locale, 'about')}>{c.about}</a></nav></noscript>
       <div className="event-details"><time dateTime={event.date}>{c.date}</time><span>ETSII UPM · Madrid</span></div>
       <div className="hero-bottom">
-        <h1 id="hero-message">{c.headline[0]} <em>{c.headline[1]}</em><br />{c.headline[2]} <em>{c.headline[3]}</em></h1>
-        <div className="hero-intro"><p>{c.description}</p><a href="#updates" className="text-link">{c.updates}<Arrow /></a></div>
+        <h1 id="hero-message" className="intro-reveal" data-intro-reveal="">{c.headline[0]} <em>{c.headline[1]}</em><br />{c.headline[2]} <em>{c.headline[3]}</em></h1>
+        <div className="hero-intro intro-reveal" data-intro-reveal=""><p>{c.description}</p><a href="#updates" className="text-link">{c.updates}<Arrow /></a></div>
       </div>
       <a className="scroll-cue" href="#event"><span aria-hidden="true">↓</span>{c.scroll}<span className="hero-index">01 — 07</span></a>
     </section>
     <section id="event" className="section-light section-pad">
       <Label>{c.eventLabel}</Label>
       <div className="section-intro"><h2>{c.eventTitle}</h2><div><p className="lead">{c.eventBody}</p><p className="muted">{c.eventFoot}</p></div></div>
-      <div className="topic-list">{c.disciplines.map(([title, body], i) => <article className="topic" key={title}><span className="topic-number">0{i + 1}</span><div><h3>{title}</h3><p>{body}</p></div><span className="topic-plus" aria-hidden="true">↗</span></article>)}</div>
+      <TopicAccordion topics={c.disciplines} expandHint={locale === 'es' ? 'Toca para desplegar' : 'Tap to expand'} />
       <p className="small muted topics-note">{c.topicsNote}</p>
     </section>
     <section className="experience-section section-dark section-pad">
@@ -150,7 +193,7 @@ function Home({ locale }: { locale: Locale }) {
     </section>
     <section id="programme" className="section-light section-pad">
       <Label>{c.programmeLabel}</Label><div className="programme-heading"><h2>{c.programmeTitle}</h2><span className="tag">{c.draft}</span></div>
-      <div className="schedule">{schedule.map(([start, es, en, end, kind]) => <div className={`schedule-row ${kind}`} key={start}><time>{start}<small>— {end}</small></time><h3>{locale === 'es' ? es : en}</h3><span className="schedule-type" aria-hidden="true">{kind === 'talk' ? '↗' : '○'}</span></div>)}</div>
+      <div className="schedule">{schedule.map(([start, es, en, end, kind]) => <div className={`schedule-row ${kind}`} key={start}><time>{start}<small>— {end}</small></time><h3>{locale === 'es' ? es : en}</h3><span className="schedule-type" aria-hidden="true">{kind === 'talk' ? <Arrow /> : '○'}</span></div>)}</div>
       <p className="small muted">{c.timeNote}</p>
     </section>
     <section id="updates" className="signup-section section-pad">
@@ -162,7 +205,7 @@ function Home({ locale }: { locale: Locale }) {
     </section>
     <section className="partner-invite section-dark section-pad"><Label>{c.partnerLabel}</Label><div className="section-intro"><h2>{c.partnerTitle}</h2><div><p className="lead muted-light">{c.partnerBody}</p><a className="button button-white" href={href(locale, 'partners')}>{c.partnerCta}<Arrow /></a></div></div></section>
     <section className="section-light section-pad tedx-section"><div><Label>{c.tedxLabel}</Label><h2>{c.tedxTitle}</h2></div><div><p className="lead">{c.tedxBody}</p><a className="text-link" href="https://www.ted.com/tedx">{c.tedxLink}<Arrow /></a></div></section>
-    <section id="faq" className="section-light section-pad faq-section"><div><Label>{c.faqLabel}</Label><h2>{c.faqTitle}</h2></div><div>{c.faqs.map(([q, a]) => <details key={q}><summary>{q}<span aria-hidden="true">+</span></summary><p>{a}</p></details>)}</div></section>
+    <section id="faq" className="section-light section-pad faq-section"><div><Label>{c.faqLabel}</Label><h2>{c.faqTitle}</h2></div><FaqAccordion items={c.faqs} /></section>
   </>;
 }
 

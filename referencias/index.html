@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TEDxUPM · Portfolio de referencias web</title>
+<style>
+  :root {
+    --bg: #0b0b0b; --panel: #151515; --line: #2a2a2a; --text: #f2efe9; --muted: #9a958d;
+    --red: #e62b1e; --cream: #f4f1ea;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.55 "Inter", system-ui, -apple-system, sans-serif; }
+  a { color: inherit; }
+  .wrap { max-width: 1320px; margin: 0 auto; padding: 0 28px; }
+
+  header.top { position: sticky; top: 0; z-index: 20; background: rgba(11,11,11,.88); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  header.top .wrap { display: flex; align-items: center; gap: 28px; height: 58px; }
+  .logo { font-weight: 800; letter-spacing: -.02em; }
+  .logo b { color: var(--red); }
+  header nav { display: flex; gap: 20px; font-size: 13px; color: var(--muted); }
+  header nav a { text-decoration: none; }
+  header nav a:hover { color: var(--text); }
+
+  .hero { padding: 96px 0 64px; border-bottom: 1px solid var(--line); }
+  .eyebrow { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--red); font-weight: 600; }
+  h1 { font-size: clamp(44px, 7vw, 104px); line-height: .95; letter-spacing: -.045em; margin: 18px 0 28px; font-weight: 800; }
+  h1 em { font-style: normal; color: var(--red); }
+  .lede { max-width: 720px; font-size: 18px; color: #cfcac2; }
+  .stats { display: flex; gap: 48px; margin-top: 40px; flex-wrap: wrap; }
+  .stats div { font-size: 13px; color: var(--muted); }
+  .stats strong { display: block; font-size: 40px; color: var(--text); letter-spacing: -.03em; line-height: 1.1; }
+
+  section { padding: 80px 0; border-bottom: 1px solid var(--line); }
+  h2 { font-size: clamp(30px, 4vw, 52px); letter-spacing: -.035em; line-height: 1; margin: 12px 0 20px; }
+  h3 { margin: 0 0 8px; font-size: 18px; letter-spacing: -.01em; }
+  .sub { color: var(--muted); max-width: 760px; margin-bottom: 36px; }
+
+  .diag { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; align-items: start; }
+  .diag img { width: 100%; border: 1px solid var(--line); border-radius: 6px; }
+  .pill-list { display: grid; gap: 10px; }
+  .pill-list div { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; }
+  .pill-list b { color: var(--text); }
+  .pill-list .ok b { color: #3fb27f; }
+  .pill-list .ko b { color: #ff6a5f; }
+
+  .dirs { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 16px; }
+  .dir { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 22px; display: flex; flex-direction: column; gap: 10px; }
+  .dir .n { font-size: 12px; color: var(--red); font-weight: 700; letter-spacing: .1em; }
+  .dir p { margin: 0; color: #cfcac2; font-size: 14px; }
+  .dir .refs { font-size: 13px; color: var(--muted); }
+  .dir .refs a { color: var(--text); }
+
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+  .filters button { background: transparent; border: 1px solid var(--line); color: var(--muted); padding: 8px 14px; border-radius: 999px; cursor: pointer; font: inherit; font-size: 13px; }
+  .filters button:hover { color: var(--text); border-color: #555; }
+  .filters button.on { background: var(--text); color: #111; border-color: var(--text); }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 22px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; cursor: pointer; display: flex; flex-direction: column; transition: transform .2s, border-color .2s; }
+  .card:hover { transform: translateY(-3px); border-color: #4a4a4a; }
+  .card .shot { aspect-ratio: 720/500; background: #000 center top / cover no-repeat; position: relative; }
+  .card .star { position: absolute; top: 10px; left: 10px; background: var(--red); color: #fff; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 4px; letter-spacing: .04em; }
+  .card .body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .card .meta { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--muted); }
+  .card p { margin: 0; font-size: 13.5px; color: #cfcac2; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 6px; }
+  .tags span { font-size: 11px; border: 1px solid var(--line); padding: 2px 8px; border-radius: 999px; color: var(--muted); }
+
+  .tpl { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+  .tpl a { display: block; text-decoration: none; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 18px; }
+  .tpl a:hover { border-color: #555; }
+  .tpl small { color: var(--red); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; font-size: 11px; }
+  .tpl p { color: #cfcac2; font-size: 13.5px; margin: 6px 0 0; }
+
+  .avoid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+  .avoid div { border: 1px dashed #3a3a3a; border-radius: 8px; padding: 16px; color: #cfcac2; font-size: 14px; }
+
+  dialog { width: min(1200px, 94vw); max-height: 92vh; border: 1px solid var(--line); border-radius: 10px; padding: 0; background: var(--panel); color: var(--text); }
+  dialog::backdrop { background: rgba(0,0,0,.8); }
+  .dlg-head { position: sticky; top: 0; background: var(--panel); border-bottom: 1px solid var(--line); padding: 16px 20px; display: flex; gap: 16px; align-items: center; z-index: 2; }
+  .dlg-head h3 { margin: 0; flex: 1; }
+  .dlg-head button, .dlg-head a { background: transparent; border: 1px solid var(--line); color: var(--text); padding: 6px 12px; border-radius: 6px; cursor: pointer; font: inherit; font-size: 13px; text-decoration: none; }
+  .dlg-head button.on { background: var(--text); color: #111; }
+  .dlg-body { display: grid; grid-template-columns: 1fr 320px; gap: 0; }
+  .dlg-body .img { overflow: auto; max-height: calc(92vh - 64px); background: #000; text-align: center; }
+  .dlg-body .img img { max-width: 100%; display: block; margin: 0 auto; }
+  .dlg-body .img.mobile img { max-width: 390px; }
+  .dlg-body aside { padding: 20px; border-left: 1px solid var(--line); font-size: 14px; overflow: auto; max-height: calc(92vh - 64px); }
+  .dlg-body aside h4 { margin: 18px 0 6px; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--red); }
+  .dlg-body aside p { margin: 0; color: #cfcac2; }
+
+  footer { padding: 40px 0 60px; color: var(--muted); font-size: 13px; }
+  @media (max-width: 860px) {
+    .diag, .dlg-body { grid-template-columns: 1fr; }
+    header nav { display: none; }
+    .dlg-body aside { border-left: 0; border-top: 1px solid var(--line); }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="logo"><b>TEDx</b>UPM · Referencias</div>
+    <nav>
+      <a href="#diagnostico">Web actual</a>
+      <a href="#direcciones">Direcciones</a>
+      <a href="#galeria">Galería</a>
+      <a href="#plantillas">Plantillas</a>
+      <a href="#evitar">Qué evitar</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Departamento web · noviembre 2026</div>
+    <h1>Cómo se ven las<br>mejores webs <em>TEDx</em>.</h1>
+    <p class="lede">Portfolio de referencias para rediseñar la web de TEDxUniversidad Politécnica de Madrid (26 feb 2027, ETSII). Solo frontend. Cada ficha incluye capturas de escritorio y móvil, qué hace bien y qué podemos aprovechar para la UPM.</p>
+    <div class="stats">
+      <div><strong>~100</strong>dominios TEDx revisados</div>
+      <div><strong id="count">0</strong>referencias seleccionadas</div>
+      <div><strong>4</strong>direcciones de diseño</div>
+      <div><strong>5</strong>plantillas de partida</div>
+    </div>
+  </div>
+</div>
+
+<section id="diagnostico">
+  <div class="wrap">
+    <div class="eyebrow">00 · Punto de partida</div>
+    <h2>Por qué la web actual no convence</h2>
+    <p class="sub">La estructura y el contenido de <a href="https://tedxupm.vercel.app/">tedxupm.vercel.app</a> son sólidos. Lo que falla es la identidad: podría ser la landing de cualquier SaaS o consultora.</p>
+    <div class="diag">
+      <img src="img/tedxupm_actual_seccion.png" alt="Captura de la web actual de TEDxUPM">
+      <div class="pill-list">
+        <div class="ok"><b>Bien:</b> la arquitectura de información (evento, territorios, programa, lugar, colabora, FAQ) coincide con la de las mejores referencias.</div>
+        <div class="ok"><b>Bien:</b> el copy es honesto y cuidado, es bilingüe, tiene enlace para saltar al contenido y deja claro qué es la lista de espera.</div>
+        <div class="ko"><b>Falta imagen:</b> no hay ni una foto. Todas las referencias fuertes se apoyan en escenario, público, campus o una pieza gráfica propia.</div>
+        <div class="ko"><b>Sin concepto de edición:</b> no hay tema ni póster. Cambridge (<i>Possibility</i>), Zurich (<i>Life Cycles</i>) o Rotterdam (<i>Acceleration</i>) construyen toda la web alrededor de una idea.</div>
+        <div class="ko"><b>Demasiado texto y demasiado uniforme:</b> siete secciones casi iguales (titular + párrafo + lista con líneas). No hay ritmo ni momentos memorables.</div>
+        <div class="ko"><b>No aprovecha la UPM:</b> la ETSII y la Sala de la Máquina son un activo visual enorme que ahora solo aparece en texto.</div>
+        <div class="ko"><b>La intro bloquea el scroll</b> y es solo texto con brillo. En las referencias, la animación del hero muestra la identidad, no la retrasa.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="direcciones">
+  <div class="wrap">
+    <div class="eyebrow">01 · Síntesis</div>
+    <h2>Cuatro direcciones para TEDxUPM</h2>
+    <p class="sub">Combinaciones de referencias que encajan con lo que ya tenemos: el mensaje de «conectar» y «abrir perspectivas», una universidad técnica, la ETSII como sede y todavía sin ponentes confirmados.</p>
+    <div class="dirs">
+      <div class="dir">
+        <div class="n">A · ESCENARIO CON HISTORIA</div>
+        <h3>La ETSII como protagonista</h3>
+        <p>Fotografía potente del edificio y de la Sala de la Máquina como hero, con un relato que une la historia de la escuela con el tema de la edición. Es lo más realista con los recursos que ya tenemos.</p>
+        <div class="refs">Ver: <a href="#" data-open="tedxcambridgeuniversity_com">Cambridge Univ.</a>, <a href="#" data-open="tedxnewengland_com">NewEngland</a>, <a href="#" data-open="tedxstanford_com">Stanford</a>, <a href="#" data-open="tedxbristol_co_uk">Bristol</a></div>
+      </div>
+      <div class="dir">
+        <div class="n">B · PÓSTER TIPOGRÁFICO</div>
+        <h3>El tema de la edición en grande</h3>
+        <p>Una palabra o frase gigante que funciona como cartel (en web, en redes y en el escenario), con cuenta atrás. No necesita fotos ni ponentes, así que sirve desde hoy.</p>
+        <div class="refs">Ver: <a href="#" data-open="tedxvancouver_com">Vancouver</a>, <a href="#" data-open="tedxporto_com">Porto</a>, <a href="#" data-open="tedxvalencia_com">València</a>, <a href="#" data-open="tedxrotterdam_com">Rotterdam</a>, <a href="#" data-open="tedxharvardcollege_com">Harvard</a></div>
+      </div>
+      <div class="dir">
+        <div class="n">C · SISTEMA DE CONEXIONES</div>
+        <h3>Ingeniería generativa</h3>
+        <p>Desarrollar el diagrama de órbitas que ya hay en la web hasta convertirlo en el sistema visual: líneas, nodos y planos técnicos que «conectan» secciones. Encaja con una politécnica y con el mensaje.</p>
+        <div class="refs">Ver: <a href="#" data-open="tedxamsterdam_nl">Amsterdam</a>, <a href="#" data-open="tedxcern_web_cern_ch">CERN</a>, <a href="#" data-open="tedxseattle_com">Seattle</a>, <a href="#" data-open="tedxmontreal_com">Montréal</a></div>
+      </div>
+      <div class="dir">
+        <div class="n">D · LA X COMO MARCO</div>
+        <h3>Gráfica TEDx reconocible</h3>
+        <p>Usar la X (o formas planas) como máscara de fotos y bloques de color. Es la forma más barata de tener una identidad muy TEDx y se adapta bien a los pósters de ponentes cuando lleguen.</p>
+        <div class="refs">Ver: <a href="#" data-open="tedxcopenhagen_dk">Copenhagen</a>, <a href="#" data-open="tedxmuenchen_com">München</a>, <a href="#" data-open="tedxgranada_com">Granada</a>, <a href="#" data-open="tedxtoronto_com">Toronto</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="galeria">
+  <div class="wrap">
+    <div class="eyebrow">02 · Galería</div>
+    <h2>Referencias</h2>
+    <p class="sub">Pulsa cualquier tarjeta para ver la captura completa de escritorio y de móvil. Las marcadas como <b style="color:var(--red)">TOP</b> son las que más recomiendo para tomar como base.</p>
+    <div class="filters" id="filters"></div>
+    <div class="grid" id="grid"></div>
+  </div>
+</section>
+
+<section id="plantillas">
+  <div class="wrap">
+    <div class="eyebrow">03 · Plantillas</div>
+    <h2>Puntos de partida</h2>
+    <p class="sub">Plantillas de conferencia con la estructura que necesitamos (ponentes, programa, sede, entradas, FAQ). Sirven para inspirarse o para copiar la estructura de componentes al reconstruir la web.</p>
+    <div class="tpl">
+      <a href="https://www.framer.com/marketplace/templates/onstage/" target="_blank"><small>Framer · gratis</small><h3>Onstage</h3><p>Hero tipo póster con fecha y ciudad gigantes, programa con filtros, páginas de ponente enlazadas a sus charlas y sección de accesibilidad. Es la más completa.</p></a>
+      <a href="https://www.framer.com/marketplace/templates/summit-live/" target="_blank"><small>Framer</small><h3>Summit Live</h3><p>Pensada para eventos de un solo día como el nuestro: hero oscuro con fecha y sede, cuenta atrás y programa por escenarios (auditorio / Sala de la Máquina).</p></a>
+      <a href="https://www.framer.com/marketplace/templates/shift26/" target="_blank"><small>Framer</small><h3>Shift26</h3><p>Editorial y con personalidad: acreditaciones de ponente que cuelgan de una cinta, entradas con perforado y un «agenda builder» que guarda en el navegador sin backend.</p></a>
+      <a href="https://www.framer.com/marketplace/templates/event-summit-website/" target="_blank"><small>Framer · gratis</small><h3>Event Summit Website</h3><p>Hero con foto del escenario y una luz que sigue al cursor, transición de telón entre páginas y loader con las luces de sala.</p></a>
+      <a href="https://www.framer.com/marketplace/templates/signale/" target="_blank"><small>Framer · gratis</small><h3>Signale</h3><p>Estética técnica con etiquetas monoespaciadas, en formato de «dossier». Interesante para la dirección C (ingeniería).</p></a>
+      <a href="https://www.awwwards.com/websites/events/" target="_blank"><small>Fuera de TEDx</small><h3>Awwwards · Events</h3><p>OFFF Forum (Site of the Day, 16 oct 2026) combina una serif para el ambiente y una grotesca para los datos. FlowFest 2025 y Superlocal destacan por sus microinteracciones.</p></a>
+    </div>
+  </div>
+</section>
+
+<section id="evitar">
+  <div class="wrap">
+    <div class="eyebrow">04 · Antirreferencias</div>
+    <h2>Qué evitar</h2>
+    <div class="avoid">
+      <div><b>Dominios caducados.</b> tedxmadrid.com, tedxlisboa.com y tedxleidenuniversity.com hoy son spam de casinos. Hay que registrar el dominio por varios años y no depender solo de vercel.app.</div>
+      <div><b>Muros de login.</b> TEDxDublin muestra un login de Google en la portada. Ningún formulario externo debería tapar el contenido.</div>
+      <div><b>Plantillas de blog antiguas.</b> TEDxBarcelona tiene un calendario lateral y mosaicos de miniaturas: aspecto de 2010 y sin jerarquía.</div>
+      <div><b>Webs que se quedan en el pasado.</b> TEDxIEMadrid sigue anunciando su evento de 2018. Hay que tener previsto el estado «después del evento» (vídeos, galería, gracias).</div>
+      <div><b>«Speakers coming soon» vacío.</b> Si todavía no hay ponentes, mejor un bloque con intención, como el rojo de Harvard College, o una llamada a proponer ponentes, que una rejilla de huecos vacíos.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">Capturas tomadas el 17/11/2026 con Chrome headless (1440 px de escritorio y 390 px de móvil). Algunas webs cargan contenido con animaciones al hacer scroll, así que la captura puede no mostrarlo todo: abre la web real para verla bien.</div>
+</footer>
+
+<dialog id="dlg">
+  <div class="dlg-head">
+    <h3 id="dlg-title"></h3>
+    <button id="b-desk" class="on">Escritorio</button>
+    <button id="b-mob">Móvil</button>
+    <a id="dlg-link" target="_blank">Abrir web ↗</a>
+    <button id="dlg-close">✕</button>
+  </div>
+  <div class="dlg-body">
+    <div class="img" id="dlg-img"></div>
+    <aside>
+      <h4>Qué hace bien</h4><p id="dlg-what"></p>
+      <h4>Para TEDxUPM</h4><p id="dlg-upm"></p>
+      <h4>Stack</h4><p id="dlg-stack"></p>
+    </aside>
+  </div>
+</dialog>
+
+<script>
+const REFS = [
+  { id: "tedxcambridgeuniversity_com", name: "TEDxCambridgeUniversity", url: "https://tedxcambridgeuniversity.com", stack: "Framer", top: true, cats: ["Universidad", "Concepto de edición", "Fotografía"],
+    what: "Tema «POSSIBILITY · Dare to imagine» sobre una foto del campus. El texto conecta la historia de la universidad (Newton, Turing, Crick y Watson) con el tema de la edición. Bloque «Featuring the class of 2026» y charlas destacadas en una columna con un rótulo vertical.",
+    upm: "Es la plantilla conceptual más cercana: universidad con historia y fotos del edificio. Se puede contar la historia de la ETSII y de la Sala de la Máquina de la misma forma." },
+  { id: "tedxstanford_com", name: "TEDxStanford", url: "https://tedxstanford.com", stack: "Squarespace", top: true, cats: ["Universidad", "Interacción", "Datos"],
+    what: "«BIG IDEAS. ONE STAGE.» sobre una foto del escenario. Tiene una sección interactiva («Okay, but have you heard this idea?») con un campo donde el público escribe su idea, y una banda roja con cifras grandes.",
+    upm: "La interacción de «cuéntanos tu idea» encaja con el mensaje de «conectar». Se puede hacer solo en el frontend, como demo o con almacenamiento local, mientras no haya backend." },
+  { id: "tedxcopenhagen_dk", name: "TEDxCopenhagen", url: "https://tedxcopenhagen.dk", stack: "Personalizado", top: true, cats: ["Gráfica / forma", "Minimal"],
+    what: "Foto recortada dentro de una X gigante, mucho blanco y titulares serif en negro. Una franja de X repetidas sirve como separador. El estudio Lamb Agency destaca sus transiciones entre páginas.",
+    upm: "La X como máscara es una identidad muy TEDx que funciona sin un concepto complejo y sirve para mostrar fotos de la ETSII o, más adelante, de los ponentes." },
+  { id: "tedxportland_com", name: "TEDxPortland", url: "https://tedxportland.com", stack: "Personalizado", top: true, cats: ["Concepto de edición", "Archivo"],
+    what: "Carrusel de ediciones tratadas como pósters (14 «Homecoming», 13 «Continuum»…), un bloque «Our Legacy», una galería en mosaico de caras y una sección de películas. Aparece en el listado de eventos de Awwwards de 2026.",
+    upm: "Conviene pensar la web como una serie desde el año 1: cada edición tiene su póster y su página. Así la web no se queda obsoleta después del 26 de febrero." },
+  { id: "tedxvancouver_com", name: "TEDxVancouver", url: "https://tedxvancouver.com", stack: "Webflow", top: true, cats: ["Tipografía", "Editorial"],
+    what: "«IDEAS CHANGE EVERYTHING» en una tipografía enorme con la última línea invertida como reflejo, sobre un paisaje. Debajo, un layout editorial con líneas finas y etiquetas pequeñas.",
+    upm: "Es lo más parecido a vuestro estilo actual (editorial y con reglas finas), pero con un hero que sí tiene impacto. Es una evolución natural de lo que ya existe." },
+  { id: "tedxzurich_com", name: "TEDxZurich", url: "https://tedxzurich.com", stack: "Personalizado", top: true, cats: ["Concepto de edición", "Fotografía", "Minimal"],
+    what: "«Chapter I – ROOTS»: vídeo de bosque a pantalla completa y titular serif con cursiva («Life Cycles»). Navegación mínima y tono sereno y premium.",
+    upm: "Muestra cómo la pareja serif + cursiva y el vídeo de fondo dan un aire «premium» sin recargar la página. Encaja con un vídeo lento de la Sala de la Máquina." },
+  { id: "tedxgranada_com", name: "TEDxGranada", url: "https://tedxgranada.com", stack: "WordPress", top: true, cats: ["España", "Ponentes"],
+    what: "Ponentes como pósters en duotono amarillo y morado, con el nombre en vertical. Los artistas van en magenta. La venta de entradas es muy visible y hay un TEDxGranada Youth aparte.",
+    upm: "Es la mejor referencia española para la rejilla de ponentes cuando estén confirmados. Los pósters se reutilizan tal cual en Instagram." },
+  { id: "tedxnewengland_com", name: "TEDxNewEngland", url: "https://tedxnewengland.com", stack: "Next.js", top: true, cats: ["Fotografía", "Gráfica / forma", "Datos"],
+    what: "Una N roja como bloque gráfico junto a la foto del escenario, cifras (16 años, más de 100 ponentes, más de 100 millones de visualizaciones) y bloques de foto y texto alternos con acentos rojos y flechas.",
+    upm: "Está hecha en React (Next.js), como la nuestra (React + Vite + GSAP), así que sus patrones se pueden replicar tal cual. El bloque de sede con foto del auditorio aplica directamente a la ETSII." },
+  { id: "tedxamsterdam_nl", name: "TEDxAmsterdam", url: "https://www.tedxamsterdam.nl", stack: "Webflow", top: true, cats: ["Concepto de edición", "Gráfica / forma"],
+    what: "Hero a pantalla completa con una forma abstracta roja y azul, como un fluido. Navegación mínima con un CTA «Join waitlist» fijo y un bloque «After Growth? SOLD OUT» con aire de cartel.",
+    upm: "Una pieza visual abstracta propia de la edición sustituye a la foto. Sirve para la dirección C, con líneas o nodos en lugar del fluido." },
+  { id: "tedxvalencia_com", name: "TEDxValència", url: "https://tedxvalencia.com", stack: "WordPress", top: true, cats: ["España", "Tipografía", "Cuenta atrás"],
+    what: "Letras gigantes con degradado morado y rosa que ocupan toda la pantalla, y una cuenta atrás grande con el CTA «Compra tu entrada».",
+    upm: "Es la referencia española para el póster tipográfico con cuenta atrás hasta el 26 de febrero." },
+  { id: "tedxharvardcollege_com", name: "TEDxHarvardCollege", url: "https://www.tedxharvardcollege.com", stack: "Wix", top: false, cats: ["Universidad", "Tipografía"],
+    what: "El bloque rojo con «Speakers will be announced soon» en una tipografía enorme convierte la falta de contenido en un momento visual. Debajo hay una rejilla del equipo organizador.",
+    upm: "Es el patrón exacto para nuestro estado actual: sin ponentes confirmados todavía. Mostrar al equipo también da credibilidad." },
+  { id: "tedxberlin_de", name: "TEDxBerlin", url: "https://www.tedxberlin.de", stack: "Personalizado", top: false, cats: ["Fotografía", "Cuenta atrás", "Datos"],
+    what: "Fondo oscuro con «Where ideas change everything. Live in Berlin.» y una serif cursiva. Tiene una cuenta atrás para el próximo evento, cifras y la llamada «Become a speaker».",
+    upm: "Combina bien la grotesca con la serif cursiva para dar énfasis. La sección «Become a speaker» puede servir para captar ponentes ahora." },
+  { id: "tedxporto_com", name: "TEDxPorto", url: "https://tedxporto.com", stack: "WordPress + Elementor", top: false, cats: ["Tipografía", "Color"],
+    what: "Tipografía de puntos gigante (tipo LED) sobre un degradado naranja y rosa. El hero es literalmente un cartel.",
+    upm: "La tipografía de puntos tiene una lectura tecnológica y de ingeniería: es una idea concreta para la dirección B." },
+  { id: "tedxrotterdam_com", name: "TEDxRotterdam", url: "https://tedxrotterdam.com", stack: "Personalizado", top: false, cats: ["Tipografía", "Minimal"],
+    what: "Negro total con «THE MEANING OF ACCELERATION» en mayúsculas espaciadas, cursiva y una pregunta («Where is all this speed taking us?»). Muy cinematográfico.",
+    upm: "Plantear el tema como una pregunta es muy TED. Muestra que con poco contenido se puede tener un hero memorable." },
+  { id: "tedxmuenchen_com", name: "TEDxMünchen", url: "https://www.tedxmuenchen.com", stack: "Squarespace", top: false, cats: ["Gráfica / forma", "Color"],
+    what: "Formas planas de color (cian, magenta y rojo) que construyen letras, y bloques de color como «TED = Technology, Entertainment, Design».",
+    upm: "Un sistema gráfico de formas permite que cualquier persona del equipo haga piezas coherentes para redes sin saber diseñar." },
+  { id: "tedxtoronto_com", name: "TEDxToronto", url: "https://www.tedxtoronto.com", stack: "Webflow", top: false, cats: ["Gráfica / forma", "Datos"],
+    what: "Texto en marquesina («ABOUT TEDXTORONTO»), un bloque de cifras con tipografía manuscrita y formas de colores para cada subprograma (Adventures, Circles).",
+    upm: "La marquesina es un recurso barato para dar movimiento. Los subprogramas con su propia forma sirven para separar Auditorio y Sala de la Máquina." },
+  { id: "tedxutrecht_com", name: "TEDxUtrecht", url: "https://tedxutrecht.com", stack: "Ghost", top: false, cats: ["Ponentes", "Color"],
+    what: "Amarillo neón como acento, tarjetas de ponentes con el nombre en etiquetas rojas y una tipografía condensada (Anton + DM Sans).",
+    upm: "Muestra que añadir un segundo color de acento junto al rojo TED da mucha personalidad." },
+  { id: "tedxmilano_com", name: "TEDxMilano", url: "https://tedxmilano.com", stack: "WordPress + Elementor", top: false, cats: ["Ponentes", "Concepto de edición"],
+    what: "Identidad de edición tipográfica («SOTTO SOPRA») y una rejilla de charlas con retratos grandes en primer plano.",
+    upm: "Una buena referencia para la sección de vídeos «después del evento»." },
+  { id: "tedxparis_com", name: "TEDxParis", url: "https://www.tedxparis.com", stack: "Squarespace", top: false, cats: ["Concepto de edición", "Oscuro"],
+    what: "Fondo negro con el visual de la edición «2045», el anuncio en el Grand Rex, tarjetas para cada programa (TED en Français, Salons) y un histórico de ediciones.",
+    upm: "Muestra cómo presentar un lugar emblemático como parte del atractivo, igual que la ETSII." },
+  { id: "tedx_mit_edu", name: "TEDxMIT", url: "https://tedx.mit.edu", stack: "Webflow / Astro", top: false, cats: ["Universidad", "Ponentes"],
+    what: "Imagen del escenario con un TEDx enorme y «Cultivating Innovation at MIT», seguida de una rejilla de ponentes con foto, nombre y cargo.",
+    upm: "Es la referencia más directa de una universidad técnica. Sobria, quizá demasiado." },
+  { id: "tedxlondon_com", name: "TEDxLondon", url: "https://tedxlondon.com", stack: "WordPress", top: false, cats: ["Datos", "Color", "Comunidad"],
+    what: "«We're not just a city, we're a movement». Naranja intenso, cifras gigantes y contenido continuo: podcasts, charlas y blog.",
+    upm: "Plantea la web como una comunidad que dura todo el año y no solo como la landing de un día." },
+  { id: "tedxsydney_com", name: "TEDxSydney", url: "https://www.tedxsydney.com", stack: "Squarespace", top: false, cats: ["Fotografía"],
+    what: "Vídeo del público a pantalla completa con un borde inferior curvo. Muy emocional: vende la experiencia de estar allí.",
+    upm: "Cuando haya material de la primera edición, un vídeo así será el mejor hero para 2028." },
+  { id: "tedxmelbourne_com", name: "TEDxMelbourne", url: "https://tedxmelbourne.com", stack: "Webflow", top: false, cats: ["Comunidad", "Oscuro"],
+    what: "Foto oscura del público con «Join the community of curious thinkers» y botones de acción sobre la imagen.",
+    upm: "Muy cerca de vuestro copy («personas con curiosidad»). Sirve para la sección de la newsletter." },
+  { id: "tedxeindhoven_nl", name: "TEDxEindhoven", url: "https://www.tedxeindhoven.nl", stack: "WordPress + Elementor", top: false, cats: ["Datos"],
+    what: "«Why TEDxEindhoven?» con seis tarjetas de valor con icono (ideas, networking, insights…), cifras y una banda roja de newsletter.",
+    upm: "Útil para la sección de colaboradores y empresas: explica qué gana cada uno." },
+  { id: "tedxseoul_com", name: "TEDxSeoul", url: "https://tedxseoul.com", stack: "Personalizado", top: false, cats: ["Concepto de edición", "Color"],
+    what: "Póster de la edición («A New Dawn», en rosa) como una tarjeta flotante sobre una foto desenfocada del escenario.",
+    upm: "La tarjeta-póster flotante es un recurso fácil para presentar el tema sin rehacer todo el hero." },
+  { id: "tedxbristol_co_uk", name: "TEDxBristol", url: "https://www.tedxbristol.co.uk", stack: "Squarespace", top: false, cats: ["Fotografía"],
+    what: "Foto inmersiva de una instalación de luz a pantalla completa con «Human Futures». Navegación muy limpia.",
+    upm: "Ejemplo de foto artística (no de escenario) como hero. Funcionaría con un detalle de la maquinaria de la ETSII." },
+  { id: "tedxmilehigh_com", name: "TEDxMileHigh", url: "https://www.tedxmilehigh.com", stack: "WordPress + Elementor", top: false, cats: ["Fotografía", "Datos"],
+    what: "Foto de un ponente con «ideas worth spreading», una banda amarilla de newsletter, iconos de valores, charlas en vídeo y cifras.",
+    upm: "Es una estructura «completa» clásica. Sirve como checklist de secciones." },
+  { id: "tedxoxford_co_uk", name: "TEDxOxford", url: "https://tedxoxford.co.uk", stack: "Personalizado", top: false, cats: ["Tipografía", "Minimal"],
+    what: "«LIMITLESS» en una tipografía fina sobre un degradado, con la fecha, el lugar y dos CTAs. Muy poco contenido, pero claro.",
+    upm: "Hero minimal: tema, fecha, lugar y acción. Nada más." },
+  { id: "tedxkyoto_com", name: "TEDxKyoto", url: "https://tedxkyoto.com", stack: "WordPress + Elementor", top: false, cats: ["Bilingüe", "Archivo"],
+    what: "Bloque con aspecto de entrada con la fecha enorme y «Ticket on Sale», una rejilla de charlas de ediciones anteriores y contenido bilingüe japonés/inglés.",
+    upm: "Referencia para el bilingüe ES/EN y para un bloque de entrada visual." },
+  { id: "tedxseattle_com", name: "TEDxSeattle", url: "https://tedxseattle.com", stack: "Personalizado", top: false, cats: ["Interacción", "Gráfica / forma"],
+    what: "Una rejilla de letras donde se iluminan palabras («WHERE ARE WE») y una foto del escenario con la alfombra roja circular.",
+    upm: "La rejilla de letras se puede usar para revelar el tema de la edición. Encaja con la estética de ingeniería." },
+  { id: "tedxmontreal_com", name: "TEDxMontréal", url: "https://tedxmontreal.com", stack: "Personalizado", top: false, cats: ["Gráfica / forma", "Bilingüe"],
+    what: "Ilustración geométrica isométrica en rojo y negro, FAQ en acordeón, charlas de ediciones anteriores y web bilingüe francés/inglés.",
+    upm: "Lo geométrico e isométrico se puede llevar a planos técnicos o piezas de máquina." },
+  { id: "tedxcern_web_cern_ch", name: "TEDxCERN", url: "https://tedxcern.web.cern.ch", stack: "Drupal (archivada)", top: false, cats: ["Gráfica / forma", "Ciencia"],
+    what: "Web archivada, pero con una estética científica de líneas y redes rojas sobre gris oscuro.",
+    upm: "Es la referencia más «ciencia» de la lista y ayuda a imaginar la dirección C." },
+  { id: "tedxlausanne_com", name: "TEDxLausanne", url: "https://www.tedxlausanne.com", stack: "Webflow", top: false, cats: ["Comunidad"],
+    what: "«One City. Two Stages.»: un mes completo de actividades con varios eventos (Women, Countdown…), cada uno con su póster.",
+    upm: "Dos espacios (Auditorio y Sala de la Máquina) se pueden comunicar como «dos escenarios», igual que hacen aquí." },
+  { id: "tedxathens_com", name: "TEDxAthens", url: "https://tedxathens.com", stack: "WordPress", top: false, cats: ["Fotografía"],
+    what: "Butaca roja iluminada con «TEDxAthens returns 2027» y contenido destacado en carrusel.",
+    upm: "Un objeto simbólico fotografiado como hero (por ejemplo, una pieza de la Sala de la Máquina)." },
+  { id: "tedxtoulouse_com", name: "TEDxToulouse", url: "https://www.tedxtoulouse.com", stack: "Personalizado", top: false, cats: ["Oscuro", "Archivo"],
+    what: "Fondo oscuro y editorial, con «6 éditions depuis 2012» y fotos superpuestas.",
+    upm: "Muestra cómo presentar la trayectoria cuando ya haya varias ediciones." },
+  { id: "tedxboulder_com", name: "TEDxBoulder", url: "https://tedxboulder.com", stack: "Personalizado", top: false, cats: ["Ilustración"],
+    what: "Ilustración a tinta («Roots & Wings») como identidad de la edición.",
+    upm: "La ilustración propia es una alternativa a la foto si no hay presupuesto para fotógrafo." },
+  { id: "tedxuamadrid_com", name: "TEDxUAMadrid", url: "https://tedxuamadrid.com", stack: "Personalizado", top: false, cats: ["España", "Universidad"],
+    what: "Web muy simple y oscura de la otra universidad madrileña. Ponentes con la frase de su charla, horario y ubicación claros.",
+    upm: "Competencia directa: referencia de contenido (el título de la charla bajo cada ponente), no de diseño. Hay que superarla visualmente." },
+  { id: "tedxmalaga_com", name: "TEDxMálaga", url: "https://tedxmalaga.com", stack: "WordPress", top: false, cats: ["España", "Archivo"],
+    what: "Mensaje de agradecimiento después del evento y una galería grande en mosaico por categorías (ponentes, escenario, público).",
+    upm: "Modelo para el estado «después del evento» del 27 de febrero." },
+  { id: "tedxsevilla_com", name: "TEDxSevilla", url: "https://tedxsevilla.com", stack: "WordPress", top: false, cats: ["España", "Fotografía"],
+    what: "Foto del escenario a pantalla completa con «Ya disponibles los vídeos» como mensaje principal.",
+    upm: "Muestra que el hero puede cambiar según la fase: antes, durante y después del evento." },
+];
+
+const ALL = "Todas";
+const TOP = "★ Top";
+const cats = [ALL, TOP, ...new Set(REFS.flatMap(r => r.cats))];
+let active = ALL;
+const $ = s => document.querySelector(s);
+$("#count").textContent = REFS.length;
+
+function renderFilters() {
+  $("#filters").innerHTML = cats.map(c => `<button class="${c === active ? "on" : ""}" data-c="${c}">${c}</button>`).join("");
+}
+function renderGrid() {
+  const list = REFS.filter(r => active === ALL || (active === TOP ? r.top : r.cats.includes(active)));
+  $("#grid").innerHTML = list.map(r => `
+    <article class="card" data-id="${r.id}">
+      <div class="shot" style="background-image:url('img/${r.id}_thumb.jpg')">${r.top ? '<span class="star">TOP</span>' : ""}</div>
+      <div class="body">
+        <div class="meta"><span>${new URL(r.url).hostname.replace("www.", "")}</span><span>${r.stack}</span></div>
+        <h3>${r.name}</h3>
+        <p>${r.upm}</p>
+        <div class="tags">${r.cats.map(c => `<span>${c}</span>`).join("")}</div>
+      </div>
+    </article>`).join("");
+}
+
+const dlg = $("#dlg"), dimg = $("#dlg-img");
+let current;
+function setView(mobile) {
+  dimg.classList.toggle("mobile", mobile);
+  dimg.innerHTML = `<img src="img/${current.id}_${mobile ? "mobile" : "full"}.jpg" alt="Captura de ${current.name} (${mobile ? "móvil" : "escritorio"})">`;
+  dimg.scrollTop = 0;
+  $("#b-desk").classList.toggle("on", !mobile);
+  $("#b-mob").classList.toggle("on", mobile);
+}
+function open(id) {
+  current = REFS.find(r => r.id === id);
+  if (!current) return;
+  $("#dlg-title").textContent = current.name;
+  $("#dlg-link").href = current.url;
+  $("#dlg-what").textContent = current.what;
+  $("#dlg-upm").textContent = current.upm;
+  $("#dlg-stack").textContent = current.stack;
+  setView(false);
+  dlg.showModal();
+}
+
+document.addEventListener("click", e => {
+  const f = e.target.closest("[data-c]");
+  if (f) { active = f.dataset.c; renderFilters(); renderGrid(); return; }
+  const c = e.target.closest(".card");
+  if (c) return open(c.dataset.id);
+  const o = e.target.closest("[data-open]");
+  if (o) { e.preventDefault(); open(o.dataset.open); }
+});
+$("#b-desk").onclick = () => setView(false);
+$("#b-mob").onclick = () => setView(true);
+$("#dlg-close").onclick = () => dlg.close();
+dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+
+renderFilters();
+renderGrid();
+</script>
+</body>
+</html>

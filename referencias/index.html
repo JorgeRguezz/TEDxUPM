@@ -92,7 +92,17 @@
   .dlg-body aside p { margin: 0; color: #cfcac2; }
 
   footer { padding: 40px 0 60px; color: var(--muted); font-size: 13px; }
+  .new { display: inline-block; margin-left: 8px; font-size: 10px; font-weight: 700; letter-spacing: .08em; color: #111; background: var(--cream); padding: 2px 6px; border-radius: 4px; vertical-align: middle; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .two .dir ul { margin: 0; padding-left: 18px; display: grid; gap: 8px; color: #cfcac2; font-size: 14px; }
+  .countdown { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 40px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 22px 24px; margin-bottom: 16px; }
+  .countdown strong { display: block; font-size: 56px; line-height: 1; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+  .countdown span { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; }
+  .countdown p { flex: 1 1 260px; margin: 0; color: #cfcac2; font-size: 14px; }
+  .later { margin-top: 16px; border: 1px dashed #3a3a3a; border-radius: 8px; padding: 16px; color: #cfcac2; font-size: 14px; }
+  .note { margin-top: 20px; background: var(--panel); border-left: 3px solid var(--cream); padding: 14px 16px; color: #cfcac2; font-size: 14px; border-radius: 0 6px 6px 0; }
   @media (max-width: 860px) {
+    .two { grid-template-columns: 1fr; }
     .diag, .dlg-body { grid-template-columns: 1fr; }
     header nav { display: none; }
     .dlg-body aside { border-left: 0; border-top: 1px solid var(--line); }
@@ -105,6 +115,9 @@
   <div class="wrap">
     <div class="logo"><b>TEDx</b>UPM · Referencias</div>
     <nav>
+      <a href="#enfoque">Enfoque</a>
+      <a href="#decisiones">Sí / No</a>
+      <a href="#reglas">Reglas TED</a>
       <a href="#diagnostico">Web actual</a>
       <a href="#direcciones">Direcciones</a>
       <a href="#galeria">Galería</a>
@@ -118,7 +131,7 @@
   <div class="wrap">
     <div class="eyebrow">Departamento web · noviembre 2026</div>
     <h1>Cómo se ven las<br>mejores webs <em>TEDx</em>.</h1>
-    <p class="lede">Portfolio de referencias para rediseñar la web de TEDxUniversidad Politécnica de Madrid (26 feb 2027, ETSII). Solo frontend. Cada ficha incluye capturas de escritorio y móvil, qué hace bien y qué podemos aprovechar para la UPM.</p>
+    <p class="lede">Portfolio de referencias para rediseñar la web de TEDxUniversidad Politécnica de Madrid (26 feb 2027, ETSII). Solo frontend. Cada ficha incluye capturas de escritorio y móvil, qué hace bien y qué podemos aprovechar para la UPM. Ahora incluye también el enfoque de la primera landing y lo que el equipo ha decidido que sí y que no.</p>
     <div class="stats">
       <div><strong>~100</strong>dominios TEDx revisados</div>
       <div><strong id="count">0</strong>referencias seleccionadas</div>
@@ -128,9 +141,85 @@
   </div>
 </div>
 
+<section id="enfoque">
+  <div class="wrap">
+    <div class="eyebrow">00 · Enfoque <span class="new">NUEVO</span></div>
+    <h2>Fase 1: una landing para conseguir partners y ponentes</h2>
+    <div class="countdown">
+      <div><strong id="cd-days">—</strong><span>días</span></div>
+      <div><strong id="cd-hours">—</strong><span>horas</span></div>
+      <p>Contador hasta el 26 feb 2027 a las 09:00, hora de Madrid. Muestra días y horas, sin segundos. Va en el hero, junto a la fecha y la sede, sin ocupar toda la pantalla. Después del evento cambia a «Gracias» y a los vídeos.</p>
+    </div>
+    <div class="two">
+      <div class="dir">
+        <div class="n">PARTNERS</div>
+        <h3>Que una empresa quiera estar</h3>
+        <ul>
+          <li>CTA «Colabora» en el hero y en el header, que lleva a <code>/partners/</code>.</li>
+          <li>Por qué colaborar, con datos reales de la UPM y la ETSII. Sin cifras de TED.</li>
+          <li>Formas de colaborar: aportación económica, en especie (catering, técnica, imprenta) y difusión.</li>
+          <li>Dossier en PDF y una persona de contacto con nombre y email.</li>
+          <li>Decir claro que un partner no puede dar charla ni decidir el contenido (regla de TED).</li>
+        </ul>
+        <div class="refs">Ver: <a href="#" data-open="tedxamsterdam_nl">Amsterdam</a> (página de partners)</div>
+      </div>
+      <div class="dir">
+        <div class="n">PONENTES</div>
+        <h3>Que alguien con una idea se presente</h3>
+        <ul>
+          <li>Convocatoria abierta: «Propón una charla» y «Propón a alguien».</li>
+          <li>Qué buscamos: una idea, no un currículum. Mejor si conecta con el tema.</li>
+          <li>Formato: hasta 18 minutos, sin promoción comercial. Los ponentes no cobran.</li>
+          <li>Plazo de candidaturas visible y fecha de respuesta.</li>
+          <li>Formulario corto: nombre, la idea en una o dos frases, por qué ahora y un enlace opcional.</li>
+        </ul>
+        <div class="refs">Ver: <a href="#" data-open="tedxstanford_com">Stanford</a> («cuéntanos tu idea»), <a href="#" data-open="tedxamsterdam_nl">Amsterdam</a> (450+ candidaturas para 9 charlas)</div>
+      </div>
+    </div>
+    <div class="later"><b>Para más adelante:</b> rejilla de ponentes, programa por horas, entradas, FAQ para asistentes y la página «después del evento». <b>Bloqueante ya:</b> los formularios actuales son de demostración y no envían nada. Hay que conectarlos a un servicio real y añadir política de privacidad (RGPD) antes de lanzar.</div>
+  </div>
+</section>
+
+<section id="decisiones">
+  <div class="wrap">
+    <div class="eyebrow">01 · Decisiones del equipo <span class="new">NUEVO</span></div>
+    <h2>Qué sí y qué no queremos</h2>
+    <p class="sub">Notas de la reunión del equipo, con lo que implica cada una.</p>
+    <div class="two">
+      <div class="pill-list">
+        <div class="ok"><b>Sí · TEDxAmsterdam.</b> Toda la web gira alrededor del tema de la edición («What Comes After Growth?»). El hero es el tema, no el logo. Tiene una pieza gráfica propia, una foto real del escenario, cifras propias y un CTA fijo.</div>
+        <div class="ok"><b>Sí · Más relación con la temática.</b> Antes hay que decidir el tema: en TED.com no figura. Mejor una frase o pregunta que salga de la UPM (la ETSII, la Sala de la Máquina) que una palabra suelta como «Innovación».</div>
+        <div class="ok"><b>Sí · Imágenes reales.</b> Fotos propias de la ETSII, de la Sala de la Máquina y del auditorio, y planos o archivo histórico con permiso. Nada de stock ni de imágenes generadas.</div>
+        <div class="ok"><b>Sí · Redes sociales</b> en el footer y en el contacto de <code>/partners/</code>: <a href="https://www.instagram.com/tedx.upm/" target="_blank">Instagram @tedx.upm</a> y <a href="https://www.linkedin.com/company/tedxuniversidad-polit%C3%A9cnica-de-madrid/" target="_blank">LinkedIn</a>.</div>
+        <div class="ok"><b>Sí · Logo UPM y sponsors</b>, pero en <code>/partners/</code> o <code>/about/</code>, no en la home (ver reglas).</div>
+      </div>
+      <div class="pill-list">
+        <div class="ko"><b>No · AI slop en textos.</b> Frases que valen para cualquier evento: los textos de los 4 territorios o «Ideas que abren perspectivas. Personas que conectan.».</div>
+        <div class="ko"><b>No · AI slop en diseño.</b> Degradados sin relación con el tema, el dibujo de órbitas, etiquetas «01 / …» en todas las secciones, la burbuja «SCROLL DOWN» y elementos con brillo.</div>
+        <div class="ko"><b>No · Contenido de relleno.</b> Nada de filas iguales en el programa («Primer/Segundo/Tercer bloque de ideas»). Si algo no está decidido, mejor no ponerlo.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="reglas">
+  <div class="wrap">
+    <div class="eyebrow">02 · Reglas TED que nos afectan <span class="new">NUEVO</span></div>
+    <h2>Lo que no podemos hacer</h2>
+    <p class="sub">Sacado de las <a href="https://www.ted.com/participate/organize-a-local-tedx-event/before-you-start/tedx-rules" target="_blank">TEDx Rules</a>. Lo dudoso hay que confirmarlo con nuestro contacto de TED.</p>
+    <div class="avoid">
+      <div><b>Sin sponsors en la home.</b> <i>«Sponsor or partner logos or names may not appear on your site's homepage.»</i> Van en <code>/partners/</code>, y cada logo tiene que ser más pequeño que el logo TEDx.</div>
+      <div><b>Logo UPM separado.</b> No se puede vincular el logo TEDx a otra organización ni presentar el evento como organizado por otra entidad. Nunca junto al wordmark ni en el header. Hay que confirmarlo con TED.</div>
+      <div><b>Nombre completo.</b> En la web pública siempre «TEDxUniversidad Politecnica Madrid». «TEDxUPM» solo para uso interno.</div>
+      <div><b>Partners y ponentes.</b> Un partner no puede dar charla ni tener control sobre el contenido.</div>
+      <div><b>Fotos.</b> Se suben a Flickr con licencia CC, sin marcas de agua y con el fotógrafo acreditado.</div>
+    </div>
+  </div>
+</section>
+
 <section id="diagnostico">
   <div class="wrap">
-    <div class="eyebrow">00 · Punto de partida</div>
+    <div class="eyebrow">03 · Punto de partida</div>
     <h2>Por qué la web actual no convence</h2>
     <p class="sub">La estructura y el contenido de <a href="https://tedxupm.vercel.app/">tedxupm.vercel.app</a> son sólidos. Lo que falla es la identidad: podría ser la landing de cualquier SaaS o consultora.</p>
     <div class="diag">
@@ -150,7 +239,7 @@
 
 <section id="direcciones">
   <div class="wrap">
-    <div class="eyebrow">01 · Síntesis</div>
+    <div class="eyebrow">04 · Síntesis</div>
     <h2>Cuatro direcciones para TEDxUPM</h2>
     <p class="sub">Combinaciones de referencias que encajan con lo que ya tenemos: el mensaje de «conectar» y «abrir perspectivas», una universidad técnica, la ETSII como sede y todavía sin ponentes confirmados.</p>
     <div class="dirs">
@@ -179,12 +268,13 @@
         <div class="refs">Ver: <a href="#" data-open="tedxcopenhagen_dk">Copenhagen</a>, <a href="#" data-open="tedxmuenchen_com">München</a>, <a href="#" data-open="tedxgranada_com">Granada</a>, <a href="#" data-open="tedxtoronto_com">Toronto</a></div>
       </div>
     </div>
+    <div class="note"><b>Nota del equipo:</b> nos gusta TEDxAmsterdam, que está en la dirección C. De ella nos quedamos con la idea de una pieza gráfica propia que nace del tema. No queremos el dibujo de órbitas actual, porque se lee como plantilla. Las direcciones A y B encajan bien con la fase 1, porque funcionan sin ponentes y con un contador.</div>
   </div>
 </section>
 
 <section id="galeria">
   <div class="wrap">
-    <div class="eyebrow">02 · Galería</div>
+    <div class="eyebrow">05 · Galería</div>
     <h2>Referencias</h2>
     <p class="sub">Pulsa cualquier tarjeta para ver la captura completa de escritorio y de móvil. Las marcadas como <b style="color:var(--red)">TOP</b> son las que más recomiendo para tomar como base.</p>
     <div class="filters" id="filters"></div>
@@ -194,7 +284,7 @@
 
 <section id="plantillas">
   <div class="wrap">
-    <div class="eyebrow">03 · Plantillas</div>
+    <div class="eyebrow">06 · Plantillas</div>
     <h2>Puntos de partida</h2>
     <p class="sub">Plantillas de conferencia con la estructura que necesitamos (ponentes, programa, sede, entradas, FAQ). Sirven para inspirarse o para copiar la estructura de componentes al reconstruir la web.</p>
     <div class="tpl">
@@ -210,13 +300,15 @@
 
 <section id="evitar">
   <div class="wrap">
-    <div class="eyebrow">04 · Antirreferencias</div>
+    <div class="eyebrow">07 · Antirreferencias</div>
     <h2>Qué evitar</h2>
     <div class="avoid">
       <div><b>Dominios caducados.</b> tedxmadrid.com, tedxlisboa.com y tedxleidenuniversity.com hoy son spam de casinos. Hay que registrar el dominio por varios años y no depender solo de vercel.app.</div>
       <div><b>Muros de login.</b> TEDxDublin muestra un login de Google en la portada. Ningún formulario externo debería tapar el contenido.</div>
       <div><b>Plantillas de blog antiguas.</b> TEDxBarcelona tiene un calendario lateral y mosaicos de miniaturas: aspecto de 2010 y sin jerarquía.</div>
       <div><b>Webs que se quedan en el pasado.</b> TEDxIEMadrid sigue anunciando su evento de 2018. Hay que tener previsto el estado «después del evento» (vídeos, galería, gracias).</div>
+      <div><b>Cifras prestadas.</b> TEDxUAMadrid abre con los 44M de suscriptores y los 9.000M de visualizaciones de TED. Solo cifras propias y reales.</div>
+      <div><b>Textos que valen para cualquiera.</b> «Mentes brillantes», «experiencia única de ideas transformadoras». Si la frase sirve para otro evento, hay que reescribirla.</div>
       <div><b>«Speakers coming soon» vacío.</b> Si todavía no hay ponentes, mejor un bloque con intención, como el rojo de Harvard College, o una llamada a proponer ponentes, que una rejilla de huecos vacíos.</div>
     </div>
   </div>
@@ -425,6 +517,15 @@ dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
 
 renderFilters();
 renderGrid();
+
+const EVENT_START = Date.parse("2027-02-26T09:00:00+01:00");
+function tick() {
+  const ms = Math.max(0, EVENT_START - Date.now());
+  $("#cd-days").textContent = Math.floor(ms / 864e5);
+  $("#cd-hours").textContent = Math.floor(ms / 36e5) % 24;
+}
+tick();
+setInterval(tick, 60000);
 </script>
 </body>
 </html>

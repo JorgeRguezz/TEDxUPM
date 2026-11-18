@@ -5,5 +5,4 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   build: { manifest: true },
-  ssr: { noExternal: ['gsap', '@gsap/react'] },
 });

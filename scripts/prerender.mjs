@@ -5,18 +5,18 @@ import { render } from '../.prerender/entry-server.js';
 const template = await readFile('dist/index.html', 'utf8');
 const vercelHost = process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL;
 const origin = (process.env.SITE_ORIGIN || (vercelHost ? `https://${vercelHost}` : 'http://127.0.0.1:5173')).replace(/\/$/, '');
+const title = 'TEDxUniversidad Politecnica Madrid · 26.02.2027';
+const description = { es: 'TEDxUniversidad Politecnica Madrid. 26 de febrero de 2027, ETSII, Madrid.', en: 'TEDxUniversidad Politecnica Madrid. 26 February 2027, ETSII, Madrid.' };
+const page = (locale) => template
+  .replace('lang="es"', `lang="${locale}"`)
+  .replace(/<title>.*?<\/title>/, `<title>${title}</title>`)
+  .replace(/<meta name="description"[^>]*>/, `<meta name="description" content="${description[locale]}" />`)
+  .replace('<!--app-html-->', render(`/${locale}/`))
+  .replace('</head>', `<link rel="canonical" href="${origin}/${locale}/" /><link rel="alternate" hreflang="es" href="${origin}/es/" /><link rel="alternate" hreflang="en" href="${origin}/en/" /><meta name="robots" content="noindex,nofollow" /><meta property="og:title" content="${title}" /><meta property="og:description" content="${description[locale]}" /><meta property="og:type" content="website" /><meta property="og:url" content="${origin}/${locale}/" /></head>`);
+
 for (const locale of ['es', 'en']) {
-  for (const page of ['', 'about/', 'partners/', 'prototype/']) {
-    const path = `/${locale}/${page}`;
-    const title = `TEDxUniversidad Politecnica Madrid · ${page === 'partners/' ? (locale === 'es' ? 'Colabora' : 'Partnerships') : page === 'about/' ? 'About TEDx' : page === 'prototype/' ? 'Motion study' : '26.02.2027'}`;
-    let html = template.replace('lang="es"', `lang="${locale}"`).replace(/<title>.*?<\/title>/, `<title>${title}</title>`).replace('<!--app-html-->', render(path));
-    const description = locale === 'es' ? 'Ideas que abren perspectivas. Personas que conectan. Madrid, 26 febrero 2027.' : 'Ideas that open perspectives. People who connect. Madrid, 26 February 2027.';
-    html = html.replace(/<meta name="description"[^>]*>/, `<meta name="description" content="${description}" />`);
-    html = html.replace('</head>', `<link rel="canonical" href="${origin}${path}" /><link rel="alternate" hreflang="es" href="${origin}/es/${page}" /><link rel="alternate" hreflang="en" href="${origin}/en/${page}" /><meta name="robots" content="noindex,nofollow" /><meta property="og:title" content="${title}" /><meta property="og:description" content="${description}" /><meta property="og:type" content="website" /><meta property="og:url" content="${origin}${path}" /></head>`);
-    const dir = resolve('dist', locale, page);
-    await mkdir(dir, { recursive: true });
-    await writeFile(resolve(dir, 'index.html'), html);
-  }
+  await mkdir(resolve('dist', locale), { recursive: true });
+  await writeFile(resolve('dist', locale, 'index.html'), page(locale));
 }
-await writeFile('dist/index.html', template.replace('<!--app-html-->', render('/es/')).replace('</head>', '<meta name="robots" content="noindex,nofollow" /><link rel="canonical" href="'+origin+'/es/" /></head>'));
-console.log('Prerendered ES/EN landing, About, Partners and motion-study pages.');
+await writeFile('dist/index.html', page('es'));
+console.log('Prerendered the ES/EN coming soon page.');

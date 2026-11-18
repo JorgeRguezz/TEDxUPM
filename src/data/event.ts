@@ -1,5 +1,4 @@
 export type Locale = 'es' | 'en';
-export type Page = 'home' | 'about' | 'partners' | 'prototype';
 
 export const event = {
   name: 'TEDxUniversidad Politecnica Madrid',
@@ -8,134 +7,9 @@ export const event = {
   address: 'Calle de José Gutiérrez Abascal, 2 · Madrid',
   officialUrl: 'https://www.ted.com/tedx/events/68819',
   directions: 'https://www.google.com/maps/search/?api=1&query=Calle+de+Jose+Gutierrez+Abascal+2+Madrid',
-  signupMode: 'mock' as const,
   instagram: 'https://www.instagram.com/tedx.upm/',
   linkedin: 'https://www.linkedin.com/company/tedxuniversidad-polit%C3%A9cnica-de-madrid/',
 };
 
-export function routeInfo(path: string): { locale: Locale; page: Page } {
-  const segments = path.split('/').filter(Boolean);
-  const locale = segments[0] === 'en' ? 'en' : 'es';
-  const page = segments[1] === 'about' || segments[1] === 'partners' || segments[1] === 'prototype' ? segments[1] : 'home';
-  return { locale, page };
-}
-
-export const href = (locale: Locale, page: Page = 'home') => `/${locale}/${page === 'home' ? '' : `${page}/`}`;
-
-export const schedule = [
-  ['09:00', 'Bienvenida y apertura', 'Welcome and opening', '10:00', 'break'],
-  ['10:00', 'Primer bloque de ideas', 'First session of ideas', '11:30', 'talk'],
-  ['11:30', 'Conversaciones y experiencias', 'Conversations and experiences', '12:15', 'break'],
-  ['12:15', 'Segundo bloque de ideas', 'Second session of ideas', '14:00', 'talk'],
-  ['14:00', 'Comida y networking', 'Lunch and networking', '15:00', 'break'],
-  ['15:00', 'Tercer bloque de ideas', 'Third session of ideas', '16:30', 'talk'],
-  ['16:30', 'Conversaciones y experiencias', 'Conversations and experiences', '17:15', 'break'],
-  ['17:15', 'Cuarto bloque y cierre', 'Fourth session and closing', '19:00', 'talk'],
-  ['19:00', 'Encuentro final', 'Closing gathering', '21:00', 'break'],
-] as const;
-
-export const copy = {
-  es: {
-    skip: 'Saltar al contenido', menu: 'Menú', close: 'Cerrar', event: 'El evento', programme: 'Programa', venue: 'Dónde', partners: 'Colabora', about: 'Sobre TEDx', updates: 'Recibir novedades',
-    date: '26 febrero 2027', dateShort: '26.02.2027', city: 'Madrid', eyebrow: 'Una jornada. Nuevas perspectivas.',
-    headline: ['Ideas que abren', 'perspectivas.', 'Personas que', 'conectan.'],
-    description: 'Una jornada de charlas, experiencias y conversaciones para conectar la comunidad UPM con la ciencia, la tecnología, el emprendimiento y la sociedad.',
-    explore: 'Descubre el encuentro', scroll: 'Sigue explorando', demo: 'Vista de desarrollo · formularios de demostración',
-    eventLabel: '01 / EL ENCUENTRO', eventTitle: 'La próxima gran idea puede empezar con una conversación.',
-    eventBody: 'Un lugar para mirar más allá de tu disciplina. Para escuchar otras formas de pensar, hacer preguntas nuevas y encontrar personas con las que seguir la conversación.',
-    eventFoot: 'Estudiantes, alumni, investigadores, emprendedores y personas con curiosidad. Un encuentro abierto al público.',
-    // Draft placeholder descriptions for the topic accordion; editorial review pending.
-    disciplines: [
-      ['Ciencia y tecnología', 'Cada descubrimiento abre nuevas preguntas. Exploramos cómo la investigación, la ingeniería y las tecnologías emergentes pueden transformar nuestra vida cotidiana, ampliar lo que creemos posible y ayudarnos a afrontar los retos de un mundo en constante cambio.'],
-      ['Ideas y emprendimiento', 'Las ideas cobran vida cuando alguien se atreve a dar el primer paso. Un espacio para explorar la creatividad, la experimentación y el aprendizaje que acompañan a quienes convierten una inquietud en un proyecto capaz de aportar valor a los demás.'],
-      ['Personas y liderazgo', 'Detrás de cada avance hay personas que escuchan, colaboran y movilizan a otras. Reflexionamos sobre la empatía, el propósito y la capacidad de liderar desde lo cotidiano para construir equipos, abrir oportunidades y generar un impacto compartido.'],
-      ['Cultura y sociedad', 'Nuestra forma de mirar el mundo está hecha de historias, experiencias y perspectivas diversas. Abrimos la conversación sobre cómo convivimos, qué nos conecta y cómo la cultura puede ayudarnos a cuestionar lo establecido e imaginar futuros más inclusivos.'],
-    ],
-    topicsNote: 'Territorios de conversación propuestos. Los temas de las charlas se anunciarán con el programa.',
-    experienceLabel: '02 / ENTRE LAS CHARLAS', experienceTitle: 'Las ideas no terminan en el escenario.',
-    experienceBody: 'El auditorio abre la conversación. En la Sala de la Máquina, el encuentro continúa: nuevas conexiones, experiencias participativas y tiempo para compartir lo que te ha hecho pensar.',
-    experienceTags: ['Escuchar', 'Descubrir', 'Conversar', 'Conectar'],
-    programmeLabel: '03 / EL DÍA', programmeTitle: 'Un día para abrir la mirada.', draft: 'Programa provisional', timeNote: 'Hora local de Madrid. Horarios y actividades sujetos a confirmación.',
-    signupLabel: '04 / FORMA PARTE', signupTitle: 'Las próximas ideas, en tu bandeja de entrada.', signupBody: 'Recibe las novedades del evento y el aviso de apertura de inscripciones.',
-    email: 'Tu email', name: 'Nombre', company: 'Empresa', message: 'Cuéntanos tu idea', optional: 'opcional', submit: 'Quiero recibir novedades', send: 'Enviar propuesta', sending: 'Enviando…',
-    mockNotice: 'Formulario de demostración: no guarda datos ni envía correos.',
-    signupNote: 'Apuntarte a la lista no reserva una entrada. Solo comunicaciones sobre este evento.',
-    mockSuccess: 'Demostración completada. No se han guardado ni enviado tus datos.',
-    formError: 'No se ha podido completar. Puedes volver a intentarlo.',
-    venueLabel: '05 / NOS VEMOS EN MADRID', venueTitle: 'Un escenario con historia. Una comunidad mirando al futuro.',
-    venueBody: 'Nos encontramos en la Escuela Técnica Superior de Ingenieros Industriales. Charlas en el auditorio y conversaciones en la Sala de la Máquina.', directions: 'Cómo llegar', access: 'Los detalles de acceso, llegada y accesibilidad se publicarán antes del evento.',
-    partnerLabel: '06 / HAGÁMOSLO POSIBLE', partnerTitle: 'Tu empresa también puede abrir perspectivas.',
-    partnerBody: 'Construyamos una colaboración que aporte algo al encuentro: experiencias, recursos y conexiones con la comunidad.', partnerCta: 'Exploremos una colaboración',
-    tedxLabel: '07 / IDEAS QUE SE COMPARTEN', tedxTitle: 'Un encuentro local. Un mundo de ideas.',
-    tedxBody: 'TEDx reúne a comunidades locales en eventos organizados de forma independiente para compartir ideas y generar conversación. Este encuentro está organizado por su equipo local bajo licencia de TED.', tedxLink: 'Conoce el programa TEDx',
-    faqTitle: 'Antes de encontrarnos.', faqLabel: 'PREGUNTAS FRECUENTES',
-    faqs: [
-      ['¿Puede asistir público externo a la UPM?', 'Sí. La ficha oficial del evento indica que está abierto al público. Las condiciones de inscripción se anunciarán próximamente.'],
-      ['¿Estar en la lista me reserva una entrada?', 'No. La lista sirve para recibir novedades y el aviso de apertura de inscripciones; no garantiza ni reserva una plaza.'],
-      ['¿Quiénes serán los ponentes?', 'El programa y los ponentes se anunciarán cuando estén confirmados.'],
-      ['¿Habrá contenido en español e inglés?', 'La web está disponible en ambos idiomas. Los idiomas de las charlas y los servicios de interpretación se comunicarán cuando estén confirmados.'],
-      ['¿Qué incluye la entrada?', 'Los precios, modalidades y servicios incluidos se comunicarán al abrir las inscripciones.'],
-    ],
-    official: 'Ficha oficial en TED.com', organized: 'Organización independiente', team: 'Equipo organizador', organizer: 'Organizadora', coorganizer: 'Coorganizador',
-    aboutTitle: 'Las ideas nos reúnen.', aboutIntro: 'Una comunidad local que comparte curiosidad, perspectivas y ganas de conversar.',
-    aboutTed: 'TED es una organización dedicada a compartir ideas que amplían nuestra comprensión del mundo. Su trabajo conecta voces de distintas disciplinas y culturas.',
-    aboutTedx: 'TEDx permite a equipos locales organizar encuentros independientes bajo licencia. La organización, la selección de ideas y la experiencia de este evento corresponden a su equipo local.',
-    aboutSource: 'Más sobre TED y TEDx',
-    partnerPageTitle: 'Construyamos la experiencia juntos.', partnerPageIntro: 'Una colaboración empieza con una pregunta: ¿qué podemos aportar juntos a esta comunidad?',
-    partnerTypes: [['Experience Partner', 'Una experiencia compartida', 'Cocreación de una activación participativa destacada, fuera del auditorio.'], ['Partner', 'Presencia y conversación', 'Un formato de interacción adaptado a los objetivos y recursos acordados.'], ['Supporting Partner', 'Apoyo que hace posible', 'Contribuciones económicas o en especie que ayudan a construir el encuentro.']],
-    contributions: 'Movilidad · Catering · Tecnología · Alojamiento · Producción · Accesibilidad',
-    partnerTerms: 'El alcance, el reconocimiento y las invitaciones se acuerdan según cada colaboración y las normas TEDx. El apoyo no otorga influencia editorial ni participación como ponente.',
-    contactTitle: 'Todo empieza con una conversación.', back: 'Volver al encuentro',
-    prototype: 'Estudio de movimiento', prototypeNote: 'Lettering de prototipo. El arte final utilizará el logotipo vectorial aprobado.', replay: 'Repetir animación', skipAnimation: 'Saltar animación',
-  },
-  en: {
-    skip: 'Skip to content', menu: 'Menu', close: 'Close', event: 'The event', programme: 'Programme', venue: 'Where', partners: 'Partner with us', about: 'About TEDx', updates: 'Get updates',
-    date: '26 February 2027', dateShort: '26.02.2027', city: 'Madrid', eyebrow: 'One day. New perspectives.',
-    headline: ['Ideas that open', 'perspectives.', 'People who', 'connect.'],
-    description: 'A day of talks, experiences and conversations connecting the UPM community with science, technology, entrepreneurship and society.',
-    explore: 'Discover the gathering', scroll: 'Keep exploring', demo: 'Development preview · demonstration forms',
-    eventLabel: '01 / THE GATHERING', eventTitle: 'The next big idea could begin with a conversation.',
-    eventBody: 'A place to look beyond your discipline. To hear different ways of thinking, ask new questions and meet people to continue the conversation with.',
-    eventFoot: 'Students, alumni, researchers, entrepreneurs and curious people. An event open to the public.',
-    // Draft placeholder descriptions for the topic accordion; editorial review pending.
-    disciplines: [
-      ['Science and technology', 'Every discovery opens up new questions. We explore how research, engineering and emerging technologies can transform everyday life, expand our sense of what is possible and help us face the challenges of a world that never stands still.'],
-      ['Ideas and entrepreneurship', 'Ideas come to life when someone takes the first step. A space to explore the creativity, experimentation and learning behind turning a spark of curiosity into a project that can create value for others.'],
-      ['People and leadership', 'Behind every step forward are people who listen, collaborate and inspire others to act. We reflect on empathy, purpose and everyday leadership as ways to build teams, open opportunities and create an impact together.'],
-      ['Culture and society', 'The way we see the world is shaped by stories, experiences and diverse perspectives. We open a conversation about how we live together, what connects us and how culture can help us question assumptions and imagine more inclusive futures.'],
-    ],
-    topicsNote: 'Proposed areas of conversation. Talk topics will be announced with the programme.',
-    experienceLabel: '02 / BETWEEN THE TALKS', experienceTitle: 'Ideas don’t end at the edge of the stage.',
-    experienceBody: 'The auditorium starts the conversation. In Sala de la Máquina, it continues: new connections, participatory experiences and time to share what made you think.',
-    experienceTags: ['Listen', 'Discover', 'Talk', 'Connect'],
-    programmeLabel: '03 / THE DAY', programmeTitle: 'A day to broaden your view.', draft: 'Provisional programme', timeNote: 'Madrid local time. Times and activities are subject to confirmation.',
-    signupLabel: '04 / BE PART OF IT', signupTitle: 'The next ideas, in your inbox.', signupBody: 'Get event updates and hear when registration opens.',
-    email: 'Your email', name: 'Name', company: 'Company', message: 'Tell us your idea', optional: 'optional', submit: 'Keep me updated', send: 'Send proposal', sending: 'Sending…',
-    mockNotice: 'Demonstration form: no information is stored and no email is sent.',
-    signupNote: 'Joining the list does not reserve a ticket. Only updates about this event.',
-    mockSuccess: 'Demonstration complete. Your information has not been saved or sent.', formError: 'We could not complete that. Please try again.',
-    venueLabel: '05 / SEE YOU IN MADRID', venueTitle: 'A setting with history. A community looking ahead.',
-    venueBody: 'We meet at the School of Industrial Engineering. Talks in the auditorium and conversations in Sala de la Máquina.', directions: 'Get directions', access: 'Arrival details and accessibility information will be published before the event.',
-    partnerLabel: '06 / MAKE IT POSSIBLE', partnerTitle: 'Your company can open perspectives too.', partnerBody: 'Let’s build a partnership that contributes to the gathering: experiences, resources and connections with the community.', partnerCta: 'Explore a partnership',
-    tedxLabel: '07 / IDEAS TO SHARE', tedxTitle: 'A local gathering. A world of ideas.',
-    tedxBody: 'TEDx brings local communities together through independently organized events to share ideas and spark conversations. This gathering is organized by its local team under license from TED.', tedxLink: 'Discover the TEDx programme',
-    faqTitle: 'Before we meet.', faqLabel: 'FREQUENTLY ASKED QUESTIONS',
-    faqs: [
-      ['Can people from outside UPM attend?', 'Yes. The official event listing says it is open to the public. Registration conditions will be announced soon.'],
-      ['Does joining the list reserve a ticket?', 'No. The list provides updates and news about registration opening; it does not guarantee or reserve a place.'],
-      ['Who will be speaking?', 'The programme and speakers will be announced once confirmed.'],
-      ['Will content be in Spanish and English?', 'The website is available in both languages. Talk languages and interpretation services will be announced when confirmed.'],
-      ['What does a ticket include?', 'Prices, ticket options and included services will be announced when registration opens.'],
-    ],
-    official: 'Official listing on TED.com', organized: 'Independently organized', team: 'Organizing team', organizer: 'Organizer', coorganizer: 'Co-organizer',
-    aboutTitle: 'Ideas bring us together.', aboutIntro: 'A local community sharing curiosity, perspectives and a desire to talk.',
-    aboutTed: 'TED is an organization dedicated to sharing ideas that deepen our understanding of the world. Its work connects voices across disciplines and cultures.',
-    aboutTedx: 'TEDx enables local teams to organize independent gatherings under license. This event’s organization, selection of ideas and experience are the responsibility of its local team.', aboutSource: 'More about TED and TEDx',
-    partnerPageTitle: 'Let’s build the experience together.', partnerPageIntro: 'A partnership starts with a question: what can we contribute to this community together?',
-    partnerTypes: [['Experience Partner', 'A shared experience', 'Co-create a prominent participatory activation outside the auditorium.'], ['Partner', 'Presence and conversation', 'An interaction format adapted to the agreed objectives and resources.'], ['Supporting Partner', 'Support that makes it possible', 'Financial or in-kind contributions that help bring the gathering to life.']],
-    contributions: 'Mobility · Catering · Technology · Hospitality · Production · Accessibility',
-    partnerTerms: 'Scope, recognition and invitations are agreed for each partnership under TEDx rules. Support does not grant editorial influence or a speaking opportunity.',
-    contactTitle: 'It starts with a conversation.', back: 'Back to the gathering',
-    prototype: 'Motion study', prototypeNote: 'Prototype lettering. The final artwork will use the approved vector logo.', replay: 'Replay animation', skipAnimation: 'Skip animation',
-  },
-};
+export const localeOf = (path: string): Locale => (path.split('/')[1] === 'en' ? 'en' : 'es');
+export const href = (locale: Locale) => `/${locale}/`;

@@ -6,6 +6,7 @@ import { TopicAccordion } from './components/TopicAccordion';
 import { FaqAccordion } from './components/FaqAccordion';
 import { Arrow } from './components/Arrow';
 import { TedxMark } from './components/TedxMark';
+import { ComingSoon } from './components/ComingSoon';
 
 const Label = ({ children }: { children: React.ReactNode }) => <p className="eyebrow">{children}</p>;
 
@@ -73,6 +74,9 @@ export function App({ initialPath }: { initialPath: string }) {
     return () => document.removeEventListener('keydown', onKey);
   }, [menuOpen]);
 
+  // Coming soon: la portada pública es solo fecha, lugar, contador y qué es TED. El resto de la web queda sin enlazar.
+  if (page === 'home') return <ComingSoon locale={locale} />;
+
   const switchLocale = (e: MouseEvent<HTMLAnchorElement>, next: Locale) => {
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
     e.preventDefault();
@@ -89,7 +93,7 @@ export function App({ initialPath }: { initialPath: string }) {
     <a className="skip-link" href="#main">{c.skip}</a>
     <header className={`site-header${immersiveOpening ? ' site-header--landing' : ''}${headerVisible ? ' is-visible' : ''}`} inert={!headerVisible} aria-hidden={!headerVisible}>
       <a className="brand-small" href={href(locale)} aria-label={event.name}><TedxMark /><span>Universidad<br />Politecnica Madrid</span></a>
-      <nav className="desktop-nav" aria-label={locale === 'es' ? 'Navegación principal' : 'Main navigation'}>{nav.map(([label, url]) => <a key={url} href={url} aria-current={(url === href(locale, page) && page !== 'home') ? 'page' : undefined}>{label}</a>)}</nav>
+      <nav className="desktop-nav" aria-label={locale === 'es' ? 'Navegación principal' : 'Main navigation'}>{nav.map(([label, url]) => <a key={url} href={url} aria-current={url === href(locale, page) ? 'page' : undefined}>{label}</a>)}</nav>
       <div className="header-tools"><div className="locale-switch" aria-label={locale === 'es' ? 'Idioma' : 'Language'}>{(['es', 'en'] as Locale[]).map(l => <a key={l} lang={l} href={href(l, page)} onClick={e => switchLocale(e, l)} aria-current={locale === l ? 'true' : undefined}>{l.toUpperCase()}</a>)}</div>
         <a className="header-cta" href={`${href(locale)}#updates`}>{c.updates}<Arrow /></a>
         <button id="menu-toggle" className="menu-toggle" type="button" aria-controls="mobile-nav" aria-expanded={menuOpen} onClick={() => setMenuOpen(v => !v)}>{menuOpen ? c.close : c.menu}<span aria-hidden="true">{menuOpen ? '−' : '+'}</span></button>
@@ -98,7 +102,7 @@ export function App({ initialPath }: { initialPath: string }) {
       {immersiveOpening && <div className="reading-progress" aria-hidden="true"><span ref={progressFill} className="reading-progress-fill" /></div>}
     </header>
     <main id="main">
-      {page === 'home' ? <Home locale={locale} onIntroComplete={finishLandingIntro} /> : page === 'partners' ? <Partners locale={locale} /> : page === 'about' ? <About locale={locale} /> : <Prototype locale={locale} />}
+      {page === 'partners' ? <Partners locale={locale} /> : page === 'about' ? <About locale={locale} /> : <Prototype locale={locale} />}
     </main>
     <Footer locale={locale} />
     <div className={`development-badge${!badgeVisible ? ' development-badge--quiet' : ''}`} aria-hidden={!badgeVisible}><span className="status-dot" />{c.demo}</div>

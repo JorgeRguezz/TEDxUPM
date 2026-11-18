@@ -9,6 +9,8 @@ export const event = {
   officialUrl: 'https://www.ted.com/tedx/events/68819',
   directions: 'https://www.google.com/maps/search/?api=1&query=Calle+de+Jose+Gutierrez+Abascal+2+Madrid',
   signupMode: 'mock' as const,
+  instagram: 'https://www.instagram.com/tedx.upm/',
+  linkedin: 'https://www.linkedin.com/company/tedxuniversidad-polit%C3%A9cnica-de-madrid/',
 };
 
 export function routeInfo(path: string): { locale: Locale; page: Page } {

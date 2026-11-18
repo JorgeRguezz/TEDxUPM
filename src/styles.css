@@ -232,3 +232,70 @@
 /* Draw diagonal arrows as vectors so iOS cannot substitute an emoji glyph. */
 .arrow-icon { display: inline-flex; width: 1em; height: 1em; flex-shrink: 0; vertical-align: middle; }
 .arrow-icon svg { display: block; width: 100%; height: 100%; }
+
+/* Coming soon. Minimalista: fondo negro puro (oscuro) o blanco puro (claro), rojo TED y la X de luz. */
+.cs{--bg:#000;--fg:#fff;--muted:#8c8c8c;--line:#262626;--g:max(16px,5vw);background:var(--bg);color:var(--fg);min-height:100svh;display:flex;flex-direction:column;color-scheme:dark}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]) body{background:#fff}:root:not([data-theme="dark"]) .cs{--bg:#fff;--fg:#000;--muted:#6b6b6b;--line:#e6e6e6;color-scheme:light}}
+:root[data-theme="light"] .cs{--bg:#fff;--fg:#000;--muted:#6b6b6b;--line:#e6e6e6;color-scheme:light}
+:root[data-theme="dark"] body{background:#000}:root[data-theme="light"] body{background:#fff}
+.cs{--edge:rgba(120,14,20,.5);position:relative;isolation:isolate}
+:root[data-theme="light"] .cs{--edge:rgba(235,0,40,.14)}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]) .cs{--edge:rgba(235,0,40,.14)}}
+/* Gradiente rojo en los laterales (referencia TEDxAmsterdam), fijo al hacer scroll */
+.cs::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,var(--edge),transparent 11%,transparent 89%,var(--edge))}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.cs-top{display:flex;justify-content:space-between;align-items:center;padding:20px var(--g)}
+.cs-brand{display:flex;align-items:center;gap:10px}.cs-brand>span{font-size:11px;font-weight:500;line-height:1.25}
+.cs-tools{display:flex;align-items:center;gap:8px}
+.cs-lang{display:flex;font-size:13px;font-weight:600}.cs-lang a{display:flex;align-items:center;justify-content:center;min-width:40px;min-height:44px;color:var(--muted)}.cs-lang a[aria-current]{color:var(--fg)}
+.cs-theme{display:grid;place-items:center;width:44px;height:44px;background:none;border:0;color:var(--fg)}
+.cs-theme svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6}.cs-theme path{fill:currentColor;stroke:none}
+.cs-hero{position:relative;flex:1;min-height:calc(100svh - 84px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(20px,3vh,32px);padding:24px var(--g) 112px;text-align:center}
+/* La X como línea de luz: un trazo incompleto que recorre la figura en bucle, con brillo rojo que respira */
+.cs-x{width:min(34vh,56vw);height:auto;overflow:visible;margin-bottom:clamp(8px,2vh,24px);filter:drop-shadow(0 0 4px rgba(235,0,40,.9)) drop-shadow(0 0 18px rgba(235,0,40,.5));animation:cs-glow 4s ease-in-out infinite alternate}
+.cs-x path{fill:none;stroke:var(--red);stroke-width:3.2;stroke-linejoin:miter;stroke-linecap:round;vector-effect:non-scaling-stroke;stroke-dasharray:46 10 10 34;animation:cs-run 9s linear infinite}
+@keyframes cs-run{from{stroke-dashoffset:0}to{stroke-dashoffset:-100}}
+@keyframes cs-glow{to{filter:drop-shadow(0 0 6px rgba(235,0,40,1)) drop-shadow(0 0 32px rgba(235,0,40,.7))}}
+.cs-soon{display:block;font-size:13px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--red);padding-left:.24em}
+.cs-count{display:flex;gap:clamp(18px,4vw,48px)}
+.cs-count>div{display:grid;gap:6px}
+.cs-num{font-size:clamp(46px,7.5vw,96px);font-weight:400;line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.cs-unit{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.cs-today{font-size:clamp(46px,7.5vw,96px);font-weight:400;letter-spacing:-.04em}
+.cs-meta{display:flex;gap:14px;font-size:14px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+.cs-meta span{color:var(--red)}
+.cs-meta a{display:inline-flex;align-items:center;min-height:44px;margin-block:-14px;border-bottom:1px solid transparent}.cs-meta a:hover{border-color:var(--red)}
+.cs-calls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.cs-calls article{display:grid;align-content:start;gap:14px;padding:clamp(40px,6vw,80px) var(--g)}
+
+.cs-label{font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--red)}
+.cs-calls h2{font-size:clamp(26px,2.8vw,40px);font-weight:600;letter-spacing:-.035em;line-height:1.1;max-width:none}
+.cs-calls p:not(.cs-label){color:var(--muted);font-size:16px;font-weight:450;line-height:1.6;max-width:46ch}
+.cs-calls a{justify-self:start;display:inline-flex;align-items:center;min-height:44px;margin-top:6px;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+@media(max-width:720px){.cs-calls{grid-template-columns:1fr}}
+.cs-foot{--glow:rgba(190,30,30,.55);display:grid;gap:12px;padding:clamp(72px,10vw,140px) var(--g) 28px;font-size:13px;color:var(--muted);background:linear-gradient(to bottom,transparent,var(--glow) 40%,transparent 92%)}
+:root[data-theme="light"] .cs-foot{--glow:rgba(235,0,40,.16)}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]) .cs-foot{--glow:rgba(235,0,40,.16)}}
+.cs-foot .cs-sign{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 .22em;max-width:none;margin-bottom:clamp(24px,4vw,56px);font-size:clamp(34px,5.4vw,104px);font-weight:500;line-height:1;letter-spacing:-.045em;color:var(--fg);white-space:normal}
+.cs-sign .brand-mark{width:auto;height:.74em}
+.cs-foot p{max-width:72ch;line-height:1.6}.cs-foot a{color:var(--fg);white-space:nowrap}.cs-foot a:hover{color:var(--red)}
+.cs-legal{font-size:11px}
+@media(prefers-reduced-motion:reduce){.cs-x path{animation:none}.cs-x{animation:none}}
+/* Los bloques de empresas/ponentes quedan bajo el pliegue y entran al hacer scroll (nativo, sin JS). */
+@keyframes cs-in{from{opacity:0;transform:translateY(56px);filter:blur(6px)}}
+@media(prefers-reduced-motion:no-preference){@supports(animation-timeline:view()){.cs-calls article>*,.cs-foot>*{animation:cs-in linear both;animation-timeline:view();animation-range:entry 0% entry 100%}}}
+/* Indicador de scroll: una chispa roja baja en bucle por una línea fina. */
+.cs-scroll{position:absolute;bottom:24px;left:50%;width:44px;height:64px;translate:-50% 0;background:linear-gradient(var(--red),var(--red)) 50% -20px/2px 20px no-repeat,linear-gradient(rgba(235,0,40,.25),rgba(235,0,40,.25)) 50% 0/1px 100% no-repeat;animation:cs-drop 2s cubic-bezier(.6,0,.4,1) infinite}
+@keyframes cs-drop{to{background-position:50% 84px,50% 0}}
+@media(prefers-reduced-motion:no-preference){html:has(.cs){scroll-behavior:smooth}}
+@media(prefers-reduced-motion:reduce){.cs-scroll{animation:none;background-position:50% 22px,50% 0}}
+/* Pie: aviso legal a la izquierda, redes a la derecha (debajo en móvil). */
+.cs-end{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 24px}
+.cs-social{display:flex;gap:24px;font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
+.cs-social a{display:inline-flex;align-items:center;min-height:44px}
+/* CTA: el subrayado rojo se llena hasta ser un botón y la flecha sale en diagonal. */
+.cs-calls a{gap:.5em;padding-inline:8px;margin-inline:-8px;background:linear-gradient(var(--red),var(--red)) 0 100%/100% 2px no-repeat;transition:background-size .35s cubic-bezier(.2,.8,.2,1),color .2s}
+.cs-calls a span{transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.cs-calls a:hover,.cs-calls a:focus-visible{background-size:100% 100%;color:#fff}
+.cs-calls a:hover span,.cs-calls a:focus-visible span{transform:translate(3px,-3px)}
+@media(prefers-reduced-motion:reduce){.cs-calls a,.cs-calls a span{transition:none}}

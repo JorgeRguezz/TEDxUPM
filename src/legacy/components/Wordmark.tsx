@@ -2,7 +2,7 @@ import { Arrow } from './Arrow';
 import { useId, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import artwork from '../assets/wordmark.json';
+import artwork from '../../assets/wordmark.json';
 import { copy, event, type Locale } from '../data/event';
 
 gsap.registerPlugin(useGSAP);

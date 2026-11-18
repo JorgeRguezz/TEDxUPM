@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Cabeceras TEDxUPM · 4 opciones</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap">
+<style>
+:root { --red: #EB0028; --deep: #78001a; }
+* { box-sizing: border-box; }
+body { margin: 0; background: #000; color: #fff; font: 400 16px/1.5 Inter, system-ui, sans-serif; }
+h1, p { margin: 0; }
+.pad { padding-left: max(20px, 4vw); padding-right: max(20px, 4vw); }
+.btn { display: inline-flex; font: 600 14px Inter; text-decoration: none; padding: 12px 18px; border: 1px solid var(--red); color: inherit; }
+.btn.solid { background: var(--red); color: #fff; }
+.label { font: 300 11px Inter; letter-spacing: .18em; text-transform: uppercase; }
+.cd { display: flex; gap: 18px; align-items: baseline; }
+.cd strong { font-size: clamp(32px, 3.4vw, 52px); font-weight: 700; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; line-height: 1; }
+.cd small { font: 300 11px Inter; letter-spacing: .14em; text-transform: uppercase; opacity: .6; margin-left: 4px; }
+.lockup { font-weight: 800; letter-spacing: -0.02em; font-size: 20px; }
+.lockup b { color: var(--red); }
+.lockup span { font-size: 11px; font-weight: 600; display: inline-block; vertical-align: middle; line-height: 1.15; margin-left: 6px; }
+.xl { fill: none; stroke: var(--red); vector-effect: non-scaling-stroke; stroke-dasharray: 100; stroke-dashoffset: 100; stroke-linejoin: miter; }
+.play .xl.draw { animation: draw 1.8s .3s cubic-bezier(.6,.05,.2,1) forwards; }
+.ph { font: 600 10px Inter; letter-spacing: .1em; text-transform: uppercase; background: var(--red); color: #fff; padding: 3px 6px; }
+
+/* Pestañas */
+.tabs { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 100; display: flex; gap: 4px; background: rgba(20,20,20,.85); backdrop-filter: blur(8px); border: 1px solid #333; padding: 4px; border-radius: 999px; }
+.tabs a { color: #aaa; text-decoration: none; font: 600 13px Inter; padding: 8px 14px; border-radius: 999px; white-space: nowrap; }
+.tabs a[aria-current] { background: #fff; color: #000; }
+section.opt { display: none; }
+section.opt.on { display: block; }
+
+/* A · Atravesar la X */
+.a-track { height: 320vh; position: relative; }
+.a-stage { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+.a-bg { position: absolute; inset: -20%; background: radial-gradient(40% 45% at 30% 40%, rgba(235,0,40,.55), transparent 70%), radial-gradient(45% 50% at 75% 65%, rgba(120,0,26,.8), transparent 70%), radial-gradient(30% 30% at 60% 20%, rgba(189,189,189,.12), transparent 70%), #000; animation: drift 16s ease-in-out infinite alternate; }
+.a-next { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(0,0,0,.65), rgba(0,0,0,.1) 60%), url("img/ref-bn-rojo.png") center 30% / cover; display: grid; align-content: end; padding-bottom: 10vh; }
+.a-next h2 { font-size: clamp(32px, 4.5vw, 64px); font-weight: 800; letter-spacing: -0.04em; line-height: 1; max-width: 16ch; margin: 12px 0 0; }
+.a-xsvg { position: absolute; left: 50%; top: 46%; width: 30vmin; height: 30vmin; transform: translate(-50%, -50%); overflow: visible; filter: drop-shadow(0 0 10px rgba(235,0,40,.8)); }
+.a-xsvg .xl { stroke-width: 2; }
+.a-text { position: absolute; inset: auto 0 0 0; padding-bottom: 6vh; display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; }
+.a-text h1 { font-size: clamp(40px, 6.4vw, 104px); font-weight: 800; letter-spacing: -0.05em; line-height: .92; }
+.a-text h1 em { font-style: normal; color: var(--red); }
+.a-hint { position: absolute; top: 76px; left: 50%; transform: translateX(-50%); opacity: .6; }
+.a-top { position: absolute; top: 70px; left: 0; right: 0; display: flex; justify-content: space-between; }
+
+/* B · Cine en blanco y negro */
+.b { position: relative; height: 100vh; overflow: hidden; background: #000; }
+.b-photo { position: absolute; inset: 0; background: url("img/ref-bn-rojo.png") center 28% / cover; filter: contrast(1.08); transform: scale(1.12); }
+.play .b-photo { animation: kenburns 18s ease-out forwards; }
+.b::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,.85) 0%, rgba(0,0,0,.35) 50%, rgba(0,0,0,.1) 100%), linear-gradient(0deg, rgba(0,0,0,.8), transparent 45%); }
+.b-bar { position: absolute; left: 0; right: 0; height: 7vh; background: #000; z-index: 3; display: flex; align-items: center; justify-content: space-between; }
+.b-bar.top { top: 0; } .b-bar.bot { bottom: 0; }
+.b-x { position: absolute; right: 8vw; top: 50%; width: 46vmin; height: 46vmin; transform: translateY(-50%); z-index: 2; }
+.b-x .xl { stroke-width: 2.4; }
+.b-text { position: absolute; left: 0; bottom: 13vh; z-index: 2; display: grid; gap: 22px; }
+.b-text h1 { font-size: clamp(44px, 7vw, 116px); font-weight: 800; letter-spacing: -0.05em; line-height: .9; max-width: 11ch; }
+.b-text h1 em { font-style: normal; color: var(--red); }
+.b-text .row { display: flex; gap: 32px; align-items: center; flex-wrap: wrap; }
+.b .ph { position: absolute; top: 9vh; right: 2vw; z-index: 3; }
+
+/* C · Póster tipográfico */
+.c { position: relative; min-height: 100vh; overflow: hidden; background: #000; display: grid; align-content: center; padding-block: 90px 40px; }
+.c-band { position: absolute; left: -30%; width: 160%; height: 28vh; filter: blur(70px); opacity: .85; border-radius: 50%; }
+.c-band.one { top: 18%; background: linear-gradient(90deg, transparent, var(--red), var(--deep), transparent); }
+.c-band.two { top: 58%; background: linear-gradient(90deg, transparent, var(--deep), rgba(189,189,189,.25), transparent); }
+.play .c-band.one { animation: band 14s ease-in-out infinite alternate; }
+.play .c-band.two { animation: band 18s ease-in-out infinite alternate-reverse; }
+.c h1 { position: relative; font-size: clamp(48px, 11vw, 200px); font-weight: 900; letter-spacing: -0.055em; line-height: 1.1; text-transform: uppercase; }
+.c h1 .ln { display: block; }
+.c h1 svg { display: inline-block; height: .74em; width: .74em; vertical-align: -0.02em; margin: 0 .06em; overflow: visible; filter: drop-shadow(0 0 8px rgba(235,0,40,.8)); }
+.c h1 svg .xl { stroke-width: 3; }
+.c h1 em { font-style: normal; color: var(--red); }
+.c-info { position: relative; display: flex; flex-wrap: wrap; gap: 20px 40px; align-items: end; justify-content: space-between; border-top: 1px solid rgba(255,255,255,.25); padding-top: 22px; margin-top: 40px; }
+.c-info .meta { display: flex; gap: 32px; font-weight: 600; }
+.c-info .meta span b { display: block; font: 300 11px Inter; letter-spacing: .16em; text-transform: uppercase; opacity: .6; }
+
+/* D · Claro y luminoso */
+.d { position: relative; min-height: 100vh; overflow: hidden; background: #fff; color: #000; display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 4vw; padding-block: 90px 40px; }
+.d-leak { position: absolute; border-radius: 50%; filter: blur(80px); }
+.d-leak.one { width: 55vw; height: 55vw; right: -18vw; top: -22vw; background: radial-gradient(circle, rgba(235,0,40,.55), transparent 65%); }
+.d-leak.two { width: 40vw; height: 40vw; left: -14vw; bottom: -20vw; background: radial-gradient(circle, rgba(235,0,40,.3), transparent 65%); }
+.play .d-leak { animation: breathe 9s ease-in-out infinite alternate; }
+.d-text { position: relative; display: grid; gap: 26px; }
+.d-text h1 { font-size: clamp(44px, 6.6vw, 112px); font-weight: 800; letter-spacing: -0.05em; line-height: .92; }
+.d-text h1 em { font-style: normal; color: var(--red); }
+.d-text .lockup { color: #000; }
+.d-fig { position: relative; aspect-ratio: 1; width: 100%; max-width: 640px; justify-self: center; }
+.d-fig svg { width: 100%; height: 100%; overflow: visible; }
+.d-fig image { filter: grayscale(1) contrast(1.1); opacity: 0; }
+.play .d-fig image { animation: fadein 1.2s 1.5s forwards; }
+.d-fig .xl { stroke-width: 2; }
+.d-fig .ph { position: absolute; bottom: 4%; left: 50%; transform: translateX(-50%); }
+.d .btn { color: #000; }
+.d .btn.solid { color: #fff; }
+
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes drift { from { transform: translate(-4%, -3%) scale(1); } to { transform: translate(4%, 3%) scale(1.08); } }
+@keyframes kenburns { to { transform: scale(1); } }
+@keyframes band { from { transform: translateX(-12%) rotate(-4deg); } to { transform: translateX(12%) rotate(3deg); } }
+@keyframes breathe { from { transform: scale(1); opacity: .8; } to { transform: scale(1.15); opacity: 1; } }
+@keyframes fadein { to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; }
+  .xl { stroke-dashoffset: 0; }
+  .d-fig image { opacity: 1; }
+  .b-photo { transform: none; }
+}
+@media (max-width: 860px) {
+  .tabs a { padding: 7px 10px; font-size: 12px; }
+  .d { grid-template-columns: 1fr; }
+  .d-fig { max-width: 420px; order: -1; }
+  .b-x { width: 60vmin; height: 60vmin; right: 4vw; top: 34%; opacity: .9; }
+  .a-xsvg { width: 44vmin; height: 44vmin; }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <polygon id="xs" pathLength="100" points="4,4 32,4 50,34 68,4 96,4 66,50 96,96 68,96 50,66 32,96 4,96 34,50"/>
+  <clipPath id="xclip"><use href="#xs"/></clipPath>
+</defs></svg>
+
+<nav class="tabs" aria-label="Opciones de cabecera">
+  <a href="#a">A · Atravesar la X</a><a href="#b">B · Cine B/N</a><a href="#c">C · Póster</a><a href="#d">D · Claro</a>
+</nav>
+
+<!-- A -->
+<section class="opt" id="a" aria-label="Opción A">
+  <div class="a-track" id="a-track">
+    <div class="a-stage">
+      <div class="a-bg"></div>
+      <div class="a-next pad" id="a-next">
+        <span class="label" style="color:var(--red);font-weight:600">El tema de 2027</span>
+        <h2>Las máquinas ya funcionan. La pregunta es qué hacemos ahora.</h2>
+      </div>
+      <svg class="a-xsvg" id="a-x" viewBox="0 0 100 100" aria-hidden="true"><use href="#xs" class="xl draw" pathLength="100"/></svg>
+      <div class="a-top pad" id="a-top"><span class="lockup"><b>TEDx</b><span>Universidad<br>Politecnica Madrid</span></span><span class="label">Baja para entrar ↓</span></div>
+      <div class="a-text pad" id="a-text">
+        <div style="display:grid;gap:18px"><span class="label" style="color:var(--red);font-weight:600">26.02.2027 · ETSII · Madrid</span><h1>¿Qué viene después<br>de la <em>máquina</em>?</h1></div>
+        <div style="display:grid;gap:16px;justify-items:end"><div class="cd"><span><strong class="cd-d">—</strong><small>días</small></span><span><strong class="cd-h">—</strong><small>h</small></span><span><strong class="cd-m">—</strong><small>min</small></span></div><div style="display:flex;gap:10px"><a class="btn solid" href="#a">Propón una charla</a><a class="btn" href="#a">Colabora</a></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- B -->
+<section class="opt" id="b" aria-label="Opción B">
+  <div class="b">
+    <div class="b-photo" role="img" aria-label="Persona explicando una maqueta en un taller, en blanco y negro"></div>
+    <div class="b-bar top pad"><span class="lockup"><b>TEDx</b><span>Universidad<br>Politecnica Madrid</span></span><span class="label">Primera edición</span></div>
+    <span class="ph">Foto de referencia · sustituir</span>
+    <svg class="b-x" viewBox="0 0 100 100" aria-hidden="true"><use href="#xs" class="xl draw" pathLength="100"/></svg>
+    <div class="b-text pad">
+      <span class="label" style="color:var(--red);font-weight:600">26.02.2027 · ETSII · Madrid</span>
+      <h1>¿Qué viene después de la <em>máquina</em>?</h1>
+      <div class="row"><div class="cd"><span><strong class="cd-d">—</strong><small>días</small></span><span><strong class="cd-h">—</strong><small>h</small></span><span><strong class="cd-m">—</strong><small>min</small></span></div><a class="btn solid" href="#b">Propón una charla</a><a class="btn" href="#b">Colabora</a></div>
+    </div>
+    <div class="b-bar bot pad"><span class="label">Tecnología · Investigación · Emprendimiento · Oratoria</span><span class="label">Entradas próximamente</span></div>
+  </div>
+</section>
+
+<!-- C -->
+<section class="opt" id="c" aria-label="Opción C">
+  <div class="c pad">
+    <div class="c-band one"></div><div class="c-band two"></div>
+    <h1><span class="ln">¿Qué viene</span><span class="ln">después<svg viewBox="0 0 100 100" aria-hidden="true"><use href="#xs" class="xl draw" pathLength="100"/></svg>de</span><span class="ln">la <em>máquina</em>?</span></h1>
+    <div class="c-info">
+      <div class="meta"><span><b>Cuándo</b>26.02.2027</span><span><b>Dónde</b>ETSII · Madrid</span></div>
+      <div class="cd"><span><strong class="cd-d">—</strong><small>días</small></span><span><strong class="cd-h">—</strong><small>h</small></span><span><strong class="cd-m">—</strong><small>min</small></span></div>
+      <div style="display:flex;gap:10px"><a class="btn solid" href="#c">Propón una charla</a><a class="btn" href="#c">Colabora</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- D -->
+<section class="opt" id="d" aria-label="Opción D">
+  <div class="d pad">
+    <div class="d-leak one"></div><div class="d-leak two"></div>
+    <div class="d-text">
+      <span class="lockup"><b>TEDx</b><span>Universidad<br>Politecnica Madrid</span></span>
+      <h1>¿Qué viene después de la <em>máquina</em>?</h1>
+      <span class="label" style="color:var(--red);font-weight:600">26.02.2027 · ETSII · Madrid</span>
+      <div class="cd"><span><strong class="cd-d">—</strong><small>días</small></span><span><strong class="cd-h">—</strong><small>h</small></span><span><strong class="cd-m">—</strong><small>min</small></span></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn solid" href="#d">Propón una charla</a><a class="btn" href="#d">Colabora</a></div>
+    </div>
+    <div class="d-fig">
+      <svg viewBox="-4 -4 108 108" aria-hidden="true">
+        <image href="img/ref-bn-rojo.png" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid slice" clip-path="url(#xclip)"/>
+        <use href="#xs" class="xl draw" pathLength="100" transform="translate(-3 -3) scale(1.06)"/>
+      </svg>
+      <span class="ph">Foto de referencia · sustituir</span>
+    </div>
+  </div>
+</section>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Contador
+  const target = Date.parse('2027-02-26T09:00:00+01:00'), pad = n => String(n).padStart(2, '0');
+  const tick = () => {
+    const ms = Math.max(0, target - Date.now());
+    document.querySelectorAll('.cd').forEach(c => {
+      c.querySelector('.cd-d').textContent = Math.floor(ms / 864e5);
+      c.querySelector('.cd-h').textContent = pad(Math.floor(ms / 36e5) % 24);
+      c.querySelector('.cd-m').textContent = pad(Math.floor(ms / 6e4) % 60);
+    });
+  };
+  tick(); setInterval(tick, 30000);
+
+  // Pestañas: muestra una opción y reinicia sus animaciones
+  const show = () => {
+    const id = ['#a', '#b', '#c', '#d'].includes(location.hash) ? location.hash.slice(1) : 'a';
+    document.querySelectorAll('section.opt').forEach(s => { s.classList.toggle('on', s.id === id); s.classList.remove('play'); });
+    document.querySelectorAll('.tabs a').forEach(a => a.toggleAttribute('aria-current', a.hash === '#' + id));
+    const s = document.getElementById(id); void s.offsetWidth; s.classList.add('play');
+    scrollTo(0, 0); updateA();
+  };
+
+  // A: la X crece con el scroll y se atraviesa
+  const track = document.getElementById('a-track'), next = document.getElementById('a-next'), ax = document.getElementById('a-x');
+  const aText = document.getElementById('a-text'), aTop = document.getElementById('a-top');
+  const P = [[4,4],[32,4],[50,34],[68,4],[96,4],[66,50],[96,96],[68,96],[50,66],[32,96],[4,96],[34,50]];
+  let frame = 0;
+  function updateA() {
+    frame = 0;
+    if (!document.getElementById('a').classList.contains('on')) return;
+    const r = track.getBoundingClientRect();
+    const p = reduce ? 0 : Math.min(1, Math.max(0, -r.top / (r.height - innerHeight)));
+    const s = 1 + 38 * Math.pow(p, 2.4);
+    const size = ax.getBoundingClientRect().width / (parseFloat(getComputedStyle(ax).transform.split(',')[0].slice(7)) || 1);
+    const cx = innerWidth / 2, cy = innerHeight * .46;
+    next.style.clipPath = 'polygon(' + P.map(([x, y]) => `${cx + (x - 50) / 100 * size * s}px ${cy + (y - 50) / 100 * size * s}px`).join(',') + ')';
+    next.style.opacity = Math.min(1, .25 + p * 2.5);
+    ax.style.transform = `translate(-50%, -50%) scale(${s})`;
+    aText.style.opacity = aTop.style.opacity = Math.max(0, 1 - p * 3);
+  }
+  addEventListener('scroll', () => { if (!frame) frame = requestAnimationFrame(updateA); }, { passive: true });
+  addEventListener('resize', updateA);
+  addEventListener('hashchange', show);
+  show();
+})();
+</script>
+</body>
+</html>

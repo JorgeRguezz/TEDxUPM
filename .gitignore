@@ -9,3 +9,5 @@ dist/
 review/
 .DS_Store
 .vercel
+.claude/settings.local.json
+.impeccable/

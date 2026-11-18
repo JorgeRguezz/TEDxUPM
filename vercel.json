@@ -4,5 +4,12 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "cleanUrls": true,
-  "trailingSlash": true
+  "trailingSlash": true,
+  "redirects": [
+    {
+      "source": "/:lang(es|en)/:path+",
+      "destination": "/:lang/",
+      "permanent": false
+    }
+  ]
 }

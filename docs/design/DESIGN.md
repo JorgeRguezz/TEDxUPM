@@ -26,7 +26,7 @@ El tema sigue al sistema; el botón lo fija (`data-theme` en `<html>`). Todo col
 Inter (`@fontsource/inter`, pesos 400, 500, 600, 700; no cargues otros sin añadirlos en `main.tsx`).
 - Números del contador: 400, grandes (`clamp(46px, 7.5vw, 96px)`), cifras tabulares.
 - Etiquetas: mayúsculas, 600–700, `letter-spacing` 0.12–0.24em, 11–14px.
-- Titulares: 600, `letter-spacing` negativo.
+- Titulares (`h2`): 600, `letter-spacing` negativo. La etiqueta «Próximamente» del `h1` sigue el estilo de etiqueta (700).
 - Texto corrido: 16px, 400, `--muted`, máximo ~46 caracteres por línea en bloques.
 
 ## Movimiento
@@ -38,7 +38,7 @@ Inter (`@fontsource/inter`, pesos 400, 500, 600, 700; no cargues otros sin añad
 
 ## Accesibilidad (mínimos)
 
-Contraste AA. Objetivos táctiles de 44px. Foco visible (rojo). Un solo `h1`. Textos alternativos o `aria-hidden` en lo decorativo. Contador con `role="timer"` y etiqueta. Probar a 1440px y 390px sin scroll horizontal.
+Contraste AA. Objetivos táctiles de 44px. Foco visible (contorno de 2px; rojo en botones). Un solo `h1`. Textos alternativos o `aria-hidden` en lo decorativo. Contador con `role="timer"` y etiqueta. Probar a 1440px y 390px sin scroll horizontal.
 
 ## Normas TED que afectan al diseño
 

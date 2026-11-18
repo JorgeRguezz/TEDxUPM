@@ -2,6 +2,9 @@
 
 Registro breve. Una entrada por decisión: fecha, qué, por qué, consecuencia. Las nuevas van arriba.
 
+## 2026-11-18 · Arranque: esta reorganización entra directa en `main`
+`dev` y `staging` todavía no existen; se crean desde `main` justo después. A partir de ahí, todo pasa por el flujo normal. Las URL antiguas (`/es/about/`, `/en/partners/`…) redirigen temporalmente a la portada de su idioma (`vercel.json`). Ponytail no se instala como plugin del proyecto (sin hooks de terceros): su escalera vive en `docs/engineering/CODING_STANDARDS.md`.
+
 ## 2026-11-18 · Ramas dev, staging y main
 `main` es producción (Vercel ya publica desde ahí). Se crean `dev` (integración) y `staging` (validación con el equipo). Todo cambio entra por PR `feature/* → dev → staging → main`. Detalle en `docs/workflows/GIT_WORKFLOW.md`.
 

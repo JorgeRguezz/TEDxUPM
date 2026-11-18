@@ -37,14 +37,14 @@ Stack real: Vite 6 + React 19 + TypeScript (strict) + Tailwind v4 (solo el reset
 5. No toques lo que no te pidieron. No reescribas `src/legacy/`.
 6. Nunca inventes resultados: si no ejecutaste typecheck/build o no miraste la página, dilo.
 7. Nunca leas, escribas ni subas `.env*`. Un hook lo bloquea.
-8. Push a `main` = producción. Siempre por PR desde `staging`, y con el visto bueno de una persona.
+8. Push a `main` = producción. Siempre por PR desde `staging` (salvo un `fix/…` urgente, ver flujo git), y con el visto bueno de una persona.
 
 ## Cómo se trabaja (skills instaladas por `.claude/settings.json`)
 
 1. `superpowers:brainstorming`: entender qué se quiere y por qué antes de construir.
 2. `the-agency:roster`: elegir el agente o agentes mínimos para la tarea (`.claude/agents/` primero).
 3. `superpowers:writing-plans` → `superpowers:executing-plans`: plan y ejecución.
-4. UI: `impeccable:impeccable`. Simplicidad: `ponytail:ponytail`. Planificación por paquetes: `the-agency:prd-blueprint`.
+4. UI: `impeccable:impeccable`. Simplicidad: escalera de `docs/engineering/CODING_STANDARDS.md`. Planificación por paquetes: `the-agency:prd-blueprint`.
 5. `superpowers:systematic-debugging` para bugs; `superpowers:verification-before-completion` antes de decir «hecho».
 6. Skills del proyecto: `release` (dev → staging → main) y `ted-compliance` (normas TED antes de publicar).
 

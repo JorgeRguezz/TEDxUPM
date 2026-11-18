@@ -1,16 +1,29 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "extraKnownMarketplaces": {
-    "claude-plugins-official": { "source": { "source": "github", "repo": "anthropics/claude-plugins-official" } },
-    "the-agency-marketplace": { "source": { "source": "github", "repo": "Hammad-Bellachhab/the-engineering-agents-" } },
-    "impeccable": { "source": { "source": "github", "repo": "pbakaus/impeccable" } },
-    "ponytail": { "source": { "source": "github", "repo": "DietrichGebert/ponytail" } }
+    "claude-plugins-official": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
+      }
+    },
+    "the-agency-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "Hammad-Bellachhab/the-engineering-agents-"
+      }
+    },
+    "impeccable": {
+      "source": {
+        "source": "github",
+        "repo": "pbakaus/impeccable"
+      }
+    }
   },
   "enabledPlugins": {
     "superpowers@claude-plugins-official": true,
     "the-agency@the-agency-marketplace": true,
     "impeccable@impeccable": true,
-    "ponytail@ponytail": true,
     "vercel@claude-plugins-official": true
   },
   "permissions": {
@@ -46,8 +59,24 @@
   },
   "hooks": {
     "PreToolUse": [
-      { "matcher": "Bash", "hooks": [{ "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-coauthor.sh" }] },
-      { "matcher": "Read|Edit|Write|Bash", "hooks": [{ "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/protect-secrets.sh" }] }
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/block-coauthor.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Read|Edit|Write|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/protect-secrets.sh"
+          }
+        ]
+      }
     ]
   }
 }

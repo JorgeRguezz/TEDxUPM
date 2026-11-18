@@ -25,7 +25,7 @@ Usa `event.date` (`src/data/event.ts`) y el wordmark animado que ya existen.
 ## Fuera de alcance
 
 - Proteger con contraseña la web completa → WP-03
-- Captación de emails real (hoy es de demostración, `services/forms.ts`) → WP-05
+- Captación de emails real (hoy es de demostración, `src/legacy/services/forms.ts`) → WP-05
 
 ## Estado
 

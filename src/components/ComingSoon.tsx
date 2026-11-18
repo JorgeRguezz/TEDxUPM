@@ -105,7 +105,7 @@ export function ComingSoon({ locale }: { locale: Locale }) {
 
     <footer className="cs-foot">
       {/* Nombre completo en una línea (TED exige el nombre completo; "TEDxUPM" pendiente de confirmar). */}
-      <p className="cs-sign" aria-label={event.name}><TedxMark /><span aria-hidden="true">Universidad Politecnica Madrid</span></p>
+      <p className="cs-sign"><TedxMark /><span className="sr-only">TEDx</span><span>Universidad Politecnica Madrid</span></p>
       <p>{p.about} <a href="https://www.ted.com/tedx" target="_blank" rel="noreferrer">{p.more} ↗</a></p>
       <div className="cs-end">
         <p className="cs-legal">This independent TEDx event is operated under license from TED.</p>

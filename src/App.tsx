@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useRef, useState, type MouseEvent } from 'react';
-import { copy, event, href, routeInfo, schedule, type Locale, type Page } from './data/event';
+import { copy, event, href, routeInfo, type Locale, type Page } from './data/event';
 import { Wordmark } from './components/Wordmark';
 import { DemoForm } from './components/DemoForm';
-import { TopicAccordion } from './components/TopicAccordion';
-import { FaqAccordion } from './components/FaqAccordion';
+import { PosterHome, PosterFooter } from './components/PosterHome';
 import { Arrow } from './components/Arrow';
 import { TedxMark } from './components/TedxMark';
 
@@ -15,11 +14,9 @@ export function App({ initialPath }: { initialPath: string }) {
   const c = copy[locale];
   const [menuOpen, setMenuOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
-  const [introComplete, setIntroComplete] = useState(false);
-  const finishLandingIntro = useCallback(() => setIntroComplete(true), []);
-  const immersiveOpening = page === 'home';
-  const headerVisible = !immersiveOpening || introComplete;
-  const badgeVisible = !immersiveOpening || hasScrolled;
+  const immersiveOpening = false;
+  const headerVisible = true;
+  const badgeVisible = page !== 'home' || hasScrolled;
   const progressFill = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
@@ -82,7 +79,7 @@ export function App({ initialPath }: { initialPath: string }) {
     setMenuOpen(false);
   };
   const nav = [
-    [c.event, `${href(locale)}#event`], [c.programme, `${href(locale)}#programme`], [c.venue, `${href(locale)}#venue`],
+    [c.event, `${href(locale)}#event`], [c.speakersNav, `${href(locale)}#speakers`], [c.programme, `${href(locale)}#programme`], [c.venue, `${href(locale)}#venue`],
     [c.partners, href(locale, 'partners')], [c.about, href(locale, 'about')],
   ];
   return <>
@@ -98,114 +95,10 @@ export function App({ initialPath }: { initialPath: string }) {
       {immersiveOpening && <div className="reading-progress" aria-hidden="true"><span ref={progressFill} className="reading-progress-fill" /></div>}
     </header>
     <main id="main">
-      {page === 'home' ? <Home locale={locale} onIntroComplete={finishLandingIntro} /> : page === 'partners' ? <Partners locale={locale} /> : page === 'about' ? <About locale={locale} /> : <Prototype locale={locale} />}
+      {page === 'home' ? <PosterHome locale={locale} /> : page === 'partners' ? <Partners locale={locale} /> : page === 'about' ? <About locale={locale} /> : <Prototype locale={locale} />}
     </main>
-    <Footer locale={locale} />
+    <PosterFooter locale={locale} />
     <div className={`development-badge${!badgeVisible ? ' development-badge--quiet' : ''}`} aria-hidden={!badgeVisible}><span className="status-dot" />{c.demo}</div>
-  </>;
-}
-
-function Home({ locale, onIntroComplete }: { locale: Locale; onIntroComplete: () => void }) {
-  const c = copy[locale];
-  const introduction = useRef<HTMLElement>(null);
-  const introFinished = useRef(false);
-  const [scrollHint, setScrollHint] = useState<'waiting' | 'visible' | 'leaving' | 'hidden'>('waiting');
-  useEffect(() => {
-    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (motion.matches || !('IntersectionObserver' in window)) return;
-    const blocks = Array.from(introduction.current?.querySelectorAll<HTMLElement>('[data-intro-reveal]') ?? []);
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.remove('intro-reveal--pending');
-        observer.unobserve(entry.target);
-      });
-    }, { threshold: 0.15, rootMargin: '0px 0px -32px 0px' });
-    blocks.forEach(block => {
-      block.classList.add('intro-reveal--pending');
-      observer.observe(block);
-    });
-    const revealAll = () => {
-      if (!motion.matches) return;
-      observer.disconnect();
-      blocks.forEach(block => block.classList.remove('intro-reveal--pending'));
-    };
-    motion.addEventListener('change', revealAll);
-    return () => {
-      observer.disconnect();
-      motion.removeEventListener('change', revealAll);
-      blocks.forEach(block => block.classList.remove('intro-reveal--pending'));
-    };
-  }, []);
-  const finishIntro = useCallback(() => {
-    introFinished.current = true;
-    onIntroComplete();
-    setScrollHint(window.scrollY > 4 ? 'hidden' : 'visible');
-  }, [onIntroComplete]);
-  useEffect(() => {
-    let previouslyAtTop: boolean | undefined;
-    const updateHint = () => {
-      const atTop = window.scrollY <= 4;
-      if (atTop === previouslyAtTop) return;
-      previouslyAtTop = atTop;
-      if (atTop) {
-        if (introFinished.current) setScrollHint('visible');
-      } else {
-        setScrollHint(current => current === 'visible' ? 'leaving' : current === 'waiting' ? 'hidden' : current);
-      }
-    };
-    window.addEventListener('scroll', updateHint, { passive: true });
-    updateHint();
-    return () => window.removeEventListener('scroll', updateHint);
-  }, []);
-  return <>
-    <section className="hero hero-opening section-dark" aria-label={event.name}>
-      <div className="hero-wordmark"><Wordmark locale={locale} immersive onComplete={finishIntro} /></div>
-      {(scrollHint === 'visible' || scrollHint === 'leaving') && <div
-        className={`scroll-prompt${scrollHint === 'leaving' ? ' scroll-prompt--leaving' : ''}`}
-        aria-hidden="true"
-        onAnimationEnd={e => {
-          if (e.target === e.currentTarget && e.animationName === 'scroll-prompt-exit') setScrollHint(current => current === 'leaving' ? 'hidden' : current);
-        }}
-      >
-        <span className="scroll-prompt-label">SCROLL DOWN</span>
-        <span className="scroll-prompt-bubble"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4v15m-6-6 6 6 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
-      </div>}
-    </section>
-    <section ref={introduction} id="introduction" className="hero-details section-dark" aria-labelledby="hero-message">
-      <noscript><nav className="no-script-nav"><a href={href(locale === 'es' ? 'en' : 'es')}>{locale === 'es' ? 'English' : 'Español'}</a><a href={href(locale, 'partners')}>{c.partners}</a><a href={href(locale, 'about')}>{c.about}</a></nav></noscript>
-      <div className="event-details"><time dateTime={event.date}>{c.date}</time><span>ETSII UPM · Madrid</span></div>
-      <div className="hero-bottom">
-        <h1 id="hero-message" className="intro-reveal" data-intro-reveal="">{c.headline[0]} <em>{c.headline[1]}</em><br />{c.headline[2]} <em>{c.headline[3]}</em></h1>
-        <div className="hero-intro intro-reveal" data-intro-reveal=""><p>{c.description}</p><a href="#updates" className="text-link">{c.updates}<Arrow /></a></div>
-      </div>
-      <a className="scroll-cue" href="#event"><span aria-hidden="true">↓</span>{c.scroll}<span className="hero-index">01 — 07</span></a>
-    </section>
-    <section id="event" className="section-light section-pad">
-      <Label>{c.eventLabel}</Label>
-      <div className="section-intro"><h2>{c.eventTitle}</h2><div><p className="lead">{c.eventBody}</p><p className="muted">{c.eventFoot}</p></div></div>
-      <TopicAccordion topics={c.disciplines} expandHint={locale === 'es' ? 'Toca para desplegar' : 'Tap to expand'} />
-      <p className="small muted topics-note">{c.topicsNote}</p>
-    </section>
-    <section className="experience-section section-dark section-pad">
-      <div className="experience-text"><Label>{c.experienceLabel}</Label><h2>{c.experienceTitle}</h2><p className="lead muted-light">{c.experienceBody}</p><div className="experience-tags">{c.experienceTags.map((tag, i) => <span key={tag}><small>0{i+1}</small>{tag}</span>)}</div></div>
-      <div className="conversation-art" aria-hidden="true"><div className="orbit orbit-one" /><div className="orbit orbit-two" /><div className="orbit orbit-three" /><div className="orbit orbit-four" /><span className="art-label label-top">AUDITORIO</span><div className="red-stage" /><span className="art-cross cross-one">+</span><span className="art-cross cross-two">+</span><span className="art-label label-bottom">SALA DE LA MÁQUINA</span><div className="art-rule" /></div>
-    </section>
-    <section id="programme" className="section-light section-pad">
-      <Label>{c.programmeLabel}</Label><div className="programme-heading"><h2>{c.programmeTitle}</h2><span className="tag">{c.draft}</span></div>
-      <div className="schedule">{schedule.map(([start, es, en, end, kind]) => <div className={`schedule-row ${kind}`} key={start}><time>{start}<small>— {end}</small></time><h3>{locale === 'es' ? es : en}</h3><span className="schedule-type" aria-hidden="true">{kind === 'talk' ? <Arrow /> : '○'}</span></div>)}</div>
-      <p className="small muted">{c.timeNote}</p>
-    </section>
-    <section id="updates" className="signup-section section-pad">
-      <div><Label>{c.signupLabel}</Label><h2>{c.signupTitle}</h2><p className="lead muted">{c.signupBody}</p></div><DemoForm locale={locale} />
-    </section>
-    <section id="venue" className="section-light section-pad venue-section">
-      <div className="venue-poster" aria-hidden="true"><div className="poster-top">ETSII <span>UPM</span></div><div className="poster-grid"><i /><i /><i /><i /><i /><i /><i /><i /><i /></div><div className="poster-bottom"><strong>MAD<br />RID.</strong><span>26<br />FEB<br />2027</span></div></div>
-      <div className="venue-copy"><Label>{c.venueLabel}</Label><h2>{c.venueTitle}</h2><p>{c.venueBody}</p><address><strong>{event.venue}</strong><br />{event.address}</address><a href={event.directions} className="text-link" target="_blank" rel="noreferrer">{c.directions}<Arrow /></a><p className="small muted">{c.access}</p></div>
-    </section>
-    <section className="partner-invite section-dark section-pad"><Label>{c.partnerLabel}</Label><div className="section-intro"><h2>{c.partnerTitle}</h2><div><p className="lead muted-light">{c.partnerBody}</p><a className="button button-white" href={href(locale, 'partners')}>{c.partnerCta}<Arrow /></a></div></div></section>
-    <section className="section-light section-pad tedx-section"><div><Label>{c.tedxLabel}</Label><h2>{c.tedxTitle}</h2></div><div><p className="lead">{c.tedxBody}</p><a className="text-link" href="https://www.ted.com/tedx">{c.tedxLink}<Arrow /></a></div></section>
-    <section id="faq" className="section-light section-pad faq-section"><div><Label>{c.faqLabel}</Label><h2>{c.faqTitle}</h2></div><FaqAccordion items={c.faqs} /></section>
   </>;
 }
 
@@ -213,7 +106,7 @@ function Partners({ locale }: { locale: Locale }) {
   const c = copy[locale];
   return <>
     <section className="subpage-hero section-dark section-pad"><Label>{c.partners}</Label><h1>{c.partnerPageTitle}</h1><p className="lead muted-light">{c.partnerPageIntro}</p><a href="#contact" className="text-link">{c.contactTitle}<Arrow /></a></section>
-    <section className="section-light section-pad"><div className="partner-types">{c.partnerTypes.map(([name, title, body], i) => <article key={name}><Label>0{i + 1} / {name}</Label><h2>{title}</h2><p>{body}</p></article>)}</div><div className="contributions"><p>{c.contributions}</p><p className="small muted">{c.partnerTerms}</p></div></section>
+    <section className="section-light section-pad"><div className="partner-types">{c.partnerTypes.map(([name, title, body], i) => <article key={name}><Label>{name}</Label>{i === 0 && <img className="partner-logo" src="/img/partners/bbva.png" alt="BBVA" />}<h2>{title}</h2><p>{body}</p></article>)}</div><div className="contributions"><p>{c.contributions}</p><p className="small muted">{c.partnerTerms}</p></div></section>
     <section id="contact" className="section-light section-pad contact-section"><div><Label>{c.partners}</Label><h2>{c.contactTitle}</h2></div><DemoForm locale={locale} partnership /></section>
   </>;
 }
@@ -222,8 +115,8 @@ function About({ locale }: { locale: Locale }) {
   const c = copy[locale];
   return <>
     <section className="subpage-hero section-dark section-pad"><Label>{c.about}</Label><h1>{c.aboutTitle}</h1><p className="lead muted-light">{c.aboutIntro}</p></section>
-    <section className="section-light section-pad about-copy"><article><Label>01 / TEDx</Label><h2>{c.tedxTitle}</h2><p className="lead">{c.aboutTedx}</p><a className="text-link" href="https://www.ted.com/tedx">{c.tedxLink}<Arrow /></a></article><article><Label>02 / TED</Label><h2>Ideas worth spreading.</h2><p className="lead">{c.aboutTed}</p><a className="text-link" href="https://www.ted.com/about/our-organization">{c.aboutSource}<Arrow /></a></article></section>
-    <section className="section-light section-pad team-section"><Label>{c.team}</Label><h2>{c.organized}</h2><div className="team-grid"><article><span>01</span><h3>Azul Snaider</h3><p>{c.organizer}</p></article><article><span>02</span><h3>Mariano Lorenzo</h3><p>{c.coorganizer}</p></article></div><a className="text-link" href={event.officialUrl}>{c.official}<Arrow /></a></section>
+    <section className="section-light section-pad about-copy"><article><Label>TEDx</Label><h2>{c.tedxTitle}</h2><p className="lead">{c.aboutTedx}</p><a className="text-link" href="https://www.ted.com/tedx">{c.tedxLink}<Arrow /></a></article><article><Label>TED</Label><h2>Ideas worth spreading.</h2><p className="lead">{c.aboutTed}</p><a className="text-link" href="https://www.ted.com/about/our-organization">{c.aboutSource}<Arrow /></a></article></section>
+    <section className="section-light section-pad team-section"><Label>{c.team}</Label><h2>{c.organized}</h2><div className="team-grid"><article><h3>Azul Snaider</h3><p>{c.organizer}</p></article><article><h3>Mariano Lorenzo</h3><p>{c.coorganizer}</p></article></div><a className="text-link" href={event.officialUrl}>{c.official}<Arrow /></a></section>
   </>;
 }
 
@@ -232,9 +125,4 @@ function Prototype({ locale }: { locale: Locale }) {
   const [replay, setReplay] = useState(0);
   const [speed, setSpeed] = useState(0.25);
   return <section className="prototype section-dark section-pad"><Label>{c.prototype}</Label><Wordmark locale={locale} prototype replay={replay} speed={speed} /><div className="prototype-controls"><button className="button button-white" type="button" onClick={() => setReplay(v => v + 1)}>{c.replay}<span aria-hidden="true">↻</span></button><label>{locale === 'es' ? 'Velocidad' : 'Speed'}<select value={speed} onChange={e => { setSpeed(Number(e.target.value)); setReplay(v => v + 1); }}><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1">1×</option><option value="1.5">1.5×</option></select></label></div><p className="small muted-light">{c.prototypeNote}</p></section>;
-}
-
-function Footer({ locale }: { locale: Locale }) {
-  const c = copy[locale];
-  return <footer className="site-footer section-dark"><div className="footer-top"><a href={href(locale)} className="footer-name">{event.name}</a><div><a href={href(locale, 'about')}>{c.about}</a><a href={href(locale, 'partners')}>{c.partners}</a><a href={event.officialUrl}>{c.official}<Arrow /></a></div></div><div className="footer-bottom"><p>This independent TEDx event is operated under license from TED.</p><span>Madrid · 2027</span></div><p className="footer-credit">designed by Jorge Rodríguez, TelecoEmprende</p></footer>;
 }

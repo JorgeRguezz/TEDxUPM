@@ -2,8 +2,8 @@ import { event, type Locale } from '../data/event';
 import { SiteFooter, SiteHeader } from './Site';
 
 // Partners con acuerdo firmado. Solo se añade un logo cuando hay contrato (ver docs/security/SECURITY_POLICY.md).
-// Cada logo, en versión para fondo oscuro y para fondo claro, en public/partners/.
-type Partner = { name: string; tier: 0 | 1 | 2; dark: string; light: string };
+// Logo en blanco sobre transparente, en public/partners/. En tema claro se tiñe con el color de la marca (`color`).
+type Partner = { name: string; tier: 0 | 1 | 2; logo: string; color: string };
 const PARTNERS: Partner[] = [];
 
 const t = {
@@ -164,8 +164,7 @@ export function Partners({ locale }: { locale: Locale }) {
       <ul>
         {PARTNERS.map(partner => <li key={partner.name}>
           <p className="cs-label">{p.tiers[partner.tier].name}</p>
-          <img className="pt-logo-dark" src={partner.dark} alt={partner.name} />
-          <img className="pt-logo-light" src={partner.light} alt="" aria-hidden="true" />
+          <span className="pt-logo" role="img" aria-label={partner.name} style={{ '--logo': `url(${partner.logo})`, '--brand': partner.color } as React.CSSProperties}><img src={partner.logo} alt="" /></span>
         </li>)}
         {PARTNERS.length === 0 && <li className="pt-slot">{p.slot}</li>}
       </ul>

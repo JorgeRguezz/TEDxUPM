@@ -20,7 +20,7 @@ const COLUMNS: [number, number][] = (() => {
 
 const VIEWS: Record<View, [THREE.Vector3, THREE.Vector3]> = {
   entrance: [new THREE.Vector3(0, 1.65, 11.5), new THREE.Vector3(0, 2.4, 0)],
-  machine: [new THREE.Vector3(-4.6, 1.65, 6.4), new THREE.Vector3(0, 2.4, 0)],
+  machine: [new THREE.Vector3(-3.4, 1.65, 6.6), new THREE.Vector3(0, 2.4, 0)],
   gallery: [new THREE.Vector3(0, FLOOR1 + 1.8, 10.1), new THREE.Vector3(0, 1.5, 0)],
 };
 
@@ -253,7 +253,7 @@ export function mountHall(container: HTMLElement, list: Stand[], slot: string) {
   const walkable = (x: number, z: number, upstairs: boolean) => {
     if (Math.abs(x) > W / 2 - 1 || Math.abs(z) > L / 2 - 1) return false;
     if (COLUMNS.some(([cx, cz]) => Math.abs(x - cx) < .9 && Math.abs(z - cz) < .9)) return false;
-    if (upstairs) return Math.abs(x) > iw / 2 + .5 || Math.abs(z) > il / 2 + .5;
+    if (upstairs) return Math.abs(x) > iw / 2 + .2 || Math.abs(z) > il / 2 + .2;
     if (Math.abs(x) < 5.4 && Math.abs(z) < 3.4) return false; // bancada de la máquina
     return !(Math.abs(x) > 4.4 && Math.abs(x) < 6.9 && [-6.5, 0, 6.5].some(sz => Math.abs(z - sz) < 2.6)); // stands
   };

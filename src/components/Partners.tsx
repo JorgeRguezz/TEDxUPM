@@ -7,7 +7,8 @@ import { TedxMark } from './TedxMark';
 // Partners con acuerdo firmado. Solo se añade un logo cuando hay contrato (ver docs/security/SECURITY_POLICY.md).
 // Logo en blanco sobre transparente, en public/partners/. En tema claro se tiñe con el color de la marca (`color`).
 type Partner = { name: string; tier: 0 | 1 | 2; logo: string; color: string };
-const PARTNERS: Partner[] = [];
+// DEMO para la reunión con BBVA: esta rama (demo/bbva) no se fusiona hasta que haya acuerdo firmado.
+const PARTNERS: Partner[] = [{ name: 'BBVA Spark', tier: 0, logo: '/partners/bbva-spark-blanco.svg', color: '#001391' }];
 
 const t = {
   es: {

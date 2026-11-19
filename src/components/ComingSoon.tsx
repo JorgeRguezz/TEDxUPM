@@ -17,7 +17,7 @@ const t = {
     day: {
       label: 'La jornada',
       title: 'Un día de charlas en la ETSII',
-      body: 'Charlas breves en el auditorio de la Escuela de Ingenieros Industriales y, en las pausas, encuentros en la Sala de la Máquina entre estudiantes, antiguos alumnos y profesionales.',
+      body: 'Charlas breves en el auditorio y encuentros en la Sala de la Máquina.',
       facts: [['~350', 'personas'], ['Auditorio', 'charlas'], ['Sala de la Máquina', 'encuentros en las pausas']],
     },
     // Ponentes: destino provisional (Instagram) hasta tener email de contacto.
@@ -49,7 +49,7 @@ const t = {
     day: {
       label: 'The day',
       title: 'A day of talks at ETSII',
-      body: 'Short talks in the auditorium of the School of Industrial Engineering and, during the breaks, students, alumni and professionals meeting in the Machine Hall.',
+      body: 'Short talks in the auditorium and meetings in the Machine Hall.',
       facts: [['~350', 'people'], ['Auditorium', 'talks'], ['Machine Hall', 'meetings during the breaks']],
     },
     calls: [

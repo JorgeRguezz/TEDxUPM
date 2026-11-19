@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1350" width="1080" height="1350">
+  <defs>
+    <clipPath id="roof"><path d="M60,340 A480,235 0 0 1 1020,340 Z"/></clipPath>
+    <clipPath id="pit"><rect x="0" y="0" width="1080" height="985"/></clipPath>
+  </defs>
+  <rect width="1080" height="1350" fill="#eb0028"/>
+
+  <!-- Arquitectura: línea negra -->
+  <g transform="translate(90,30) scale(.83)" fill="none" stroke="#0a0a0a" stroke-linecap="square">
+    <g clip-path="url(#roof)" stroke-width="2">
+      <path d="M100,0V340M140,0V340M180,0V340M220,0V340M260,0V340M300,0V340M340,0V340M380,0V340M420,0V340M460,0V340M500,0V340M540,0V340M580,0V340M620,0V340M660,0V340M700,0V340M740,0V340M780,0V340M820,0V340M860,0V340M900,0V340M940,0V340M980,0V340"/>
+      <path d="M0,170H1080M0,220H1080M0,270H1080M0,310H1080"/>
+    </g>
+    <path d="M60,340 A480,235 0 0 1 1020,340" stroke-width="6"/>
+    <path d="M150,340 A390,185 0 0 1 930,340" stroke-width="5"/>
+    <path d="M168,340 A372,170 0 0 1 912,340" stroke-width="2"/>
+    <rect x="60" y="340" width="960" height="30" fill="#0a0a0a"/>
+    <path d="M60,470H1020" stroke-width="5"/>
+    <path d="M60,370V470M200,370V470M330,370V470M460,370V470M620,370V470M750,370V470M880,370V470M1020,370V470" stroke-width="4"/>
+    <path d="M215,400H315M345,400H445M475,400H605M635,400H735M765,400H865M75,400H185M895,400H1005" stroke-width="2"/>
+    <path d="M60,488H1020" stroke-width="2"/>
+    <path d="M160,960H920" stroke-width="3"/>
+    <g fill="#0a0a0a" stroke="none">
+      <rect x="330" y="480" width="35" height="480"/>
+      <rect x="715" y="480" width="35" height="480"/>
+      <rect x="105" y="480" width="55" height="560"/>
+      <rect x="920" y="480" width="55" height="560"/>
+    </g>
+    <path d="M160,960 L-120,1350 M920,960 L1200,1350" stroke-width="3"/>
+    <g stroke-width="1.2" opacity=".35">
+      <path d="M290,960 L120,1350 M420,960 L360,1350 M540,960V1350 M660,960 L720,1350 M790,960 L960,1350"/>
+      <path d="M0,1110H1080M0,1200H1080"/>
+    </g>
+  </g>
+
+  <!-- Pedestal (negro macizo) -->
+  <path d="M150,985 H990 L1020,1010 H120 Z" fill="#0a0a0a"/>
+  <rect x="120" y="1010" width="900" height="40" fill="#0a0a0a"/>
+
+  <!-- Máquina de Watt, en blanco. Vista lateral simplificada a partir de la foto de la ETSII. -->
+  <g fill="#fff" stroke="none" transform="translate(-40 0)">
+    <!-- volante: medio hundido en el foso, como en la sala -->
+    <g clip-path="url(#pit)">
+      <circle cx="800" cy="960" r="236" fill="none" stroke="#fff" stroke-width="20"/>
+      <g stroke="#fff" stroke-width="11" stroke-linecap="round">
+        <path d="M800,960 L800,724 M800,960 L1024,887 M800,960 L576,887 M800,960 L939,769 M800,960 L661,769"/>
+      </g>
+      <circle cx="800" cy="960" r="150" fill="none" stroke="#fff" stroke-width="14" stroke-dasharray="5 5"/>
+      <circle cx="800" cy="960" r="138" fill="none" stroke="#fff" stroke-width="8"/>
+      <circle cx="800" cy="960" r="34"/>
+    </g>
+
+    <g transform="translate(-75 0)">
+    <!-- bancada -->
+    <rect x="235" y="935" width="440" height="50"/>
+    <rect x="235" y="950" width="440" height="5" fill="#eb0028"/>
+
+    <!-- columnas toscanas: basa, fuste, capitel -->
+    <g id="col">
+      <rect x="262" y="914" width="40" height="21"/>
+      <rect x="268" y="905" width="28" height="10"/>
+      <rect x="272" y="640" width="20" height="266"/>
+      <rect x="266" y="628" width="32" height="13"/>
+      <rect x="262" y="618" width="40" height="11"/>
+    </g>
+    <use href="#col" x="110"/>
+    <use href="#col" x="250"/>
+    <use href="#col" x="350"/>
+
+    <!-- entablamento -->
+    <rect x="245" y="590" width="440" height="28"/>
+    <rect x="245" y="602" width="440" height="4" fill="#eb0028"/>
+
+    <!-- remates (piñas) sobre las columnas -->
+    <g id="fin"><rect x="279" y="572" width="6" height="18"/><ellipse cx="282" cy="560" rx="10" ry="14"/><rect x="280" y="540" width="4" height="8"/></g>
+    <use href="#fin" x="110"/>
+    <use href="#fin" x="250"/>
+    <use href="#fin" x="350"/>
+
+    <!-- balancín y su soporte -->
+    <path d="M440,590 L470,548 L500,590 Z"/>
+    <path d="M296,566 Q470,505 646,550 Q470,580 296,584 Z"/>
+    <path d="M300,575 Q470,545 642,552" stroke="#eb0028" stroke-width="3" fill="none"/>
+    <circle cx="470" cy="546" r="9" fill="#eb0028"/>
+    <circle cx="470" cy="546" r="4"/>
+
+    <!-- cilindro con su caja de válvulas -->
+    <rect x="316" y="760" width="62" height="175"/>
+    <rect x="308" y="748" width="78" height="14"/>
+    <rect x="308" y="840" width="78" height="10"/>
+    <rect x="378" y="790" width="20" height="90"/>
+    <rect x="316" y="785" width="62" height="4" fill="#eb0028"/>
+    <rect x="316" y="880" width="62" height="4" fill="#eb0028"/>
+    <rect x="343" y="618" width="7" height="130"/>
+
+    <!-- regulador de bolas -->
+    <rect x="461" y="760" width="6" height="175"/>
+    <path d="M464,770 L434,810 M464,770 L494,810 M440,800 L464,830 L488,800" stroke="#fff" stroke-width="4" fill="none"/>
+    <circle cx="430" cy="816" r="11"/>
+    <circle cx="498" cy="816" r="11"/>
+    <rect x="452" y="752" width="24" height="10"/>
+    <rect x="450" y="912" width="28" height="23"/>
+
+    </g>
+    <!-- biela: del balancín al volante -->
+    <path d="M566,556 L770,930" stroke="#fff" stroke-width="12" stroke-linecap="round"/>
+    <circle cx="566" cy="556" r="8"/>
+  </g>
+
+  <!-- ETSII -->
+  <text x="44" y="1300" fill="#0a0a0a" font-family="Inter, Helvetica Neue, Helvetica, Arial, sans-serif" font-weight="800" font-size="250" letter-spacing="-14">ETSII</text>
+</svg>

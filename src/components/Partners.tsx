@@ -1,4 +1,6 @@
+import { useEffect, useRef, useState } from 'react';
 import { event, href, type Locale } from '../data/event';
+import type { Stand, View } from './hall3d';
 import { SiteFooter, SiteHeader } from './Site';
 import { TedxMark } from './TedxMark';
 
@@ -12,15 +14,16 @@ const t = {
     label: 'Partners',
     title: 'Cómo colaborar en la jornada',
     meta: ['26.02.2027', 'ETSII · Madrid', 'Unas 350 personas'],
-    intro: 'La primera edición de TEDxUniversidad Politecnica Madrid. Os contamos cómo será el día y las tres formas en que vuestra empresa puede formar parte de él.',
+    intro: 'Primera edición de TEDxUniversidad Politecnica Madrid. Así será el día y así podéis formar parte de él.',
     day: {
       label: 'La jornada',
       title: 'Un día de ideas en la ETSII',
-      body: 'Charlas breves en el auditorio de la Escuela de Ingenieros Industriales sobre ingeniería, tecnología, investigación, emprendimiento y el oficio de comunicar. En las pausas, estudiantes, antiguos alumnos y profesionales se encuentran en la Sala de la Máquina, junto al auditorio.',
+      body: 'Charlas breves en el auditorio y, en las pausas, encuentros en la Sala de la Máquina.',
       facts: [['~350', 'personas previstas'], ['Auditorio', 'charlas'], ['Sala de la Máquina', 'encuentros en las pausas']],
     },
     tiersTitle: 'Tres formas de participar',
-    photo: 'Hall de la Escuela Técnica Superior de Ingenieros Industriales (ETSII), Universidad Politécnica de Madrid',
+    photo: 'Ilustración de la Sala de la Máquina de la ETSII, con la máquina de vapor bajo la cubierta de vidrio',
+    hall: { open: 'Explorar la sala en 3D', title: 'Sala de la Máquina · ETSII', hint: 'Arrastra o usa las flechas para mirar alrededor', close: 'Cerrar', views: { entrance: 'Entrada', machine: 'Junto a la máquina', gallery: 'Galería' }, note: 'Recreación orientativa. Distribución sujeta al plano autorizado.', error: 'Tu navegador no puede mostrar la vista 3D.' },
     invites: (n: number) => (n === 1 ? 'invitación al auditorio' : 'invitaciones al auditorio'),
     invitesNote: 'Invitaciones sujetas a registro y aforo. El personal acreditado no tiene asiento automático.',
     lists: ['Qué incluye', 'Qué aporta vuestra empresa', 'Qué definimos juntos'],
@@ -59,14 +62,14 @@ const t = {
     ],
     exampleLabel: 'Ejemplo',
     previewTitle: 'Así aparecerá vuestra marca',
-    previewBody: 'Vista previa de la página de partners de la web, una vez firmado el acuerdo.',
+    previewBody: 'La página de partners, una vez firmado el acuerdo.',
     partnersTitle: 'Partners 2027',
     slot: 'Tu logo aquí',
     stepsTitle: 'De la reunión a la colaboración',
     steps: [
-      ['Reunión de objetivos', 'Escuchamos qué buscáis y elegimos juntos la forma de participar.'],
-      ['Ficha técnica', 'Concretamos espacio, actividad o servicio, materiales y responsables.'],
-      ['Propuesta final y acuerdo', 'Os enviamos la propuesta con presupuesto; tras vuestra aprobación, firmamos. La fabricación empieza con el acuerdo y el presupuesto aprobados.'],
+      ['Reunión de objetivos', 'Elegimos juntos la forma de participar.'],
+      ['Ficha técnica', 'Espacio, actividad, materiales y responsables.'],
+      ['Propuesta y acuerdo', 'Presupuesto, aprobación y firma. La producción empieza tras el acuerdo.'],
     ],
     rulesTitle: 'Condiciones comunes',
     rules: [
@@ -75,23 +78,22 @@ const t = {
       'Independencia editorial: los partners no intervienen en ponentes ni programa, y no hay publicidad desde el escenario.',
       'No se ceden datos de asistentes ni se garantizan contactos. Sin exclusividad automática.',
     ],
-    ctaTitle: '¿Hablamos?',
-    ctaBody: 'Escríbenos y preparamos juntos la propuesta para vuestra empresa.',
     cta: 'Escríbenos',
   },
   en: {
     label: 'Partners',
     title: 'How to take part on the day',
     meta: ['26.02.2027', 'ETSII · Madrid', 'About 350 people'],
-    intro: 'The first edition of TEDxUniversidad Politecnica Madrid. Here is what the day will look like and the three ways your company can be part of it.',
+    intro: 'The first edition of TEDxUniversidad Politecnica Madrid. What the day looks like and how you can be part of it.',
     day: {
       label: 'The day',
       title: 'A day of ideas at ETSII',
-      body: 'Short talks in the auditorium of the School of Industrial Engineering on engineering, technology, research, entrepreneurship and the craft of speaking. During the breaks, students, alumni and professionals meet in the Machine Hall, next to the auditorium.',
+      body: 'Short talks in the auditorium and, during the breaks, meetings in the Machine Hall.',
       facts: [['~350', 'people expected'], ['Auditorium', 'talks'], ['Machine Hall', 'meetings during the breaks']],
     },
     tiersTitle: 'Three ways to take part',
-    photo: 'Hall of the School of Industrial Engineering (ETSII), Universidad Politécnica de Madrid',
+    photo: 'Illustration of the ETSII Machine Hall, with the steam engine under the glass roof',
+    hall: { open: 'Explore the hall in 3D', title: 'Machine Hall · ETSII', hint: 'Drag or use the arrow keys to look around', close: 'Close', views: { entrance: 'Entrance', machine: 'By the engine', gallery: 'Gallery' }, note: 'Indicative recreation. Layout subject to the approved floor plan.', error: 'Your browser cannot show the 3D view.' },
     invites: (n: number) => (n === 1 ? 'auditorium invitation' : 'auditorium invitations'),
     invitesNote: 'Invitations subject to registration and capacity. Accredited staff do not get an automatic seat.',
     lists: ['What is included', 'What your company brings', 'What we define together'],
@@ -130,14 +132,14 @@ const t = {
     ],
     exampleLabel: 'Example',
     previewTitle: 'How your brand will appear',
-    previewBody: 'Preview of the partners page on the website, once the agreement is signed.',
+    previewBody: 'The partners page, once the agreement is signed.',
     partnersTitle: '2027 partners',
     slot: 'Your logo here',
     stepsTitle: 'From the meeting to the partnership',
     steps: [
-      ['Goals meeting', 'We listen to what you are looking for and choose together how to take part.'],
-      ['Technical sheet', 'We define space, activity or service, materials and who is responsible.'],
-      ['Final proposal and agreement', 'We send you the proposal with a budget; once you approve it, we sign. Production starts once the agreement and budget are approved.'],
+      ['Goals meeting', 'We choose together how you take part.'],
+      ['Technical sheet', 'Space, activity, materials and who does what.'],
+      ['Proposal and agreement', 'Budget, approval and signature. Production starts after the agreement.'],
     ],
     rulesTitle: 'Common terms',
     rules: [
@@ -146,8 +148,6 @@ const t = {
       'Editorial independence: partners have no say over speakers or programme, and there is no advertising from the stage.',
       'No attendee data is shared and no contacts are guaranteed. No automatic exclusivity.',
     ],
-    ctaTitle: 'Shall we talk?',
-    ctaBody: 'Write to us and we will prepare the proposal for your company together.',
     cta: 'Get in touch',
   },
 };
@@ -165,10 +165,7 @@ export function Partners({ locale }: { locale: Locale }) {
         <p className="pt-meta">{p.meta.map((m, i) => <span key={m}>{i > 0 && <b aria-hidden="true">·</b>}{m}</span>)}</p>
         <p className="pt-intro">{p.intro}</p>
       </div>
-      <figure>
-        <img src="/img/hall-etsii-bn.jpg" width="429" height="466" alt={p.photo} />
-        <figcaption>{p.photo}</figcaption>
-      </figure>
+      <HallViewer locale={locale} />
     </section>
 
     <section className="cs-day" aria-labelledby="pt-day-title">
@@ -238,13 +235,64 @@ export function Partners({ locale }: { locale: Locale }) {
       </figure>
     </section>
 
-    <section className="pt-cta" aria-labelledby="pt-cta-title">
-      <h2 id="pt-cta-title">{p.ctaTitle}</h2>
-      <p>{p.ctaBody}</p>
+    <section className="pt-cta">
       {/* Destino provisional (LinkedIn) hasta tener email de partnerships. */}
       <a href={event.linkedin} target="_blank" rel="noreferrer">{p.cta} <span aria-hidden="true">↗</span></a>
     </section>
 
     <SiteFooter locale={locale} />
   </main>;
+}
+
+// Stands del 3D: el Experience Partner en el sitio destacado (junto a la máquina), el resto puntos de encuentro (Partner).
+// Supporting Partner no tiene stand.
+const hallStands = (locale: Locale): Stand[] => {
+  const tiers = t[locale].tiers, logo = (tier: number) => PARTNERS.find(partner => partner.tier === tier)?.logo;
+  return [1, 1, 0, 1, 1, 1].map(tier => ({ tier: tiers[tier].name, logo: tier === 0 ? logo(0) : undefined, featured: tier === 0 }));
+};
+
+// Ilustración de Abril como botón: abre a pantalla completa la recreación 3D de la sala (three.js solo se descarga al abrirla).
+function HallViewer({ locale }: { locale: Locale }) {
+  const p = t[locale], h = p.hall;
+  const dialog = useRef<HTMLDialogElement>(null), stage = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
+  const [state, setState] = useState<'loading' | 'ready' | 'error'>('loading');
+  const hall = useRef<{ go: (v: View) => void; dispose: () => void } | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    dialog.current?.showModal();
+    let cancelled = false;
+    import('./hall3d').then(({ mountHall }) => {
+      if (cancelled || !stage.current) return;
+      hall.current = mountHall(stage.current, hallStands(locale), p.slot);
+      setState('ready');
+      stage.current.focus();
+    }).catch(() => setState('error'));
+    return () => { cancelled = true; hall.current?.dispose(); hall.current = null; setState('loading'); };
+  }, [open, locale, p.slot]);
+
+  return <>
+    <figure className="pt-hall">
+      <button type="button" onClick={() => setOpen(true)} aria-haspopup="dialog">
+        <img src="/img/sala-maquina.svg" width="1080" height="1350" alt={p.photo} />
+        <span>{h.open} <b aria-hidden="true">↗</b></span>
+      </button>
+    </figure>
+    <dialog ref={dialog} className="pt-3d" aria-label={h.title} onClose={() => setOpen(false)}>
+      {open && <>
+        <div ref={stage} className="pt-3d-stage" tabIndex={0} aria-label={`${h.title}. ${h.hint}`} />
+        <header>
+          <p><strong>{h.title}</strong><span>{state === 'error' ? h.error : state === 'loading' ? '…' : h.hint}</span></p>
+          <button type="button" className="pt-3d-close" onClick={() => dialog.current?.close()}>{h.close} <span aria-hidden="true">✕</span></button>
+        </header>
+        <footer>
+          <nav aria-label={h.title}>
+            {(Object.keys(h.views) as View[]).map(v => <button key={v} type="button" disabled={state !== 'ready'} onClick={() => hall.current?.go(v)}>{h.views[v]}</button>)}
+          </nav>
+          <p>{h.note}</p>
+        </footer>
+      </>}
+    </dialog>
+  </>;
 }

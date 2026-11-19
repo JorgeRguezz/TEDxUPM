@@ -1,43 +1,27 @@
-import { useEffect, useState } from 'react';
 import { event, href, type Locale, type Page } from '../data/event';
 import { TedxMark } from './TedxMark';
 
 const t = {
   es: {
-    lang: 'Idioma', social: 'Redes sociales', theme: { dark: 'Cambiar a modo claro', light: 'Cambiar a modo oscuro' },
+    lang: 'Idioma', social: 'Redes sociales',
     about: 'TEDx es un programa de eventos locales, organizados de forma independiente, que reúnen a personas para compartir ideas al estilo de TED, la organización sin ánimo de lucro dedicada a difundir ideas en charlas breves.',
     more: 'Qué es TEDx',
   },
   en: {
-    lang: 'Language', social: 'Social media', theme: { dark: 'Switch to light mode', light: 'Switch to dark mode' },
+    lang: 'Language', social: 'Social media',
     about: 'TEDx is a program of local, independently organized events that bring people together to share ideas in the spirit of TED, the nonprofit devoted to spreading ideas in short, powerful talks.',
     more: 'About TEDx',
   },
 };
 
-type Theme = 'dark' | 'light';
-const currentTheme = (): Theme => (document.documentElement.dataset.theme as Theme) || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-
 export function SiteHeader({ locale, page }: { locale: Locale; page: Page }) {
   const p = t[locale];
-  const [theme, setTheme] = useState<Theme>('dark');
-  useEffect(() => setTheme(currentTheme()), []);
-  const toggleTheme = () => {
-    const next: Theme = theme === 'dark' ? 'light' : 'dark';
-    document.documentElement.dataset.theme = next;
-    try { localStorage.setItem('theme', next); } catch { /* sin almacenamiento: el cambio dura hasta recargar */ }
-    setTheme(next);
-  };
-
   return <header className="cs-top">
     <a href={href(locale)} className="cs-brand" aria-label={event.name}><TedxMark /><span>Universidad<br />Politecnica Madrid</span></a>
     <div className="cs-tools">
       <nav className="cs-lang" aria-label={p.lang}>
         {(['es', 'en'] as Locale[]).map(l => <a key={l} lang={l} href={href(l, page)} aria-current={l === locale ? 'true' : undefined}>{l.toUpperCase()}</a>)}
       </nav>
-      <button type="button" className="cs-theme" onClick={toggleTheme} aria-label={p.theme[theme]}>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" /><path d="M12 4a8 8 0 0 1 0 16Z" /></svg>
-      </button>
     </div>
   </header>;
 }

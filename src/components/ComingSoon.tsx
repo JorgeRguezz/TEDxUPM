@@ -7,6 +7,9 @@ const START = Date.parse('2027-02-26T09:00:00+01:00');
 // La X de la identidad (la misma figura que en la rama rediseno-cartel), dibujada como línea de luz (demo de Abril).
 const X = 'M4 4H32L50 34L68 4H96L66 50L96 96H68L50 66L32 96H4L34 50Z';
 
+// Tarjeta de «Participa». `points` es opcional: hoy solo la usa la de empresas (las tres modalidades, sin precios).
+type Call = { label: string; title: string; body: string; points?: [string, string][]; cta: string; url: string };
+
 const t = {
   es: {
     soon: 'Próximamente', date: '26.02.2027', place: 'ETSII · Madrid', placeLabel: 'Cómo llegar a la ETSII, Madrid',
@@ -19,9 +22,26 @@ const t = {
     },
     // Ponentes: destino provisional (Instagram) hasta tener email de contacto.
     calls: [
-      ['Para empresas', 'Haz posible la primera edición', 'Tres formas de participar en la jornada: una experiencia interactiva, un punto de encuentro o un servicio del evento.', 'Cómo colaborar', href('es', 'partners')],
-      ['Para ponentes', 'Buscamos ideas, no currículums', 'Ingeniería, tecnología, investigación, emprendimiento o el propio oficio de comunicar: buscamos ideas propias y con fundamento.', 'Propón tu charla', event.instagram],
-    ],
+      {
+        label: 'Para empresas',
+        title: 'Haz posible la primera edición',
+        body: 'Unas 350 personas entre estudiantes, alumni y profesionales de la UPM pasarán el día en la ETSII. Tu empresa puede estar con ellos de tres formas:',
+        points: [
+          ['Experience Partner', 'una experiencia interactiva propia en la Sala de la Máquina, diseñada con nosotros.'],
+          ['Partner', 'un punto de encuentro con los asistentes en los descansos.'],
+          ['Supporting Partner', 'apoyo económico o en especie (catering, transporte, impresión…).'],
+        ],
+        cta: 'Cómo colaborar',
+        url: href('es', 'partners'),
+      },
+      {
+        label: 'Para ponentes',
+        title: 'Buscamos ideas, no currículums',
+        body: 'Ingeniería, tecnología, investigación, emprendimiento o el propio oficio de comunicar: buscamos ideas propias y con fundamento.',
+        cta: 'Propón tu charla',
+        url: event.instagram,
+      },
+    ] as Call[],
   },
   en: {
     soon: 'Coming soon', date: '26.02.2027', place: 'ETSII · Madrid', placeLabel: 'Directions to ETSII, Madrid',
@@ -33,9 +53,26 @@ const t = {
       facts: [['~350', 'people'], ['Auditorium', 'talks'], ['Machine Hall', 'meetings during the breaks']],
     },
     calls: [
-      ['For companies', 'Help build our first edition', 'Three ways to take part on the day: an interactive experience, a meeting point or an event service.', 'How to partner', href('en', 'partners')],
-      ['For speakers', "We're after ideas, not résumés", 'Engineering, technology, research, entrepreneurship, or the craft of speaking itself: bring an original, well-grounded idea.', 'Propose a talk', event.instagram],
-    ],
+      {
+        label: 'For companies',
+        title: 'Help build our first edition',
+        body: 'Around 350 UPM students, alumni and professionals will spend the day at ETSII. Your company can join them in three ways:',
+        points: [
+          ['Experience Partner', 'your own interactive experience in the Sala de la Máquina, designed with our team.'],
+          ['Partner', 'a meeting point with attendees during the breaks.'],
+          ['Supporting Partner', 'financial or in-kind support (catering, travel, printing…).'],
+        ],
+        cta: 'How to partner',
+        url: href('en', 'partners'),
+      },
+      {
+        label: 'For speakers',
+        title: "We're after ideas, not résumés",
+        body: 'Engineering, technology, research, entrepreneurship, or the craft of speaking itself: bring an original, well-grounded idea.',
+        cta: 'Propose a talk',
+        url: event.instagram,
+      },
+    ] as Call[],
   },
 };
 
@@ -91,12 +128,15 @@ export function ComingSoon({ locale }: { locale: Locale }) {
     </section>
 
     <section className="cs-calls" aria-label={locale === 'es' ? 'Participa' : 'Get involved'}>
-      {p.calls.map(([label, title, body, cta, url]) => {
+      {p.calls.map(({ label, title, body, points, cta, url }) => {
         const external = url.startsWith('http');
         return <article key={label}>
           <p className="cs-label">{label}</p>
           <h2>{title}</h2>
           <p>{body}</p>
+          {points && <ul className="cs-points">
+            {points.map(([name, text]) => <li key={name}><strong>{name}</strong>: {text}</li>)}
+          </ul>}
           <a href={url} {...(external ? { target: '_blank', rel: 'noreferrer' } : {})}>{cta} <span aria-hidden="true">{external ? '↗' : '→'}</span></a>
         </article>;
       })}

@@ -126,3 +126,7 @@
 .pt .cs-foot{margin-top:clamp(48px,7vw,96px)}
 @media(max-width:860px){.pt-hero,.pt-tiers,.pt-steps ol{grid-template-columns:1fr}.pt-hero img{justify-self:start}.pt-hero figcaption{text-align:left}}
 @media(prefers-reduced-motion:reduce){.pt summary::after,.pt-cta a{transition:none}}
+
+/* Modalidades de la tarjeta «Para empresas» (Participa). Mismo tono que el texto corrido: 16px, --muted, ~46 caracteres. */
+.cs-points { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; max-width: 46ch; font-size: 16px; color: var(--muted); }
+.cs-points strong { color: var(--fg); font-weight: 600; }

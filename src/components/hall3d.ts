@@ -330,10 +330,11 @@ function prop(game: Game) {
       for (const x of [.5, .7, .9]) g.add(box(.05, .14, .04, i % 2 ? red : white, x, .95, z));
     }
   } else if (game === 'kiosk') {
-    for (const z of [-.75, .75]) {
-      g.add(box(.5, .05, .5, dark, .4, .025, z), box(.08, 1.1, .08, metal, .4, .55, z), box(.1, 1.15, .7, dark, .45, 1.6, z));
-      g.add(face(screen(.62, 1.05, c => { gameScreen('RETO', '#4dd0ff')(c); c.fillStyle = '#4dd0ff'; c.fillRect(36, 250, 440, 30); }), .51, 1.6, z));
-    }
+    // Mesa táctil baja: no tapa el logo del panel.
+    const t = table(.9, 1.5, .78, dark, metal); t.position.x = .8; g.add(t);
+    const top = screen(.8, 1.4, c => { gameScreen('RETO', '#4dd0ff')(c); c.fillStyle = '#4dd0ff'; c.fillRect(36, 250, 440, 30); });
+    top.rotation.set(-Math.PI / 2, 0, Math.PI / 2); top.position.set(.8, .815, 0); g.add(top);
+    for (const z of [-.95, .95]) g.add(cyl(.17, .5, red, .8, .25, z));
   } else if (game === 'racing') {
     g.add(box(1.2, .12, .6, dark, .5, .06, .1), box(.5, .12, .5, red, .4, .4, .1), box(.12, .7, .5, red, .1, .75, .1));
     const wheel = new THREE.Mesh(new THREE.TorusGeometry(.16, .025, 8, 24), dark); wheel.rotation.y = Math.PI / 2; wheel.position.set(.95, .85, .1); g.add(wheel, box(.06, .6, .06, dark, 1.0, .5, .1));

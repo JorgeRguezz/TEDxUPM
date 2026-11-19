@@ -198,8 +198,10 @@ function stands(scene: THREE.Scene, list: Stand[], slot: string, invalidate: () 
 
 export function mountHall(container: HTMLElement, list: Stand[], slot: string) {
   const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5)); // a pantalla completa en retina, 2× son ~4,5 M píxeles por frame
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap;
+  // Sombras estáticas: se calculan una vez (la sala no cambia); recalcularlas cada frame era lo que producía tirones al caminar.
+  renderer.shadowMap.autoUpdate = false; renderer.shadowMap.needsUpdate = true;
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = .8;
   container.appendChild(renderer.domElement);
 
@@ -210,7 +212,7 @@ export function mountHall(container: HTMLElement, list: Stand[], slot: string) {
   scene.add(new THREE.HemisphereLight(0xfdfbf7, 0x6a6862, .55));
   const sun = new THREE.DirectionalLight(0xfff6ea, 2.6);
   sun.position.set(4, 22, 6); sun.castShadow = true;
-  sun.shadow.mapSize.set(2048, 2048);
+  sun.shadow.mapSize.set(1024, 1024);
   Object.assign(sun.shadow.camera, { left: -14, right: 14, top: 14, bottom: -14, far: 50 });
   scene.add(sun);
 
@@ -250,6 +252,7 @@ export function mountHall(container: HTMLElement, list: Stand[], slot: string) {
   };
   const keyup = (e: KeyboardEvent) => { held.delete(e.key.length === 1 ? e.key.toLowerCase() : e.key); };
   const blur = () => held.clear();
+  const hidden = () => { if (document.hidden) held.clear(); };
 
   // Zonas transitables: dentro de los muros y fuera de la bancada de la máquina; en la galería, solo el anillo (no el hueco central).
   const iw = W - 2 * G, il = L - 2 * G;
@@ -260,23 +263,25 @@ export function mountHall(container: HTMLElement, list: Stand[], slot: string) {
     if (Math.abs(x) < 4.1 && Math.abs(z) < 2.6) return false; // bancada de la máquina
     return !(Math.abs(x) > STAND_X - 2.3 && Math.abs(x) < STAND_X + .4 && STAND_Z.some(sz => Math.abs(z - sz) < 2.4)); // stands
   };
-  const forward = new THREE.Vector3(), next = new THREE.Vector3();
+  const forward = new THREE.Vector3(), look = new THREE.Vector3();
   const walk = (dt: number) => {
     let move = 0, turn = 0;
     held.forEach(k => { move += MOVE[k][0]; turn += MOVE[k][1]; });
     if (!move && !turn) return;
-    const look = controls.target.clone().sub(camera.position);
+    look.subVectors(controls.target, camera.position);
     if (turn) look.applyAxisAngle(THREE.Object3D.DEFAULT_UP, turn * 1.2 * dt);
     if (move) {
       forward.set(look.x, 0, look.z).normalize();
-      next.copy(camera.position).addScaledVector(forward, move * 3.2 * dt);
-      if (walkable(next.x, next.z, camera.position.y > FLOOR1)) camera.position.copy(next);
+      // Cada eje por separado: al chocar se desliza a lo largo del obstáculo en vez de quedarse clavado.
+      const p = camera.position, up = p.y > FLOOR1, dx = forward.x * move * 3.2 * dt, dz = forward.z * move * 3.2 * dt;
+      if (walkable(p.x + dx, p.z, up)) p.x += dx;
+      if (walkable(p.x, p.z + dz, up)) p.z += dz;
     }
     controls.target.copy(camera.position).add(look);
     dirty = true;
   };
   // En la ventana mientras el visor está abierto (es modal): funciona aunque el foco esté en un botón de vista.
-  addEventListener('keydown', keydown); addEventListener('keyup', keyup); addEventListener('blur', blur);
+  addEventListener('keydown', keydown); addEventListener('keyup', keyup); addEventListener('blur', blur); document.addEventListener('visibilitychange', hidden);
 
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const clock = new THREE.Clock();
@@ -292,7 +297,7 @@ export function mountHall(container: HTMLElement, list: Stand[], slot: string) {
   return {
     go: (view: View) => { go(view); dirty = true; },
     dispose: () => {
-      renderer.setAnimationLoop(null); ro.disconnect(); controls.dispose(); removeEventListener('keydown', keydown); removeEventListener('keyup', keyup); removeEventListener('blur', blur);
+      renderer.setAnimationLoop(null); ro.disconnect(); controls.dispose(); removeEventListener('keydown', keydown); removeEventListener('keyup', keyup); removeEventListener('blur', blur); document.removeEventListener('visibilitychange', hidden);
       scene.traverse(o => { if (o instanceof THREE.Mesh) { o.geometry.dispose(); (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => { m.map?.dispose(); m.dispose(); }); } });
       pmrem.dispose(); renderer.dispose(); renderer.domElement.remove();
     },

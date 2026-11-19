@@ -72,3 +72,7 @@
 .cs-calls a:hover,.cs-calls a:focus-visible{background-size:100% 100%;color:#fff}
 .cs-calls a:hover span,.cs-calls a:focus-visible span{transform:translate(3px,-3px)}
 @media(prefers-reduced-motion:reduce){.cs-calls a,.cs-calls a span{transition:none}}
+
+/* Modalidades de la tarjeta «Para empresas» (Participa). Mismo tono que el texto corrido: 16px, --muted, ~46 caracteres. */
+.cs-points { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; max-width: 46ch; font-size: 16px; color: var(--muted); }
+.cs-points strong { color: var(--fg); font-weight: 600; }

@@ -4,7 +4,8 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 
-export type Stand = { tier: string; logo?: string; featured?: boolean };
+export type Game = 'darts' | 'vr' | 'arcade' | 'foosball' | 'kiosk' | 'racing' | 'robot' | 'claw';
+export type Stand = { tier: string; game: Game; activity: string; logo?: string; featured?: boolean };
 export type View = 'entrance' | 'machine' | 'gallery';
 
 const W = 20, L = 26, G = 3.2; // ancho, largo y fondo de las galerías (m)
@@ -57,6 +58,7 @@ function panelTexture(stand: Stand, slot: string, onReady: () => void) {
     c.fillStyle = `#${RED.toString(16)}`; c.fillRect(0, 0, 1024, 64);
     c.fillStyle = '#fff'; c.font = '700 34px Inter, Arial, sans-serif'; c.textBaseline = 'middle';
     c.fillText(stand.tier.toUpperCase(), 40, 34);
+    c.textAlign = 'right'; c.fillText(stand.activity.toUpperCase(), 984, 34); c.textAlign = 'left';
     if (img) {
       const s = Math.min(760 / img.width, 360 / img.height);
       c.drawImage(img, (1024 - img.width * s) / 2, 416 - img.height * s / 2, img.width * s, img.height * s);
@@ -159,7 +161,7 @@ function link(rod: THREE.Mesh, a: THREE.Vector3, b: THREE.Vector3) {
   rod.quaternion.setFromUnitVectors(THREE.Object3D.DEFAULT_UP, dir.subVectors(b, a).normalize());
 }
 
-export function machine(scene: THREE.Scene) {
+function machine(scene: THREE.Scene) {
   const g = new THREE.Group();
   const stoneM = new THREE.MeshStandardMaterial({ color: 0xbdb8ae, roughness: .85 });
   const pit = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 1 });
@@ -269,7 +271,97 @@ export function machine(scene: THREE.Scene) {
   };
 }
 
-// Stands a ambos lados de la sala, bajo la galería, mirando a la máquina.
+// Pantalla encendida (MeshBasic: no depende de la luz). `draw` pinta el contenido sobre un lienzo de 512×320.
+function screen(w: number, h: number, draw: (c: CanvasRenderingContext2D) => void) {
+  return new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: canvasTexture(512, 320, draw), toneMapped: false }));
+}
+const gameScreen = (title: string, accent: string) => (c: CanvasRenderingContext2D) => {
+  const grad = c.createLinearGradient(0, 0, 512, 320); grad.addColorStop(0, '#120006'); grad.addColorStop(1, '#3a0010');
+  c.fillStyle = grad; c.fillRect(0, 0, 512, 320);
+  c.fillStyle = accent; for (let i = 0; i < 9; i++) c.fillRect(40 + i * 48, 210 - ((i * 37) % 110), 30, 60 + ((i * 37) % 110));
+  c.fillStyle = '#fff'; c.font = '800 44px Inter, Arial, sans-serif'; c.fillText(title, 36, 70);
+};
+
+// Mesa genérica con tablero y cuatro patas.
+function table(w: number, d: number, h: number, top: THREE.Material, legs: THREE.Material) {
+  const g = new THREE.Group();
+  g.add(box(w, .06, d, top, 0, h, 0));
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) g.add(box(.05, h, .05, legs, sx * (w / 2 - .06), h / 2, sz * (d / 2 - .06)));
+  return g;
+}
+
+// Atrezo de cada stand, en coordenadas del stand con el eje X local apuntando hacia el pasillo central.
+function prop(game: Game) {
+  const g = new THREE.Group();
+  const dark = new THREE.MeshStandardMaterial({ color: 0x1b1b1b, roughness: .6, metalness: .2 });
+  const red = new THREE.MeshStandardMaterial({ color: RED, roughness: .5 });
+  const white = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, roughness: .6 });
+  const metal = new THREE.MeshStandardMaterial({ color: 0x9a9a9a, roughness: .35, metalness: .8 });
+  const cyl = (r: number, h: number, mat: THREE.Material, x: number, y: number, z: number) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, h, 24), mat); m.position.set(x, y, z); m.castShadow = true; return m; };
+  const face = (m: THREE.Object3D, x: number, y: number, z: number) => { m.rotation.y = Math.PI / 2; m.position.set(x, y, z); return m; }; // mirando al pasillo
+
+  if (game === 'darts') {
+    const board = canvasTexture(256, 256, c => {
+      const rings = ['#111', '#eb0028', '#f2e8d0', '#111', '#1d8a3a', '#f2e8d0', '#eb0028'];
+      rings.forEach((col, i) => { c.fillStyle = col; c.beginPath(); c.arc(128, 128, 128 - i * 17, 0, Math.PI * 2); c.fill(); });
+      c.strokeStyle = 'rgba(200,200,200,.5)'; c.lineWidth = 1.5;
+      for (let i = 0; i < 20; i++) { const a = (i / 20) * Math.PI * 2; c.beginPath(); c.moveTo(128, 128); c.lineTo(128 + Math.cos(a) * 128, 128 + Math.sin(a) * 128); c.stroke(); }
+    });
+    const disc = new THREE.Mesh(new THREE.CylinderGeometry(.26, .26, .05, 48), [dark, new THREE.MeshStandardMaterial({ map: board, roughness: .8 }), dark]);
+    disc.rotation.z = -Math.PI / 2; disc.position.set(.05, 1.73, 0);
+    g.add(box(.6, .03, .6, dark, -.1, .015, 0), cyl(.03, 1.75, metal, -.1, .9, 0), box(.06, .7, .7, dark, 0, 1.73, 0), disc);
+    g.add(box(.05, .01, 1.2, red, 2.2, .07, 0)); // línea de lanzamiento
+    for (const z of [-.05, .04, .1]) { const dart = cyl(.008, .14, red, .12, 1.7 + z, z); dart.rotation.z = Math.PI / 2; g.add(dart); }
+  } else if (game === 'vr') {
+    g.add(cyl(.18, 1, white, 0, .5, -.5), box(.24, .11, .14, dark, 0, 1.07, -.5), box(.02, .05, .1, metal, .13, 1.07, -.5));
+    const mat = new THREE.Mesh(new THREE.RingGeometry(.65, .75, 48), red); mat.rotation.x = -Math.PI / 2; mat.position.set(.9, .07, .3); g.add(mat);
+    g.add(cyl(.03, 1.6, metal, -.2, .8, .7), face(screen(1, .62, gameScreen('VR', '#ff4d6d')), -.16, 1.8, .7));
+  } else if (game === 'arcade') {
+    g.add(box(.7, 1.75, .75, dark, 0, .875, 0), box(.3, .08, .74, red, .45, 1.02, 0));
+    g.add(face(screen(.6, .48, gameScreen('ARCADE', '#ffd23f')), .36, 1.45, 0));
+    g.add(cyl(.015, .1, metal, .5, 1.1, -.15), cyl(.035, .03, red, .5, 1.16, -.15));
+    for (const z of [.05, .15, .25]) g.add(cyl(.03, .02, white, .5, 1.07, z));
+    g.add(box(.72, .2, .77, red, 0, 1.85, 0));
+  } else if (game === 'foosball') {
+    const t = table(.8, 1.3, .85, new THREE.MeshStandardMaterial({ color: 0x1f7a3a, roughness: .7 }), dark); t.position.x = .7; g.add(t);
+    g.add(box(.82, .14, .06, dark, .7, .94, .67), box(.82, .14, .06, dark, .7, .94, -.67), box(.06, .14, 1.36, dark, .3, .94, 0), box(.06, .14, 1.36, dark, 1.1, .94, 0));
+    for (let i = 0; i < 4; i++) {
+      const z = -.45 + i * .3, rod = cyl(.012, 1.2, metal, .7, .98, z); rod.rotation.z = Math.PI / 2; g.add(rod);
+      for (const x of [.5, .7, .9]) g.add(box(.05, .14, .04, i % 2 ? red : white, x, .95, z));
+    }
+  } else if (game === 'kiosk') {
+    for (const z of [-.75, .75]) {
+      g.add(box(.5, .05, .5, dark, .4, .025, z), box(.08, 1.1, .08, metal, .4, .55, z), box(.1, 1.15, .7, dark, .45, 1.6, z));
+      g.add(face(screen(.62, 1.05, c => { gameScreen('RETO', '#4dd0ff')(c); c.fillStyle = '#4dd0ff'; c.fillRect(36, 250, 440, 30); }), .51, 1.6, z));
+    }
+  } else if (game === 'racing') {
+    g.add(box(1.2, .12, .6, dark, .5, .06, .1), box(.5, .12, .5, red, .4, .4, .1), box(.12, .7, .5, red, .1, .75, .1));
+    const wheel = new THREE.Mesh(new THREE.TorusGeometry(.16, .025, 8, 24), dark); wheel.rotation.y = Math.PI / 2; wheel.position.set(.95, .85, .1); g.add(wheel, box(.06, .6, .06, dark, 1.0, .5, .1));
+    g.add(box(.06, .02, .2, metal, 1.0, .82, .1));
+    const s = screen(1.1, .62, gameScreen('RACE', '#ff8c42')); s.rotation.y = -Math.PI / 2; s.position.set(1.45, 1.2, .1); g.add(s, box(.04, 1, .04, metal, 1.5, .5, .1));
+  } else if (game === 'robot') {
+    const t = table(.9, .9, .8, white, dark); t.position.set(.5, 0, 0); g.add(t);
+    g.add(cyl(.12, .1, dark, .5, .88, 0));
+    const arm = new THREE.Group(); arm.position.set(.5, .93, 0); arm.rotation.y = .6;
+    const a1 = box(.09, .55, .09, red, 0, .27, 0); a1.rotation.z = -.35; arm.add(a1);
+    const a2 = box(.07, .45, .07, red, .38, .58, 0); a2.rotation.z = -1.4; arm.add(a2);
+    arm.add(box(.04, .12, .12, metal, .6, .5, 0));
+    g.add(arm);
+    for (const [x, z, col] of [[.3, .25, 0x2f80ed], [.4, -.25, 0xffd23f], [.7, .3, 0x1d8a3a]] as [number, number, number][]) g.add(box(.08, .08, .08, new THREE.MeshStandardMaterial({ color: col }), x, .87, z));
+  } else {
+    // Máquina de gancho: mueble, urna de cristal con premios y la pinza.
+    g.add(box(.8, .9, .8, dark, .4, .45, 0), box(.82, .16, .82, red, .4, 2.02, 0));
+    const glass = new THREE.Mesh(new THREE.BoxGeometry(.78, 1, .78), new THREE.MeshStandardMaterial({ color: 0xddeeff, transparent: true, opacity: .18, roughness: .05 }));
+    glass.position.set(.4, 1.42, 0); g.add(glass);
+    const cols = [0xeb0028, 0xffd23f, 0x2f80ed, 0xffffff, 0x1d8a3a];
+    for (let i = 0; i < 14; i++) { const ball = new THREE.Mesh(new THREE.SphereGeometry(.07, 12, 10), new THREE.MeshStandardMaterial({ color: cols[i % 5], roughness: .8 })); ball.position.set(.12 + (i % 4) * .18, .97 + Math.floor(i / 4) * .06, -.27 + ((i * 7) % 5) * .13); g.add(ball); }
+    g.add(cyl(.008, .5, metal, .45, 1.65, .05), box(.1, .06, .1, metal, .45, 1.38, .05));
+  }
+  g.traverse(o => { if (o instanceof THREE.Mesh) { o.castShadow = o.receiveShadow = true; } });
+  return g;
+}
+
+// Stands a ambos lados de la sala, bajo la galería, mirando a la máquina, cada uno con su juego.
 function stands(scene: THREE.Scene, list: Stand[], slot: string, invalidate: () => void) {
   const white = new THREE.MeshStandardMaterial({ color: 0xf2f2f2, roughness: .6 });
   const carpet = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 1 });
@@ -281,8 +373,13 @@ function stands(scene: THREE.Scene, list: Stand[], slot: string, invalidate: () 
     const panel = new THREE.Mesh(new THREE.PlaneGeometry(w, w * .75), new THREE.MeshStandardMaterial({ map: panelTexture(stand, slot, invalidate), roughness: .7 }));
     panel.rotation.y = -side * Math.PI / 2; panel.position.set(.06 * -side, 1.1 + w * .375, 0);
     g.add(box(.1, 1.1 + w * .75 + .1, w + .1, white, 0, (1.1 + w * .75 + .1) / 2, 0), panel);
-    g.add(box(.6, 1.05, w * .55, white, side * -1.3, .525, 0));
-    g.add(box(.62, .05, w * .55 + .04, new THREE.MeshStandardMaterial({ color: RED, roughness: .5 }), side * -1.3, 1.07, 0));
+    // Mostrador a un lado; el juego ocupa el resto del stand.
+    const cz = -w * .3;
+    g.add(box(.6, 1.05, w * .32, white, side * -1.3, .525, cz));
+    g.add(box(.62, .05, w * .32 + .04, new THREE.MeshStandardMaterial({ color: RED, roughness: .5 }), side * -1.3, 1.07, cz));
+    // El atrezo se modela con +X hacia el pasillo: en el lado izquierdo (side = -1) ya mira bien; en el derecho se gira 180°.
+    const p = prop(stand.game); p.position.set(side * -.25, 0, w * .18); if (side > 0) p.rotation.y = Math.PI;
+    g.add(p);
     g.position.set(x, 0, z);
     scene.add(g);
   });

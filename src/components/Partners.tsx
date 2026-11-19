@@ -244,11 +244,11 @@ export function Partners({ locale }: { locale: Locale }) {
   </main>;
 }
 
-// Stands del 3D: el Experience Partner en el sitio destacado (junto a la máquina), el resto puntos de encuentro (Partner).
+// Stands del 3D (4 por lado, pares a la izquierda): el Experience Partner en el sitio destacado, a la izquierda frente a la máquina, el resto puntos de encuentro (Partner).
 // Supporting Partner no tiene stand.
 const hallStands = (locale: Locale): Stand[] => {
   const tiers = t[locale].tiers, logo = (tier: number) => PARTNERS.find(partner => partner.tier === tier)?.logo;
-  return [1, 1, 0, 1, 1, 1].map(tier => ({ tier: tiers[tier].name, logo: tier === 0 ? logo(0) : undefined, featured: tier === 0 }));
+  return [1, 1, 1, 1, 0, 1, 1, 1].map(tier => ({ tier: tiers[tier].name, logo: tier === 0 ? logo(0) : undefined, featured: tier === 0 }));
 };
 
 // Ilustración de Abril como botón: abre a pantalla completa la recreación 3D de la sala (three.js solo se descarga al abrirla).

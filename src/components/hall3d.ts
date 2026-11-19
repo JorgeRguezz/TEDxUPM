@@ -10,6 +10,8 @@ export type View = 'entrance' | 'machine' | 'gallery';
 const W = 20, L = 26, G = 3.2; // ancho, largo y fondo de las galerías (m)
 const FLOOR1 = 5.5, TOP = 10.5; // altura de la galería y arranque de la cubierta
 const RED = 0xeb0028;
+// Stands metidos entre los pilares de la planta baja (un poco por detrás de su línea), cuatro por lado en los huecos entre pilares.
+const STAND_X = (W - 2 * G) / 2 + .6, STAND_Z = [-7.35, -2.45, 2.45, 7.35];
 // Pilares de la galería (los usan el dibujo y las colisiones).
 const COLUMNS: [number, number][] = (() => {
   const iw = W - 2 * G, il = L - 2 * G, cols: [number, number][] = [];
@@ -151,13 +153,15 @@ function machine(scene: THREE.Scene) {
   g.add(box(.4, .6, .5, iron, -1.2, base + 5.1, 0));
   // Volante y cigüeñal.
   const wheel = new THREE.Group();
-  wheel.add(new THREE.Mesh(new THREE.TorusGeometry(2.5, .14, 10, 64), iron));
+  wheel.add(new THREE.Mesh(new THREE.TorusGeometry(3, .16, 10, 72), iron));
   wheel.add(new THREE.Mesh(new THREE.CylinderGeometry(.3, .3, .5, 16).rotateX(Math.PI / 2), iron));
-  for (let i = 0; i < 8; i++) { const spoke = box(.1, 2.4, .1, iron, 0, 0, 0); spoke.geometry.translate(0, 1.2, 0); spoke.rotation.z = (Math.PI / 4) * i; wheel.add(spoke); }
+  for (let i = 0; i < 8; i++) { const spoke = box(.12, 2.9, .12, iron, 0, 0, 0); spoke.geometry.translate(0, 1.45, 0); spoke.rotation.z = (Math.PI / 4) * i; wheel.add(spoke); }
   wheel.traverse(o => { o.castShadow = true; });
-  wheel.position.set(3.4, base + 2.7, 0); g.add(wheel);
-  g.add(box(.5, 2.7, .5, iron, 3.4, base + 1.35, -.5));
+  // Como en la ilustración y en el hall real, el volante gira medio enterrado: el eje queda a ras de la bancada y solo asoma la mitad superior.
+  wheel.position.set(3.4, base, 0); g.add(wheel);
+  g.add(box(.7, .45, .4, iron, 3.4, base + .22, -.5), box(.7, .45, .4, iron, 3.4, base + .22, .5));
   const rod = box(.14, 1, .14, iron, 0, 0, 0); g.add(rod);
+  g.scale.setScalar(.75); // la máquina real es más contenida que la sala: deja aire hasta los stands
   scene.add(g);
 
   const crankR = .9, beamEnd = new THREE.Vector3(), crank = new THREE.Vector3(), mid = new THREE.Vector3();
@@ -177,10 +181,9 @@ function machine(scene: THREE.Scene) {
 function stands(scene: THREE.Scene, list: Stand[], slot: string, invalidate: () => void) {
   const white = new THREE.MeshStandardMaterial({ color: 0xf2f2f2, roughness: .6 });
   const carpet = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 1 });
-  const zs = [-6.5, 0, 6.5];
-  list.slice(0, 6).forEach((stand, i) => {
-    const side = i % 2 === 0 ? -1 : 1, z = zs[Math.floor(i / 2)];
-    const w = stand.featured ? 4.2 : 3, x = side * (W / 2 - G - .5);
+  list.slice(0, STAND_Z.length * 2).forEach((stand, i) => {
+    const side = i % 2 === 0 ? -1 : 1, z = STAND_Z[Math.floor(i / 2)];
+    const w = stand.featured ? 3.9 : 3, x = side * STAND_X;
     const g = new THREE.Group();
     g.add(box(1.8, .06, w, carpet, side * -.9, .03, 0));
     const panel = new THREE.Mesh(new THREE.PlaneGeometry(w, w * .75), new THREE.MeshStandardMaterial({ map: panelTexture(stand, slot, invalidate), roughness: .7 }));
@@ -254,8 +257,8 @@ export function mountHall(container: HTMLElement, list: Stand[], slot: string) {
     if (Math.abs(x) > W / 2 - 1 || Math.abs(z) > L / 2 - 1) return false;
     if (COLUMNS.some(([cx, cz]) => Math.abs(x - cx) < .9 && Math.abs(z - cz) < .9)) return false;
     if (upstairs) return Math.abs(x) > iw / 2 + .2 || Math.abs(z) > il / 2 + .2;
-    if (Math.abs(x) < 5.4 && Math.abs(z) < 3.4) return false; // bancada de la máquina
-    return !(Math.abs(x) > 4.4 && Math.abs(x) < 6.9 && [-6.5, 0, 6.5].some(sz => Math.abs(z - sz) < 2.6)); // stands
+    if (Math.abs(x) < 4.1 && Math.abs(z) < 2.6) return false; // bancada de la máquina
+    return !(Math.abs(x) > STAND_X - 2.3 && Math.abs(x) < STAND_X + .4 && STAND_Z.some(sz => Math.abs(z - sz) < 2.4)); // stands
   };
   const forward = new THREE.Vector3(), next = new THREE.Vector3();
   const walk = (dt: number) => {

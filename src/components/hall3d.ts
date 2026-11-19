@@ -124,57 +124,148 @@ function hall(scene: THREE.Scene) {
   }
 }
 
-// Máquina de vapor de balancín tipo Watt (1832): bancada, seis columnas dóricas, balancín, cilindro, biela y volante.
+// Máquina de vapor de balancín tipo Watt (Napier & Son, 1832), según las fotos del hall:
+// bancada de piedra en dos alturas, bastidor de seis columnas dóricas con entablamento y remates,
+// balancín calado sobre el entablamento, cilindro con caja de válvulas, regulador de bolas,
+// y volante medio enterrado en el foso, con corona dentada.
+function lathe(points: [number, number][], mat: THREE.Material, segments = 24) {
+  const m = new THREE.Mesh(new THREE.LatheGeometry(points.map(([r, y]) => new THREE.Vector2(r, y)), segments), mat);
+  m.castShadow = m.receiveShadow = true;
+  return m;
+}
+
+function ring(outer: number, inner: number, depth: number, mat: THREE.Material, teeth = 0) {
+  const shape = new THREE.Shape();
+  if (teeth) {
+    const step = (Math.PI * 2) / teeth, tip = outer + .09;
+    for (let i = 0; i < teeth; i++) {
+      const a = i * step;
+      const pts: [number, number][] = [[outer, a], [tip, a + step * .2], [tip, a + step * .45], [outer, a + step * .65]];
+      pts.forEach(([r, b], j) => (i === 0 && j === 0 ? shape.moveTo : shape.lineTo).call(shape, Math.cos(b) * r, Math.sin(b) * r));
+    }
+    shape.closePath();
+  } else shape.absarc(0, 0, outer, 0, Math.PI * 2, false);
+  const hole = new THREE.Path(); hole.absarc(0, 0, inner, 0, Math.PI * 2, true); shape.holes.push(hole);
+  const m = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: false, curveSegments: 64 }), mat);
+  m.geometry.translate(0, 0, -depth / 2); m.castShadow = true;
+  return m;
+}
+
+// Coloca una barra cilíndrica entre dos puntos (bielas, vástagos). Sin crear objetos por frame: evita pausas del recolector.
+const dir = new THREE.Vector3();
+function link(rod: THREE.Mesh, a: THREE.Vector3, b: THREE.Vector3) {
+  rod.position.addVectors(a, b).multiplyScalar(.5);
+  rod.scale.y = a.distanceTo(b);
+  rod.quaternion.setFromUnitVectors(THREE.Object3D.DEFAULT_UP, dir.subVectors(b, a).normalize());
+}
+
 function machine(scene: THREE.Scene) {
   const g = new THREE.Group();
-  const plinth = new THREE.MeshStandardMaterial({ color: 0x3b3b3b, roughness: .8 });
-  const iron = new THREE.MeshStandardMaterial({ color: RED, roughness: .45, metalness: .35 });
-  const brass = new THREE.MeshStandardMaterial({ color: 0x9a7a3a, roughness: .35, metalness: .8 });
-  g.add(box(9.6, .35, 5.6, plinth, 0, .175, 0), box(8.8, .35, 4.8, plinth, 0, .525, 0));
-  const base = .7;
-  g.add(box(6.2, .4, 2.6, iron, -1.6, base + .2, 0));
-  for (const x of [-4.2, -1.6, 1]) for (const z of [-1, 1]) {
-    const col = new THREE.Mesh(new THREE.CylinderGeometry(.16, .2, 4.2, 16), iron);
-    col.position.set(x, base + .4 + 2.1, z); col.castShadow = true; g.add(col);
+  const stoneM = new THREE.MeshStandardMaterial({ color: 0xbdb8ae, roughness: .85 });
+  const pit = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 1 });
+  const iron = new THREE.MeshStandardMaterial({ color: RED, roughness: .42, metalness: .35 });
+  const dark = new THREE.MeshStandardMaterial({ color: 0x2b2b2b, roughness: .5, metalness: .6 });
+  const brass = new THREE.MeshStandardMaterial({ color: 0xb08d3c, roughness: .3, metalness: .85 });
+
+  // Bancada: losa grande, segundo escalón y foso del volante.
+  g.add(box(12.2, .45, 5.6, stoneM, .8, .225, 0), box(10.4, .35, 4.6, stoneM, .6, .625, 0));
+  g.add(box(6.6, .02, .9, pit, 3.3, .81, 0));
+  const base = .8;
+  g.add(box(6.6, .22, 3, iron, -1.4, base + .11, 0)); // placa de asiento del bastidor
+
+  // Seis columnas dóricas con basa, fuste con éntasis, collarino, equino y ábaco.
+  const COL_H = 4.2, colTop = base + .22 + COL_H;
+  const profile: [number, number][] = [[0, 0], [.27, 0], [.27, .08], [.23, .12], [.25, .18], [.2, .24], [.19, 1.6], [.165, COL_H - .5], [.19, COL_H - .46], [.17, COL_H - .4], [.18, COL_H - .32], [.27, COL_H - .14], [0, COL_H - .14]];
+  for (const x of [-4.2, -1.4, 1.4]) for (const z of [-1.15, 1.15]) {
+    const col = lathe(profile, iron); col.position.set(x, base + .22, z); g.add(col);
+    g.add(box(.62, .14, .62, iron, x, colTop - .07, z)); // ábaco
   }
-  g.add(box(6.2, .35, 2.6, iron, -1.6, base + 4.8, 0));
-  // Cilindro y regulador centrífugo.
-  const cyl = new THREE.Mesh(new THREE.CylinderGeometry(.55, .55, 2.4, 24), iron);
-  cyl.position.set(-3.6, base + 1.6, 0); cyl.castShadow = true; g.add(cyl);
-  const gov = new THREE.Group();
-  gov.add(box(.06, 1.4, .06, brass, 0, 0, 0));
-  for (const s of [-1, 1]) { const ball = new THREE.Mesh(new THREE.SphereGeometry(.16, 16, 12), brass); ball.position.set(s * .35, -.2, 0); gov.add(ball); }
-  gov.position.set(-1.6, base + 1.6, 0); g.add(gov);
-  // Balancín sobre el pivote central.
+  // Entablamento: arquitrabes, travesaños, cornisa y remates en las esquinas.
+  const ent = colTop + .2;
+  for (const z of [-1.15, 1.15]) g.add(box(6.5, .4, .34, iron, -1.4, ent, z), box(6.8, .1, .5, iron, -1.4, ent + .25, z));
+  for (const x of [-4.2, -1.4, -.6, 1.4]) g.add(box(.3, .3, 2.3, iron, x, ent, 0));
+  for (const x of [-4.2, 1.4]) for (const z of [-1.15, 1.15]) {
+    const finial = lathe([[0, 0], [.12, 0], [.12, .05], [.06, .1], [.15, .22], [.16, .32], [.1, .44], [.03, .54], [0, .6]], brass, 16);
+    finial.position.set(x, ent + .3, z); g.add(finial);
+  }
+
+  // Balancín calado (dos placas gemelas) sobre su soporte en A.
+  const pivot = new THREE.Vector3(-.6, ent + 1.25, 0);
+  for (const z of [-.3, .3]) {
+    const a = new THREE.Shape(); a.moveTo(-.55, 0); a.lineTo(-.08, .95); a.lineTo(.08, .95); a.lineTo(.55, 0); a.lineTo(.38, 0); a.lineTo(0, .7); a.lineTo(-.38, 0); a.closePath();
+    const stand = new THREE.Mesh(new THREE.ExtrudeGeometry(a, { depth: .08, bevelEnabled: false }), iron);
+    stand.position.set(pivot.x, ent + .3, z - .04); stand.castShadow = true; g.add(stand);
+  }
   const beam = new THREE.Group();
-  const shape = new THREE.Shape(); shape.moveTo(-3.2, 0); shape.quadraticCurveTo(0, .55, 3.2, 0); shape.quadraticCurveTo(0, -.55, -3.2, 0);
-  const beamMesh = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, { depth: .25, bevelEnabled: false }), iron);
-  beamMesh.position.z = -.125; beamMesh.castShadow = true; beam.add(beamMesh);
-  beam.position.set(-1.2, base + 5.4, 0); g.add(beam);
-  g.add(box(.4, .6, .5, iron, -1.2, base + 5.1, 0));
-  // Volante y cigüeñal.
-  const wheel = new THREE.Group();
-  wheel.add(new THREE.Mesh(new THREE.TorusGeometry(3, .16, 10, 72), iron));
-  wheel.add(new THREE.Mesh(new THREE.CylinderGeometry(.3, .3, .5, 16).rotateX(Math.PI / 2), iron));
-  for (let i = 0; i < 8; i++) { const spoke = box(.12, 2.9, .12, iron, 0, 0, 0); spoke.geometry.translate(0, 1.45, 0); spoke.rotation.z = (Math.PI / 4) * i; wheel.add(spoke); }
-  wheel.traverse(o => { o.castShadow = true; });
-  // Como en la ilustración y en el hall real, el volante gira medio enterrado: el eje queda a ras de la bancada y solo asoma la mitad superior.
-  wheel.position.set(3.4, base, 0); g.add(wheel);
-  g.add(box(.7, .45, .4, iron, 3.4, base + .22, -.5), box(.7, .45, .4, iron, 3.4, base + .22, .5));
-  const rod = box(.14, 1, .14, iron, 0, 0, 0); g.add(rod);
-  g.scale.setScalar(.75); // la máquina real es más contenida que la sala: deja aire hasta los stands
+  const BEAM = 3.6;
+  const lens = new THREE.Shape(); lens.moveTo(-BEAM, -.08); lens.quadraticCurveTo(0, -.75, BEAM, -.08); lens.lineTo(BEAM, .08); lens.quadraticCurveTo(0, .75, -BEAM, .08); lens.closePath();
+  for (const [cx, rx] of [[-2.1, .75], [-.9, .3], [.9, .3], [2.1, .75]] as [number, number][]) { const h = new THREE.Path(); h.absellipse(cx, 0, rx, .22, 0, Math.PI * 2, true, 0); lens.holes.push(h); }
+  for (const z of [-.16, .16]) {
+    const plate = new THREE.Mesh(new THREE.ExtrudeGeometry(lens, { depth: .07, bevelEnabled: false, curveSegments: 24 }), iron);
+    plate.position.z = z - .035; plate.castShadow = true; beam.add(plate);
+  }
+  const gudgeon = new THREE.Mesh(new THREE.CylinderGeometry(.13, .13, .7, 16).rotateX(Math.PI / 2), dark); beam.add(gudgeon);
+  for (const x of [-BEAM, -3, BEAM]) { const pin = new THREE.Mesh(new THREE.CylinderGeometry(.07, .07, .5, 12).rotateX(Math.PI / 2), dark); pin.position.x = x; beam.add(pin); }
+  beam.position.copy(pivot); g.add(beam);
+
+  // Cilindro con bridas y tapa, caja de válvulas y vástago.
+  const cyl = lathe([[0, 0], [.72, 0], [.72, .14], [.6, .14], [.6, 2.3], [.72, 2.3], [.72, 2.45], [.5, 2.6], [.16, 2.72], [0, 2.72]], iron, 32);
+  cyl.position.set(-3.6, base + .22, 0); g.add(cyl);
+  g.add(box(.42, 1.9, .7, iron, -3.6, base + 1.35, .75), box(.5, .12, .8, iron, -3.6, base + 2.36, .75));
+  const valve = new THREE.Mesh(new THREE.CylinderGeometry(.03, .03, 1, 8), dark); g.add(valve);
+  const pistonRod = new THREE.Mesh(new THREE.CylinderGeometry(.06, .06, 1, 12), dark); g.add(pistonRod);
+  const pumpRod = new THREE.Mesh(new THREE.CylinderGeometry(.05, .05, 1, 10), dark); g.add(pumpRod);
+  const pump = lathe([[0, 0], [.36, 0], [.36, 1.1], [.42, 1.1], [.42, 1.2], [0, 1.2]], iron); pump.position.set(-2.6, base + .22, -.4); g.add(pump);
+
+  // Regulador centrífugo: columna, husillo, brazos y bolas de latón.
+  const govBase = lathe([[0, 0], [.2, 0], [.2, .08], [.08, .14], [.06, 1.1], [.1, 1.16], [0, 1.16]], iron, 16);
+  govBase.position.set(.1, base + .22, 0); g.add(govBase);
+  const gov = new THREE.Group();
+  gov.add(new THREE.Mesh(new THREE.CylinderGeometry(.025, .025, 1.2, 8), brass));
+  const arms: THREE.Group[] = [];
+  for (const s of [-1, 1]) {
+    const arm = new THREE.Group();
+    const bar = new THREE.Mesh(new THREE.CylinderGeometry(.018, .018, .7, 6), brass); bar.position.y = -.35; arm.add(bar);
+    const ball = new THREE.Mesh(new THREE.SphereGeometry(.13, 16, 12), brass); ball.position.y = -.72; ball.castShadow = true; arm.add(ball);
+    arm.position.y = .55; arm.rotation.z = s * .55; gov.add(arm); arms.push(arm);
+  }
+  gov.position.set(.1, base + .22 + 1.16 + .6, 0); g.add(gov);
+
+  // Volante en el foso: llanta, ocho radios, cubo, corona dentada y chumaceras.
+  const WR = 3, wheel = new THREE.Group();
+  wheel.add(ring(WR, WR - .26, .32, iron));
+  for (let i = 0; i < 8; i++) {
+    const spoke = new THREE.Mesh(new THREE.CylinderGeometry(.07, .12, WR - .3, 10), iron);
+    spoke.geometry.translate(0, (WR - .3) / 2 + .15, 0); spoke.rotation.z = (Math.PI / 4) * i; spoke.castShadow = true; wheel.add(spoke);
+  }
+  wheel.add(new THREE.Mesh(new THREE.CylinderGeometry(.38, .38, .6, 20).rotateX(Math.PI / 2), iron));
+  const gear = ring(1.9, 1.62, .22, iron, 72); gear.position.z = .3; wheel.add(gear);
+  for (let i = 0; i < 6; i++) { const arm = box(.08, 1.4, .08, iron, 0, 0, .3); arm.geometry.translate(0, .9, 0); arm.rotation.z = (Math.PI / 3) * i + .26; wheel.add(arm); }
+  const WX = 3.3; wheel.position.set(WX, base, 0); g.add(wheel);
+  const crank = box(.18, .9, .14, dark, 0, 0, 0); crank.geometry.translate(0, .45, 0); crank.position.set(WX, base, .45); g.add(crank);
+  for (const z of [-.6, .6]) g.add(box(.8, .5, .36, iron, WX, base + .25, z), box(.9, .08, .44, dark, WX, base + .52, z));
+  const conRod = new THREE.Mesh(new THREE.CylinderGeometry(.1, .14, 1, 12), iron); g.add(conRod);
+
+  g.scale.setScalar(.7); // la máquina real es más contenida que la sala: deja aire hasta los stands
+  g.position.x = -.56; // centrada sobre su bancada
+  g.traverse(o => { if (o instanceof THREE.Mesh) o.castShadow = o.receiveShadow = true; });
   scene.add(g);
 
-  const crankR = .9, beamEnd = new THREE.Vector3(), crank = new THREE.Vector3(), mid = new THREE.Vector3();
+  const crankR = .9, end = new THREE.Vector3(), pin = new THREE.Vector3(), p1 = new THREE.Vector3(), p2 = new THREE.Vector3();
+  const beamPoint = (x: number, out: THREE.Vector3) => out.set(x, 0, 0).applyEuler(beam.rotation).add(beam.position);
   return (t: number) => {
-    wheel.rotation.z = -t * .9;
-    beam.rotation.z = Math.sin(t * .9) * .09;
-    gov.rotation.y = t * 2;
-    beamEnd.set(3.2, 0, 0); beam.localToWorld(beamEnd); g.worldToLocal(beamEnd);
-    crank.set(wheel.position.x + Math.sin(t * .9) * crankR, wheel.position.y + Math.cos(t * .9) * crankR, .3);
-    mid.addVectors(beamEnd, crank).multiplyScalar(.5);
-    rod.position.copy(mid); rod.scale.y = beamEnd.distanceTo(crank);
-    rod.rotation.z = Math.atan2(crank.y - beamEnd.y, crank.x - beamEnd.x) - Math.PI / 2;
+    const ang = t * .9;
+    wheel.rotation.z = -ang; crank.rotation.z = -ang;
+    beam.rotation.z = Math.cos(ang) * .1;
+    gov.rotation.y = t * 2.4;
+    arms.forEach((arm, i) => { arm.rotation.z = (i ? 1 : -1) * (.55 + Math.sin(t * .7) * .05); });
+    // Biela: del extremo del balancín a la muñequilla del volante.
+    pin.set(WX + Math.sin(ang) * crankR, base + Math.cos(ang) * crankR, .45);
+    link(conRod, beamPoint(BEAM, end), pin);
+    // Vástagos del émbolo, de la bomba y de la válvula: verticales, colgados del balancín.
+    const top = beamPoint(-3, end).y; link(pistonRod, p1.set(-3.6, base + 2.9, 0), p2.set(-3.6, top, 0));
+    const mid = beamPoint(-2, end).y; link(pumpRod, p1.set(-2.6, base + 1.4, -.4), p2.set(-2.6, mid, -.4));
+    link(valve, p1.set(-3.25, base + 2.4, .75), p2.set(-3.25, mid - .2, .75));
   };
 }
 
@@ -260,8 +351,8 @@ export function mountHall(container: HTMLElement, list: Stand[], slot: string) {
     if (Math.abs(x) > W / 2 - 1 || Math.abs(z) > L / 2 - 1) return false;
     if (COLUMNS.some(([cx, cz]) => Math.abs(x - cx) < .9 && Math.abs(z - cz) < .9)) return false;
     if (upstairs) return Math.abs(x) > iw / 2 + .2 || Math.abs(z) > il / 2 + .2;
-    if (Math.abs(x) < 4.8 && Math.abs(z) < 3.3) return false; // bancada de la máquina
-    return !(Math.abs(x) > STAND_X - 2.3 && Math.abs(x) < STAND_X + .4 && STAND_Z.some(sz => Math.abs(z - sz) < 2.4)); // stands
+    if (Math.abs(x) < 5 && Math.abs(z) < 2.9) return false; // bancada de la máquina
+    return !(Math.abs(x) > STAND_X - 2 && Math.abs(x) < STAND_X + .4 && STAND_Z.some(sz => Math.abs(z - sz) < 2.4)); // stands
   };
   const forward = new THREE.Vector3(), look = new THREE.Vector3();
   // Velocidad suavizada: arranca y frena en ~0,2 s en lugar de saltar de 0 a máximo (eso daba tirones).

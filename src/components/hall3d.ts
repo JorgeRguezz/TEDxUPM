@@ -10,6 +10,13 @@ export type View = 'entrance' | 'machine' | 'gallery';
 const W = 20, L = 26, G = 3.2; // ancho, largo y fondo de las galerías (m)
 const FLOOR1 = 5.5, TOP = 10.5; // altura de la galería y arranque de la cubierta
 const RED = 0xeb0028;
+// Pilares de la galería (los usan el dibujo y las colisiones).
+const COLUMNS: [number, number][] = (() => {
+  const iw = W - 2 * G, il = L - 2 * G, cols: [number, number][] = [];
+  for (let i = 0; i <= 4; i++) { const z = -il / 2 + (il / 4) * i; cols.push([-iw / 2, z], [iw / 2, z]); }
+  for (const x of [-iw / 6, iw / 6]) cols.push([x, -il / 2], [x, il / 2]);
+  return cols;
+})();
 
 const VIEWS: Record<View, [THREE.Vector3, THREE.Vector3]> = {
   entrance: [new THREE.Vector3(0, 1.65, 11.5), new THREE.Vector3(0, 2.4, 0)],
@@ -89,10 +96,7 @@ function hall(scene: THREE.Scene) {
   scene.add(box(G, .45, L, plaster, -W / 2 + G / 2, FLOOR1, 0), box(G, .45, L, plaster, W / 2 - G / 2, FLOOR1, 0), box(iw, .45, G, plaster, 0, FLOOR1, -L / 2 + G / 2), box(iw, .45, G, plaster, 0, FLOOR1, L / 2 - G / 2));
   const rail = FLOOR1 + .78;
   scene.add(box(.25, 1.1, il, plaster, -iw / 2, rail, 0), box(.25, 1.1, il, plaster, iw / 2, rail, 0), box(iw, 1.1, .25, plaster, 0, rail, -il / 2), box(iw, 1.1, .25, plaster, 0, rail, il / 2));
-  const cols: [number, number][] = [];
-  for (let i = 0; i <= 4; i++) { const z = -il / 2 + (il / 4) * i; cols.push([-iw / 2, z], [iw / 2, z]); }
-  for (const x of [-iw / 6, iw / 6]) cols.push([x, -il / 2], [x, il / 2]);
-  for (const [x, z] of cols) scene.add(box(.7, FLOOR1, .7, stone, x, FLOOR1 / 2, z), box(.6, TOP - FLOOR1, .6, plaster, x, (FLOOR1 + TOP) / 2, z));
+  for (const [x, z] of COLUMNS) scene.add(box(.7, FLOOR1, .7, stone, x, FLOOR1 / 2, z), box(.6, TOP - FLOOR1, .6, plaster, x, (FLOOR1 + TOP) / 2, z));
   // Cornisa sobre la que apoya la cubierta.
   scene.add(box(iw + 1, .5, .9, plaster, 0, TOP, -il / 2), box(iw + 1, .5, .9, plaster, 0, TOP, il / 2), box(.9, .5, il, plaster, -iw / 2, TOP, 0), box(.9, .5, il, plaster, iw / 2, TOP, 0));
   // Techo plano de las galerías (anillo alrededor de la bóveda).
@@ -239,7 +243,7 @@ export function mountHall(container: HTMLElement, list: Stand[], slot: string) {
     const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
     if (!MOVE[k]) return;
     e.preventDefault(); held.add(k);
-    if (!e.repeat) walk(.15); // un toque corto también avanza un paso
+    if (!e.repeat) walk(.12); // un toque corto también da un paso (~40 cm o ~8°)
   };
   const keyup = (e: KeyboardEvent) => { held.delete(e.key.length === 1 ? e.key.toLowerCase() : e.key); };
   const blur = () => held.clear();
@@ -247,9 +251,11 @@ export function mountHall(container: HTMLElement, list: Stand[], slot: string) {
   // Zonas transitables: dentro de los muros y fuera de la bancada de la máquina; en la galería, solo el anillo (no el hueco central).
   const iw = W - 2 * G, il = L - 2 * G;
   const walkable = (x: number, z: number, upstairs: boolean) => {
-    if (Math.abs(x) > W / 2 - .5 || Math.abs(z) > L / 2 - .5) return false;
-    if (upstairs) return Math.abs(x) > iw / 2 + .3 || Math.abs(z) > il / 2 + .3;
-    return !(Math.abs(x) < 5.2 && Math.abs(z) < 3.2);
+    if (Math.abs(x) > W / 2 - 1 || Math.abs(z) > L / 2 - 1) return false;
+    if (COLUMNS.some(([cx, cz]) => Math.abs(x - cx) < .9 && Math.abs(z - cz) < .9)) return false;
+    if (upstairs) return Math.abs(x) > iw / 2 + .5 || Math.abs(z) > il / 2 + .5;
+    if (Math.abs(x) < 5.4 && Math.abs(z) < 3.4) return false; // bancada de la máquina
+    return !(Math.abs(x) > 4.4 && Math.abs(x) < 6.9 && [-6.5, 0, 6.5].some(sz => Math.abs(z - sz) < 2.6)); // stands
   };
   const forward = new THREE.Vector3(), next = new THREE.Vector3();
   const walk = (dt: number) => {
@@ -257,7 +263,7 @@ export function mountHall(container: HTMLElement, list: Stand[], slot: string) {
     held.forEach(k => { move += MOVE[k][0]; turn += MOVE[k][1]; });
     if (!move && !turn) return;
     const look = controls.target.clone().sub(camera.position);
-    if (turn) look.applyAxisAngle(THREE.Object3D.DEFAULT_UP, turn * 1.8 * dt);
+    if (turn) look.applyAxisAngle(THREE.Object3D.DEFAULT_UP, turn * 1.2 * dt);
     if (move) {
       forward.set(look.x, 0, look.z).normalize();
       next.copy(camera.position).addScaledVector(forward, move * 3.2 * dt);

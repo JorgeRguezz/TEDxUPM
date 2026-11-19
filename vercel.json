@@ -7,7 +7,7 @@
   "trailingSlash": true,
   "redirects": [
     {
-      "source": "/:lang(es|en)/:path+",
+      "source": "/:lang(es|en)/:old(about|prototype)/",
       "destination": "/:lang/",
       "permanent": false
     }

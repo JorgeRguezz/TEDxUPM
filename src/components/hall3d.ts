@@ -52,6 +52,7 @@ function floorTexture() {
 // Panel trasero del stand: logo del partner o hueco «Tu logo aquí».
 function panelTexture(stand: Stand, slot: string, onReady: () => void) {
   const draw = (c: CanvasRenderingContext2D, img?: HTMLImageElement) => {
+    c.textAlign = 'left'; c.setLineDash([]); // el hueco «Tu logo aquí» deja el texto centrado: se reinicia en cada dibujo
     c.fillStyle = '#0d0d0d'; c.fillRect(0, 0, 1024, 768);
     c.fillStyle = `#${RED.toString(16)}`; c.fillRect(0, 0, 1024, 64);
     c.fillStyle = '#fff'; c.font = '700 34px Inter, Arial, sans-serif'; c.textBaseline = 'middle';
@@ -248,7 +249,6 @@ export function mountHall(container: HTMLElement, list: Stand[], slot: string) {
     const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
     if (!MOVE[k]) return;
     e.preventDefault(); held.add(k);
-    if (!e.repeat) walk(.12); // un toque corto también da un paso (~40 cm o ~8°)
   };
   const keyup = (e: KeyboardEvent) => { held.delete(e.key.length === 1 ? e.key.toLowerCase() : e.key); };
   const blur = () => held.clear();
@@ -264,16 +264,20 @@ export function mountHall(container: HTMLElement, list: Stand[], slot: string) {
     return !(Math.abs(x) > STAND_X - 2.3 && Math.abs(x) < STAND_X + .4 && STAND_Z.some(sz => Math.abs(z - sz) < 2.4)); // stands
   };
   const forward = new THREE.Vector3(), look = new THREE.Vector3();
+  // Velocidad suavizada: arranca y frena en ~0,2 s en lugar de saltar de 0 a máximo (eso daba tirones).
+  let speed = 0, spin = 0;
   const walk = (dt: number) => {
     let move = 0, turn = 0;
     held.forEach(k => { move += MOVE[k][0]; turn += MOVE[k][1]; });
-    if (!move && !turn) return;
+    const ease = 1 - Math.exp(-dt * 12);
+    speed += (Math.sign(move) * 3.2 - speed) * ease; spin += (Math.sign(turn) * 1.3 - spin) * ease;
+    if (Math.abs(speed) < .01 && Math.abs(spin) < .005) { speed = spin = 0; return; }
     look.subVectors(controls.target, camera.position);
-    if (turn) look.applyAxisAngle(THREE.Object3D.DEFAULT_UP, turn * 1.2 * dt);
-    if (move) {
+    if (spin) look.applyAxisAngle(THREE.Object3D.DEFAULT_UP, spin * dt);
+    if (speed) {
       forward.set(look.x, 0, look.z).normalize();
       // Cada eje por separado: al chocar se desliza a lo largo del obstáculo en vez de quedarse clavado.
-      const p = camera.position, up = p.y > FLOOR1, dx = forward.x * move * 3.2 * dt, dz = forward.z * move * 3.2 * dt;
+      const p = camera.position, up = p.y > FLOOR1, dx = forward.x * speed * dt, dz = forward.z * speed * dt;
       if (walkable(p.x + dx, p.z, up)) p.x += dx;
       if (walkable(p.x, p.z + dz, up)) p.z += dz;
     }

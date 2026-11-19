@@ -1,4 +1,5 @@
 export type Locale = 'es' | 'en';
+export type Page = 'home' | 'partners';
 
 export const event = {
   name: 'TEDxUniversidad Politecnica Madrid',
@@ -12,4 +13,5 @@ export const event = {
 };
 
 export const localeOf = (path: string): Locale => (path.split('/')[1] === 'en' ? 'en' : 'es');
-export const href = (locale: Locale) => `/${locale}/`;
+export const pageOf = (path: string): Page => (path.split('/')[2] === 'partners' ? 'partners' : 'home');
+export const href = (locale: Locale, page: Page = 'home') => `/${locale}/${page === 'home' ? '' : `${page}/`}`;

@@ -260,7 +260,7 @@ export function mountHall(container: HTMLElement, list: Stand[], slot: string) {
     if (Math.abs(x) > W / 2 - 1 || Math.abs(z) > L / 2 - 1) return false;
     if (COLUMNS.some(([cx, cz]) => Math.abs(x - cx) < .9 && Math.abs(z - cz) < .9)) return false;
     if (upstairs) return Math.abs(x) > iw / 2 + .2 || Math.abs(z) > il / 2 + .2;
-    if (Math.abs(x) < 4.1 && Math.abs(z) < 2.6) return false; // bancada de la máquina
+    if (Math.abs(x) < 4.8 && Math.abs(z) < 3.3) return false; // bancada de la máquina
     return !(Math.abs(x) > STAND_X - 2.3 && Math.abs(x) < STAND_X + .4 && STAND_Z.some(sz => Math.abs(z - sz) < 2.4)); // stands
   };
   const forward = new THREE.Vector3(), look = new THREE.Vector3();

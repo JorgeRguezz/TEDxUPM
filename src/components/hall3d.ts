@@ -235,10 +235,14 @@ export function mountHall(container: HTMLElement, list: Stand[], slot: string) {
   // Con el teclado: ↑/↓ (o W/S) caminar, ←/→ (o A/D) girar, mientras la tecla esté pulsada.
   const MOVE: Record<string, [number, number]> = { ArrowUp: [1, 0], w: [1, 0], ArrowDown: [-1, 0], s: [-1, 0], ArrowLeft: [0, 1], a: [0, 1], ArrowRight: [0, -1], d: [0, -1] };
   const held = new Set<string>();
-  const keydown = (e: KeyboardEvent) => { const k = e.key.length === 1 ? e.key.toLowerCase() : e.key; if (MOVE[k]) { e.preventDefault(); held.add(k); } };
+  const keydown = (e: KeyboardEvent) => {
+    const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    if (!MOVE[k]) return;
+    e.preventDefault(); held.add(k);
+    if (!e.repeat) walk(.15); // un toque corto también avanza un paso
+  };
   const keyup = (e: KeyboardEvent) => { held.delete(e.key.length === 1 ? e.key.toLowerCase() : e.key); };
   const blur = () => held.clear();
-  container.addEventListener('keydown', keydown); container.addEventListener('keyup', keyup); container.addEventListener('blur', blur);
 
   // Zonas transitables: dentro de los muros y fuera de la bancada de la máquina; en la galería, solo el anillo (no el hueco central).
   const iw = W - 2 * G, il = L - 2 * G;
@@ -262,6 +266,8 @@ export function mountHall(container: HTMLElement, list: Stand[], slot: string) {
     controls.target.copy(camera.position).add(look);
     dirty = true;
   };
+  // En la ventana mientras el visor está abierto (es modal): funciona aunque el foco esté en un botón de vista.
+  addEventListener('keydown', keydown); addEventListener('keyup', keyup); addEventListener('blur', blur);
 
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const clock = new THREE.Clock();
@@ -277,7 +283,7 @@ export function mountHall(container: HTMLElement, list: Stand[], slot: string) {
   return {
     go: (view: View) => { go(view); dirty = true; },
     dispose: () => {
-      renderer.setAnimationLoop(null); ro.disconnect(); controls.dispose(); container.removeEventListener('keydown', keydown); container.removeEventListener('keyup', keyup); container.removeEventListener('blur', blur);
+      renderer.setAnimationLoop(null); ro.disconnect(); controls.dispose(); removeEventListener('keydown', keydown); removeEventListener('keyup', keyup); removeEventListener('blur', blur);
       scene.traverse(o => { if (o instanceof THREE.Mesh) { o.geometry.dispose(); (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => { m.map?.dispose(); m.dispose(); }); } });
       pmrem.dispose(); renderer.dispose(); renderer.domElement.remove();
     },

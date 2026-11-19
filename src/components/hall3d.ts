@@ -232,31 +232,52 @@ export function mountHall(container: HTMLElement, list: Stand[], slot: string) {
   };
   const ro = new ResizeObserver(resize); ro.observe(container); resize();
   controls.addEventListener('change', invalidate);
-  // Con el teclado: flechas para girar.
-  const keys = (e: KeyboardEvent) => {
-    const step = { ArrowLeft: [.12, 0], ArrowRight: [-.12, 0], ArrowUp: [0, .08], ArrowDown: [0, -.08] }[e.key];
-    if (!step) return;
-    e.preventDefault();
-    const dir = controls.target.clone().sub(camera.position);
-    const s = new THREE.Spherical().setFromVector3(dir);
-    s.theta += step[0]; s.phi = THREE.MathUtils.clamp(s.phi - step[1], .2, Math.PI - .2);
-    controls.target.copy(camera.position).add(new THREE.Vector3().setFromSpherical(s));
-    controls.update();
+  // Con el teclado: ↑/↓ (o W/S) caminar, ←/→ (o A/D) girar, mientras la tecla esté pulsada.
+  const MOVE: Record<string, [number, number]> = { ArrowUp: [1, 0], w: [1, 0], ArrowDown: [-1, 0], s: [-1, 0], ArrowLeft: [0, 1], a: [0, 1], ArrowRight: [0, -1], d: [0, -1] };
+  const held = new Set<string>();
+  const keydown = (e: KeyboardEvent) => { const k = e.key.length === 1 ? e.key.toLowerCase() : e.key; if (MOVE[k]) { e.preventDefault(); held.add(k); } };
+  const keyup = (e: KeyboardEvent) => { held.delete(e.key.length === 1 ? e.key.toLowerCase() : e.key); };
+  const blur = () => held.clear();
+  container.addEventListener('keydown', keydown); container.addEventListener('keyup', keyup); container.addEventListener('blur', blur);
+
+  // Zonas transitables: dentro de los muros y fuera de la bancada de la máquina; en la galería, solo el anillo (no el hueco central).
+  const iw = W - 2 * G, il = L - 2 * G;
+  const walkable = (x: number, z: number, upstairs: boolean) => {
+    if (Math.abs(x) > W / 2 - .5 || Math.abs(z) > L / 2 - .5) return false;
+    if (upstairs) return Math.abs(x) > iw / 2 + .3 || Math.abs(z) > il / 2 + .3;
+    return !(Math.abs(x) < 5.2 && Math.abs(z) < 3.2);
   };
-  container.addEventListener('keydown', keys);
+  const forward = new THREE.Vector3(), next = new THREE.Vector3();
+  const walk = (dt: number) => {
+    let move = 0, turn = 0;
+    held.forEach(k => { move += MOVE[k][0]; turn += MOVE[k][1]; });
+    if (!move && !turn) return;
+    const look = controls.target.clone().sub(camera.position);
+    if (turn) look.applyAxisAngle(THREE.Object3D.DEFAULT_UP, turn * 1.8 * dt);
+    if (move) {
+      forward.set(look.x, 0, look.z).normalize();
+      next.copy(camera.position).addScaledVector(forward, move * 3.2 * dt);
+      if (walkable(next.x, next.z, camera.position.y > FLOOR1)) camera.position.copy(next);
+    }
+    controls.target.copy(camera.position).add(look);
+    dirty = true;
+  };
 
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const clock = new THREE.Clock();
+  let last = 0;
   renderer.setAnimationLoop(() => {
+    const now = clock.getElapsedTime(), dt = Math.min(now - last, .1); last = now;
+    walk(dt);
     controls.update();
-    if (!still) { animate(clock.getElapsedTime()); dirty = true; }
+    if (!still) { animate(now); dirty = true; }
     if (dirty) { renderer.render(scene, camera); dirty = false; }
   });
 
   return {
     go: (view: View) => { go(view); dirty = true; },
     dispose: () => {
-      renderer.setAnimationLoop(null); ro.disconnect(); controls.dispose(); container.removeEventListener('keydown', keys);
+      renderer.setAnimationLoop(null); ro.disconnect(); controls.dispose(); container.removeEventListener('keydown', keydown); container.removeEventListener('keyup', keyup); container.removeEventListener('blur', blur);
       scene.traverse(o => { if (o instanceof THREE.Mesh) { o.geometry.dispose(); (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => { m.map?.dispose(); m.dispose(); }); } });
       pmrem.dispose(); renderer.dispose(); renderer.domElement.remove();
     },

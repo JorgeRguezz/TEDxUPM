@@ -79,10 +79,10 @@
 .pt-meta{display:flex;flex-wrap:wrap;gap:0 14px;font-size:14px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
 .pt-meta b{color:var(--red);margin-right:14px}
 .pt-intro{color:var(--muted);font-size:17px;line-height:1.6;max-width:52ch}
-.pt-hall{margin:0;justify-self:end;width:100%;max-width:440px}
-.pt-hall button{position:relative;display:block;width:100%;padding:0;border:0;background:none;color:#fff;overflow:hidden}
+.pt-hall{margin:0;justify-self:end;width:100%;max-width:620px}
+.pt-hall button{display:grid;width:100%;padding:0;border:0;background:none;color:#fff;overflow:hidden}
 .pt-hall img{display:block;width:100%;height:auto;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
-.pt-hall button>span{position:absolute;right:0;top:0;display:flex;align-items:center;gap:.5em;min-height:48px;padding:0 18px;background:#000;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.pt-hall button>span{display:flex;justify-content:flex-end;align-items:center;gap:.5em;min-height:48px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
 .pt-hall b{color:var(--red);transition:transform .3s}
 .pt-hall button:hover img,.pt-hall button:focus-visible img{transform:scale(1.04)}
 .pt-hall button:hover b,.pt-hall button:focus-visible b{transform:translate(3px,-3px)}

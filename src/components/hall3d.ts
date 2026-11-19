@@ -159,7 +159,7 @@ function link(rod: THREE.Mesh, a: THREE.Vector3, b: THREE.Vector3) {
   rod.quaternion.setFromUnitVectors(THREE.Object3D.DEFAULT_UP, dir.subVectors(b, a).normalize());
 }
 
-function machine(scene: THREE.Scene) {
+export function machine(scene: THREE.Scene) {
   const g = new THREE.Group();
   const stoneM = new THREE.MeshStandardMaterial({ color: 0xbdb8ae, roughness: .85 });
   const pit = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 1 });
@@ -168,8 +168,8 @@ function machine(scene: THREE.Scene) {
   const brass = new THREE.MeshStandardMaterial({ color: 0xb08d3c, roughness: .3, metalness: .85 });
 
   // Bancada: losa grande, segundo escalón y foso del volante.
-  g.add(box(12.2, .45, 5.6, stoneM, .8, .225, 0), box(10.4, .35, 4.6, stoneM, .6, .625, 0));
-  g.add(box(6.6, .02, .9, pit, 3.3, .81, 0));
+  g.add(box(12.6, .45, 5.6, stoneM, 1, .225, 0), box(11.4, .35, 4.6, stoneM, 1, .625, 0));
+  g.add(box(6.4, .02, .9, pit, 3.3, .81, 0));
   const base = .8;
   g.add(box(6.6, .22, 3, iron, -1.4, base + .11, 0)); // placa de asiento del bastidor
 
@@ -247,7 +247,7 @@ function machine(scene: THREE.Scene) {
   const conRod = new THREE.Mesh(new THREE.CylinderGeometry(.1, .14, 1, 12), iron); g.add(conRod);
 
   g.scale.setScalar(.7); // la máquina real es más contenida que la sala: deja aire hasta los stands
-  g.position.x = -.56; // centrada sobre su bancada
+  g.position.x = -.7; // centrada sobre su bancada
   g.traverse(o => { if (o instanceof THREE.Mesh) o.castShadow = o.receiveShadow = true; });
   scene.add(g);
 

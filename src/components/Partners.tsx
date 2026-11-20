@@ -14,7 +14,7 @@ const t = {
     label: 'Partners',
     title: 'Cómo colaborar en la jornada',
     meta: ['26.02.2027', 'ETSII · Madrid', 'Unas 350 personas'],
-    intro: 'Primera edición de TEDxUniversidad Politecnica Madrid. Así será el día y así podéis formar parte de él.',
+    intro: 'Primera edición de TEDxUniversidad Politécnica Madrid. Así será el día y así podéis formar parte de él.',
     day: {
       label: 'La jornada',
       title: 'Un día de ideas en la ETSII',
@@ -84,7 +84,7 @@ const t = {
     label: 'Partners',
     title: 'How to take part on the day',
     meta: ['26.02.2027', 'ETSII · Madrid', 'About 350 people'],
-    intro: 'The first edition of TEDxUniversidad Politecnica Madrid. What the day looks like and how you can be part of it.',
+    intro: 'The first edition of TEDxUniversidad Politécnica Madrid. What the day looks like and how you can be part of it.',
     day: {
       label: 'The day',
       title: 'A day of ideas at ETSII',
@@ -217,7 +217,7 @@ export function Partners({ locale }: { locale: Locale }) {
       <figure className="pt-browser">
         <div className="pt-bar" aria-hidden="true"><i /><i /><i /><span>tedxupm.vercel.app{href(locale, 'partners')}</span></div>
         <div className="pt-screen">
-          <p className="pt-screen-brand" aria-hidden="true"><TedxMark /><span>Universidad<br />Politecnica Madrid</span></p>
+          <p className="pt-screen-brand" aria-hidden="true"><TedxMark /><span>Universidad<br />Politécnica Madrid</span></p>
           <h3>{p.partnersTitle}</h3>
           <ul>
             {p.tiers.map((tier, i) => {

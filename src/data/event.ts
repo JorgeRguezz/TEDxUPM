@@ -2,7 +2,7 @@ export type Locale = 'es' | 'en';
 export type Page = 'home' | 'partners';
 
 export const event = {
-  name: 'TEDxUniversidad Politecnica Madrid',
+  name: 'TEDxUniversidad Politécnica Madrid',
   date: '2027-02-26',
   venue: 'ETSII · Universidad Politécnica de Madrid',
   address: 'Calle de José Gutiérrez Abascal, 2 · Madrid',

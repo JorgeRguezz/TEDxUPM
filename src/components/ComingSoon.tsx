@@ -14,6 +14,7 @@ const t = {
   es: {
     soon: 'Próximamente', date: '26.02.2027', place: 'ETSII · Madrid', placeLabel: 'Cómo llegar a la ETSII, Madrid',
     units: ['días', 'horas', 'min', 'seg'], today: 'Hoy es el día.', countLabel: 'Tiempo restante hasta el evento',
+    venue: { label: 'Dónde', title: 'Escuela Técnica Superior de Ingenieros Industriales', cta: 'Cómo llegar', alt: 'Máquina de vapor de Watt de la Sala de la Máquina de la ETSII' },
     day: {
       label: 'La jornada',
       title: 'Un día de charlas en la ETSII',
@@ -46,6 +47,7 @@ const t = {
   en: {
     soon: 'Coming soon', date: '26.02.2027', place: 'ETSII · Madrid', placeLabel: 'Directions to ETSII, Madrid',
     units: ['days', 'hours', 'min', 'sec'], today: 'The day is here.', countLabel: 'Time left until the event',
+    venue: { label: 'Where', title: 'Escuela Técnica Superior de Ingenieros Industriales', cta: 'Directions', alt: 'Watt steam engine in the ETSII Machine Hall' },
     day: {
       label: 'The day',
       title: 'A day of talks at ETSII',
@@ -140,6 +142,16 @@ export function ComingSoon({ locale }: { locale: Locale }) {
           <a href={url} {...(external ? { target: '_blank', rel: 'noreferrer' } : {})}>{cta} <span aria-hidden="true">{external ? '↗' : '→'}</span></a>
         </article>;
       })}
+    </section>
+
+    <section className="cs-venue" aria-labelledby="cs-venue-title">
+      <img src="/img/maquina-watt-bn.jpg" alt={p.venue.alt} width={800} height={594} loading="lazy" />
+      <div>
+        <p className="cs-label">{p.venue.label}</p>
+        <h2 id="cs-venue-title">{p.venue.title}</h2>
+        <address>Calle de José Gutiérrez Abascal, 2<br />28006 Madrid</address>
+        <a href={event.directions} target="_blank" rel="noreferrer">{p.venue.cta} <span aria-hidden="true">↗</span></a>
+      </div>
     </section>
 
     <SiteFooter locale={locale} />

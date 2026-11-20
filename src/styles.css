@@ -10,7 +10,8 @@
 .cs{position:relative;isolation:isolate;--bg:#000;--fg:#fff;--muted:#8c8c8c;--line:#262626;--g:max(16px,5vw);background:var(--bg);color:var(--fg);min-height:100svh;display:flex;flex-direction:column;color-scheme:dark}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .cs-top{display:flex;justify-content:space-between;align-items:center;padding:20px var(--g)}
-.cs-brand{display:flex;align-items:center;gap:10px}.cs-brand>span{font-size:14px;font-weight:500;line-height:1.25}
+.cs-brand{display:flex;align-items:center;gap:12px}.cs-brand .brand-mark{width:auto;height:31px}.cs-brand>span{font-size:13px;font-weight:600;line-height:1.2;letter-spacing:-.01em}
+@media(max-width:720px){.cs-brand{gap:10px}.cs-brand .brand-mark{height:26px}.cs-brand>span{font-size:11px}}
 .cs-tools{display:flex;align-items:center;gap:8px}
 .cs-lang{display:flex;font-size:13px;font-weight:600}.cs-lang a{display:flex;align-items:center;justify-content:center;min-width:40px;min-height:44px;color:var(--muted)}.cs-lang a[aria-current]{color:var(--fg)}
 .cs-hero{position:relative;flex:1;min-height:calc(100svh - 84px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(20px,3vh,32px);padding:24px var(--g) 112px;text-align:center}
@@ -53,7 +54,7 @@
 /* Pie: aviso legal a la izquierda, redes a la derecha (debajo en móvil). */
 .cs-end{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 24px}
 .cs-social{display:flex;gap:24px;font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
-.cs-social a{display:inline-flex;align-items:center;min-height:44px}
+.cs-social a{display:inline-flex;align-items:center;gap:8px;min-height:44px}.cs-social svg{width:16px;height:16px;fill:currentColor;flex-shrink:0}
 /* CTA: el subrayado rojo se llena hasta ser un botón y la flecha sale en diagonal. */
 .cs-calls a{gap:.5em;padding-inline:8px;margin-inline:-8px;background:linear-gradient(var(--red),var(--red)) 0 100%/100% 2px no-repeat;transition:background-size .35s cubic-bezier(.2,.8,.2,1),color .2s}
 .cs-calls a span{transition:transform .35s cubic-bezier(.2,.8,.2,1)}
@@ -154,3 +155,14 @@
 
 .cs-points { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; max-width: 46ch; font-size: 16px; color: var(--muted); }
 .cs-points strong { color: var(--fg); font-weight: 600; }
+
+/* Dónde: la máquina de Watt invertida (blanca sobre negro; la web es solo oscura) y la dirección. */
+.cs-venue{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:clamp(32px,6vw,96px);align-items:center;padding:clamp(56px,8vw,112px) var(--g)}
+.cs-venue img{display:block;width:100%;height:auto;filter:invert(1);mix-blend-mode:screen}
+.cs-venue>div{display:grid;justify-items:start;gap:14px}
+.cs-venue h2{font-size:clamp(34px,4.4vw,64px);font-weight:700;letter-spacing:-.05em;line-height:.98;max-width:13ch}
+.cs-venue address{font-style:normal;color:var(--muted);font-size:16px;line-height:1.7;margin-top:8px}
+.cs-venue a{display:inline-flex;align-items:center;gap:.5em;min-height:44px;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding-inline:8px;margin-inline:-8px;background:linear-gradient(var(--red),var(--red)) 0 100%/100% 2px no-repeat;transition:background-size .35s cubic-bezier(.2,.8,.2,1),color .2s}
+.cs-venue a:hover,.cs-venue a:focus-visible{background-size:100% 100%;color:#fff}
+@media(prefers-reduced-motion:reduce){.cs-venue a{transition:none}}
+@media(max-width:720px){.cs-venue{grid-template-columns:1fr}}

@@ -42,7 +42,7 @@ Contraste AA. Objetivos táctiles de 44px. Foco visible (contorno de 2px; rojo e
 
 ## Normas TED que afectan al diseño
 
-- Nombre completo «TEDxUniversidad Politecnica Madrid» en público. «TEDxUPM» solo interno.
+- Nombre completo «TEDxUniversidad Politécnica Madrid» en público. «TEDxUPM» solo interno.
 - Sin logos ni nombres de partners en la home. Van en `/partners`, y más pequeños que el logo TEDx.
 - Logo UPM nunca junto al wordmark ni en la cabecera (pendiente de confirmar con TED).
 - Pie obligatorio: «This independent TEDx event is operated under license from TED.»

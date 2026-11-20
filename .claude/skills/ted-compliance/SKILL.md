@@ -9,7 +9,7 @@ Requiere un build reciente (`npm run build`). Revisa `dist/` y `src/`.
 
 | # | Norma | Cómo comprobarlo |
 |---|---|---|
-| 1 | Nombre público completo «TEDxUniversidad Politecnica Madrid» | `grep -rn "TEDxUPM" src dist --include=*.tsx --include=*.html`: no debe salir en texto visible |
+| 1 | Nombre público completo «TEDxUniversidad Politécnica Madrid» | `grep -rn "TEDxUPM" src dist --include=*.tsx --include=*.html`: no debe salir en texto visible |
 | 2 | Sin partners en la home | `grep -ril -E "bbva\|sponsor\|patrocin" dist/index.html dist/es dist/en`: vacío |
 | 3 | Partners sin contrato fuera de `main` | `grep -ril bbva dist src public 2>/dev/null`: vacío |
 | 4 | Pie legal en inglés | `grep -c "operated under license from TED" dist/es/index.html dist/en/index.html`: 1 en cada uno |

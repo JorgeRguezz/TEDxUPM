@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { event, href, type Locale } from '../data/event';
 import { SiteFooter, SiteHeader } from './Site';
 
@@ -21,7 +21,13 @@ const t = {
       body: 'Charlas breves en el auditorio y encuentros en la Sala de la Máquina.',
       facts: [['~350', 'personas'], ['Auditorio', 'charlas'], ['Sala de la Máquina', 'encuentros en las pausas']],
     },
-    // Ponentes: destino provisional (Instagram) hasta tener email de contacto.
+    // Ponentes: la propuesta de charla llega por correo.
+    subscribe: {
+      label: 'Novedades', title: 'Avisadme de las novedades', email: 'Correo electrónico', send: 'Apuntarme',
+      consent: 'Acepto recibir novedades de TEDxUniversidad Politécnica Madrid.',
+      privacy: `Responsable: TEDxUniversidad Politécnica Madrid. Finalidad: avisarte de entradas, ponentes y novedades del evento. Conservación: hasta que pidas la baja. Acceso, rectificación y supresión en ${event.email}.`,
+      done: 'Listo. Te avisaremos.', error: `No se ha podido guardar. Inténtalo de nuevo o escribe a ${event.email}.`,
+    },
     calls: [
       {
         label: 'Para empresas',
@@ -40,7 +46,7 @@ const t = {
         title: 'Buscamos ideas, no currículums',
         body: 'Ingeniería, tecnología, investigación, emprendimiento o el propio oficio de comunicar: buscamos ideas propias y con fundamento.',
         cta: 'Propón tu charla',
-        url: event.instagram,
+        url: `mailto:${event.email}?subject=${encodeURIComponent('Propuesta de charla')}`,
       },
     ] as Call[],
   },
@@ -53,6 +59,12 @@ const t = {
       title: 'A day of talks at ETSII',
       body: 'Short talks in the auditorium and meetings in the Machine Hall.',
       facts: [['~350', 'people'], ['Auditorium', 'talks'], ['Machine Hall', 'meetings during the breaks']],
+    },
+    subscribe: {
+      label: 'Updates', title: 'Keep me posted', email: 'Email address', send: 'Sign me up',
+      consent: 'I agree to receive updates from TEDxUniversidad Politécnica Madrid.',
+      privacy: `Controller: TEDxUniversidad Politécnica Madrid. Purpose: telling you about tickets, speakers and event news. Retention: until you ask to unsubscribe. Access, rectification and erasure at ${event.email}.`,
+      done: "Done. We'll let you know.", error: `We couldn't save it. Try again or write to ${event.email}.`,
     },
     calls: [
       {
@@ -72,7 +84,7 @@ const t = {
         title: "We're after ideas, not résumés",
         body: 'Engineering, technology, research, entrepreneurship, or the craft of speaking itself: bring an original, well-grounded idea.',
         cta: 'Propose a talk',
-        url: event.instagram,
+        url: `mailto:${event.email}?subject=${encodeURIComponent('Talk proposal')}`,
       },
     ] as Call[],
   },
@@ -81,6 +93,40 @@ const t = {
 export function remaining(ms: number) {
   const s = Math.max(0, Math.floor(ms / 1000));
   return [Math.floor(s / 86400), Math.floor(s / 3600) % 24, Math.floor(s / 60) % 60, s % 60];
+}
+
+// Alta en la lista de novedades: POST /api/subscribe (guarda el correo; el envío con Resend llegará más adelante).
+function Subscribe({ locale }: { locale: Locale }) {
+  const p = t[locale].subscribe;
+  const [state, setState] = useState<'idle' | 'sending' | 'done' | 'error'>('idle');
+  const submit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const f = new FormData(e.currentTarget);
+    setState('sending');
+    try {
+      const r = await fetch('/api/subscribe', {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ email: f.get('email'), consent: f.get('consent') === 'on', website: f.get('website') }),
+      });
+      setState(r.ok ? 'done' : 'error');
+    } catch { setState('error'); }
+  };
+  return <section className="cs-sub" aria-labelledby="cs-sub-title">
+    <p className="cs-label">{p.label}</p>
+    <h2 id="cs-sub-title">{p.title}</h2>
+    {state === 'done' ? <p role="status" className="cs-sub-msg">{p.done}</p> :
+      <form onSubmit={submit}>
+        <div className="cs-sub-row">
+          <label className="sr-only" htmlFor="cs-email">{p.email}</label>
+          <input id="cs-email" name="email" type="email" required maxLength={254} autoComplete="email" placeholder={p.email} />
+          <button type="submit" disabled={state === 'sending'}>{p.send}</button>
+        </div>
+        <label className="cs-sub-consent"><input name="consent" type="checkbox" required /> <span>{p.consent}</span></label>
+        <input className="cs-sub-hp" name="website" type="text" tabIndex={-1} autoComplete="off" aria-hidden="true" />
+        <p className="cs-sub-privacy">{p.privacy}</p>
+        {state === 'error' && <p role="alert" className="cs-sub-msg">{p.error}</p>}
+      </form>}
+  </section>;
 }
 
 export function ComingSoon({ locale }: { locale: Locale }) {
@@ -153,6 +199,8 @@ export function ComingSoon({ locale }: { locale: Locale }) {
         <a href={event.directions} target="_blank" rel="noreferrer">{p.venue.cta} <span aria-hidden="true">↗</span></a>
       </div>
     </section>
+
+    <Subscribe locale={locale} />
 
     <SiteFooter locale={locale} />
   </main>;

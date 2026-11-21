@@ -147,6 +147,7 @@
 .pt-slot{display:grid;place-items:center;width:min(100%,320px);height:110px;border:1px dashed var(--muted);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .pt-cta{display:grid;justify-items:center}
 .pt-cta a{display:inline-flex;align-items:center;gap:.5em;min-height:56px;padding-inline:24px;font-size:15px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:linear-gradient(var(--red),var(--red)) 0 100%/100% 2px no-repeat;transition:background-size .35s cubic-bezier(.2,.8,.2,1),color .2s}
+.pt-cta p{margin:12px 0 0;font-size:14px;color:var(--muted,#a7a7a7)}
 .pt-cta a:hover,.pt-cta a:focus-visible{background-size:100% 100%;color:#fff}
 .pt .cs-foot{margin-top:clamp(48px,7vw,96px)}
 @media(max-width:860px){.pt-hero,.pt-tiers,.pt-steps ol,.pt-rules ul{grid-template-columns:1fr}.pt-hall{justify-self:start}}
@@ -166,3 +167,18 @@
 .cs-venue a:hover,.cs-venue a:focus-visible{background-size:100% 100%;color:#fff}
 @media(prefers-reduced-motion:reduce){.cs-venue a{transition:none}}
 @media(max-width:720px){.cs-venue{grid-template-columns:1fr}}
+
+/* Alta en la lista de novedades (home). */
+.cs-sub{display:grid;gap:14px;justify-items:start;padding:clamp(40px,6vw,80px) var(--g);border-top:1px solid var(--line)}
+.cs-sub h2{font-size:clamp(26px,2.8vw,40px);font-weight:600;letter-spacing:-.035em;line-height:1.1}
+.cs-sub form{display:grid;gap:14px;width:min(100%,560px)}
+.cs-sub-row{display:flex;gap:8px;flex-wrap:wrap}
+.cs-sub input[type=email]{flex:1 1 240px;min-height:48px;padding:0 14px;font:inherit;font-size:16px;color:var(--fg);background:transparent;border:1px solid var(--line);border-radius:0}
+.cs-sub input[type=email]:focus-visible,.cs-sub button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.cs-sub button{min-height:48px;padding-inline:24px;font:inherit;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#fff;background:var(--red);border:0;cursor:pointer}
+.cs-sub button:disabled{opacity:.6;cursor:progress}
+.cs-sub-consent{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--fg)}
+.cs-sub-consent input{margin-top:3px;accent-color:var(--red);flex-shrink:0}
+.cs-sub-privacy{font-size:12px;line-height:1.55;color:var(--muted);max-width:60ch}
+.cs-sub-msg{font-size:15px;color:var(--fg)}
+.cs-sub-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}

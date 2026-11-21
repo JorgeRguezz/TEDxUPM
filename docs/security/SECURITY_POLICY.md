@@ -1,6 +1,6 @@
 # Seguridad y datos
 
-Hoy la web no recoge datos ni tiene secretos. Este documento fija las reglas para cuando los tenga (entradas, pagos, directorio de asistentes), porque esos sistemas manejarán pagos y datos personales de estudiantes y asistentes.
+Hoy la web recoge un único dato personal (el correo de la lista de novedades, ver abajo) y su único secreto es el token del almacén. Este documento fija las reglas para cuando los tenga (entradas, pagos, directorio de asistentes), porque esos sistemas manejarán pagos y datos personales de estudiantes y asistentes.
 
 ## Permisos para agentes
 
@@ -25,6 +25,15 @@ Antes de lanzar cualquier formulario real:
 - Proveedor con contrato de encargado de tratamiento y datos en la UE si es posible.
 - Derecho de acceso y borrado con un proceso definido.
 - El directorio de asistentes (WP-07) es opt-in y cada persona controla qué es visible.
+
+### Lista de novedades (activa)
+
+- Formulario en la home → `POST /api/subscribe` (`api/subscribe.ts`). Guarda el correo en minúsculas en el conjunto ordenado `subscribers` de Upstash Redis (integración de Vercel Marketplace); la puntuación es la fecha de consentimiento.
+- Variables de entorno (las crea la integración, nunca en el repo): `KV_REST_API_URL` y `KV_REST_API_TOKEN`. Sin ellas el endpoint responde 503 y no guarda nada. Elegir región UE al crear la base.
+- Consentimiento expreso (casilla) y aviso de privacidad junto al formulario. Pendiente: política de privacidad completa en una página propia, revisada por el equipo.
+- Defensas: solo mismo origen, cuerpo ≤ 2 KB, casilla obligatoria, campo trampa para bots. El correo no se registra en logs. Sin límite por IP (usar Vercel Firewall si hay abuso).
+- Baja y supresión: se piden a tedxupm@upm.es y se borran con `ZREM subscribers <correo>`.
+- El envío de correos (Resend) aún no existe: cuando llegue, cada envío debe llevar enlace de baja.
 
 ## Pagos y entradas (futuro, WP-05/06)
 

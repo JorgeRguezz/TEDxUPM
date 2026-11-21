@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { event, href, type Locale } from '../data/event';
-import type { Game, Stand, View } from './hall3d';
+import type { Stand, View } from './hall3d';
 import { SiteFooter, SiteHeader } from './Site';
 import { TedxMark } from './TedxMark';
 
@@ -23,7 +23,7 @@ const t = {
     },
     tiersTitle: 'Tres formas de participar',
     photo: 'Máquina de vapor de balancín de la ETSII (Watt, 1832), en el centro de la Sala de la Máquina',
-    hall: { open: 'Explorar la sala en 3D', title: 'Sala de la Máquina · ETSII', hint: 'Flechas o WASD para moverte · arrastra para mirar', close: 'Cerrar', views: { entrance: 'Entrada', machine: 'Junto a la máquina', gallery: 'Galería' }, note: 'Recreación orientativa. Distribución sujeta al plano autorizado.', games: { darts: 'Diana', vr: 'Realidad virtual', arcade: 'Arcade', foosball: 'Futbolín', racing: 'Simulador de carreras', hoops: 'Canasta', claw: 'Máquina de gancho' } as Record<Game, string>, error: 'Tu navegador no puede mostrar la vista 3D.' },
+    hall: { open: 'Explorar la sala en 3D', title: 'Sala de la Máquina · ETSII', hint: 'Flechas o WASD para moverte · arrastra para mirar', close: 'Cerrar', views: { entrance: 'Entrada', machine: 'Junto a la máquina', gallery: 'Galería' }, note: 'Recreación orientativa. Distribución sujeta al plano autorizado.', error: 'Tu navegador no puede mostrar la vista 3D.' },
     invites: (n: number) => (n === 1 ? 'invitación al auditorio' : 'invitaciones al auditorio'),
     invitesNote: 'Invitaciones sujetas a registro y aforo. El personal acreditado no tiene asiento automático.',
     lists: ['Qué incluye', 'Qué aporta vuestra empresa', 'Qué definimos juntos'],
@@ -62,7 +62,7 @@ const t = {
     ],
     exampleLabel: 'Ejemplo',
     previewTitle: 'Así aparecerá vuestra marca',
-    previewBody: 'La página de partners, una vez firmado el acuerdo.',
+    previewBody: 'Así se mostrará cada partner en esta página, según su modalidad.',
     partnersTitle: 'Partners 2027',
     slot: 'Tu logo aquí',
     stepsTitle: 'De la reunión a la colaboración',
@@ -93,7 +93,7 @@ const t = {
     },
     tiersTitle: 'Three ways to take part',
     photo: 'The ETSII beam steam engine (Watt, 1832), at the centre of the Machine Hall',
-    hall: { open: 'Explore the hall in 3D', title: 'Machine Hall · ETSII', hint: 'Arrow keys or WASD to move · drag to look around', close: 'Close', views: { entrance: 'Entrance', machine: 'By the engine', gallery: 'Gallery' }, note: 'Indicative recreation. Layout subject to the approved floor plan.', games: { darts: 'Darts', vr: 'Virtual reality', arcade: 'Arcade', foosball: 'Table football', racing: 'Racing simulator', hoops: 'Basketball', claw: 'Claw machine' } as Record<Game, string>, error: 'Your browser cannot show the 3D view.' },
+    hall: { open: 'Explore the hall in 3D', title: 'Machine Hall · ETSII', hint: 'Arrow keys or WASD to move · drag to look around', close: 'Close', views: { entrance: 'Entrance', machine: 'By the engine', gallery: 'Gallery' }, note: 'Indicative recreation. Layout subject to the approved floor plan.', error: 'Your browser cannot show the 3D view.' },
     invites: (n: number) => (n === 1 ? 'auditorium invitation' : 'auditorium invitations'),
     invitesNote: 'Invitations subject to registration and capacity. Accredited staff do not get an automatic seat.',
     lists: ['What is included', 'What your company brings', 'What we define together'],
@@ -132,7 +132,7 @@ const t = {
     ],
     exampleLabel: 'Example',
     previewTitle: 'How your brand will appear',
-    previewBody: 'The partners page, once the agreement is signed.',
+    previewBody: 'This is how each partner will be shown on this page, by tier.',
     partnersTitle: '2027 partners',
     slot: 'Your logo here',
     stepsTitle: 'From the meeting to the partnership',
@@ -215,7 +215,7 @@ export function Partners({ locale }: { locale: Locale }) {
       <h2 id="pt-preview-title">{p.previewTitle}</h2>
       <p>{p.previewBody}</p>
       <figure className="pt-browser">
-        <div className="pt-bar" aria-hidden="true"><i /><i /><i /><span>tedxupm.vercel.app{href(locale, 'partners')}</span></div>
+        <div className="pt-bar" aria-hidden="true"><i /><i /><i /><span>{event.domain}{href(locale, 'partners')}</span></div>
         <div className="pt-screen">
           <p className="pt-screen-brand" aria-hidden="true"><TedxMark /><span>Universidad<br />Politécnica Madrid</span></p>
           <h3>{p.partnersTitle}</h3>
@@ -236,8 +236,8 @@ export function Partners({ locale }: { locale: Locale }) {
     </section>
 
     <section className="pt-cta">
-      {/* Destino provisional (LinkedIn) hasta tener email de partnerships. */}
-      <a href={event.linkedin} target="_blank" rel="noreferrer">{p.cta} <span aria-hidden="true">↗</span></a>
+      <a href={`mailto:${event.email}`}>{p.cta} <span aria-hidden="true">→</span></a>
+      <p>{event.email}</p>
     </section>
 
     <SiteFooter locale={locale} />
@@ -248,9 +248,7 @@ export function Partners({ locale }: { locale: Locale }) {
 // Supporting Partner no tiene stand.
 const hallStands = (locale: Locale): Stand[] => {
   const tiers = t[locale].tiers, logo = (tier: number) => PARTNERS.find(partner => partner.tier === tier)?.logo;
-  // El stand destacado (Experience Partner) no lleva juego: su actividad se diseña con el partner.
-  const games: (Game | undefined)[] = ['darts', 'vr', 'arcade', 'foosball', undefined, 'racing', 'hoops', 'claw'];
-  return [1, 1, 1, 1, 0, 1, 1, 1].map((tier, i) => { const game = games[i]; return { tier: tiers[tier].name, game, activity: game && t[locale].hall.games[game], logo: tier === 0 ? logo(0) : undefined, featured: tier === 0 }; });
+  return [1, 1, 1, 1, 0, 1, 1, 1].map(tier => ({ tier: tiers[tier].name, logo: tier === 0 ? logo(0) : undefined, featured: tier === 0 }));
 };
 
 // Imagen de la máquina como botón: abre a pantalla completa la recreación 3D de la sala (three.js solo se descarga al abrirla).

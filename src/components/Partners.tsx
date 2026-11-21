@@ -215,7 +215,7 @@ export function Partners({ locale }: { locale: Locale }) {
       <h2 id="pt-preview-title">{p.previewTitle}</h2>
       <p>{p.previewBody}</p>
       <figure className="pt-browser">
-        <div className="pt-bar" aria-hidden="true"><i /><i /><i /><span>tedxupm.vercel.app{href(locale, 'partners')}</span></div>
+        <div className="pt-bar" aria-hidden="true"><i /><i /><i /><span>{event.domain}{href(locale, 'partners')}</span></div>
         <div className="pt-screen">
           <p className="pt-screen-brand" aria-hidden="true"><TedxMark /><span>Universidad<br />Politécnica Madrid</span></p>
           <h3>{p.partnersTitle}</h3>

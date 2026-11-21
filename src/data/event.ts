@@ -8,6 +8,8 @@ export const event = {
   address: 'Calle de José Gutiérrez Abascal, 2 · Madrid',
   officialUrl: 'https://www.ted.com/tedx/events/68819',
   directions: 'https://www.google.com/maps/search/?api=1&query=Calle+de+Jose+Gutierrez+Abascal+2+Madrid',
+  domain: 'tedxuniversidadpolitecnicamadrid.es',
+  email: 'tedxupm@upm.es',
   instagram: 'https://www.instagram.com/tedx.upm/',
   linkedin: 'https://www.linkedin.com/company/tedxuniversidad-polit%C3%A9cnica-de-madrid/',
 };

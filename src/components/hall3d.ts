@@ -4,8 +4,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 
-export type Game = 'darts' | 'vr' | 'arcade' | 'foosball' | 'racing' | 'hoops' | 'claw';
-export type Stand = { tier: string; game?: Game; activity?: string; logo?: string; featured?: boolean };
+export type Stand = { tier: string; logo?: string; featured?: boolean };
 export type View = 'entrance' | 'machine' | 'gallery';
 
 const W = 20, L = 26, G = 3.2; // ancho, largo y fondo de las galerías (m)
@@ -58,7 +57,6 @@ function panelTexture(stand: Stand, slot: string, onReady: () => void) {
     c.fillStyle = `#${RED.toString(16)}`; c.fillRect(0, 0, 1024, 64);
     c.fillStyle = '#fff'; c.font = '700 34px Inter, Arial, sans-serif'; c.textBaseline = 'middle';
     c.fillText(stand.tier.toUpperCase(), 40, 34);
-    if (stand.activity) { c.textAlign = 'right'; c.fillText(stand.activity.toUpperCase(), 984, 34); c.textAlign = 'left'; }
     if (img) {
       const s = Math.min(760 / img.width, 360 / img.height);
       c.drawImage(img, (1024 - img.width * s) / 2, 416 - img.height * s / 2, img.width * s, img.height * s);
@@ -271,143 +269,7 @@ function machine(scene: THREE.Scene) {
   };
 }
 
-// Pantalla encendida (MeshBasic: no depende de la luz). `draw` pinta el contenido sobre un lienzo de 512×320.
-function screen(w: number, h: number, draw: (c: CanvasRenderingContext2D) => void) {
-  return new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: canvasTexture(512, 320, draw), toneMapped: false }));
-}
-const gameScreen = (title: string, accent: string) => (c: CanvasRenderingContext2D) => {
-  const grad = c.createLinearGradient(0, 0, 512, 320); grad.addColorStop(0, '#120006'); grad.addColorStop(1, '#3a0010');
-  c.fillStyle = grad; c.fillRect(0, 0, 512, 320);
-  c.fillStyle = accent; for (let i = 0; i < 9; i++) c.fillRect(40 + i * 48, 210 - ((i * 37) % 110), 30, 60 + ((i * 37) % 110));
-  c.fillStyle = '#fff'; c.font = '800 44px Inter, Arial, sans-serif'; c.fillText(title, 36, 70);
-};
-
-// Mesa genérica con tablero y cuatro patas.
-function table(w: number, d: number, h: number, top: THREE.Material, legs: THREE.Material) {
-  const g = new THREE.Group();
-  g.add(box(w, .06, d, top, 0, h, 0));
-  for (const sx of [-1, 1]) for (const sz of [-1, 1]) g.add(box(.05, h, .05, legs, sx * (w / 2 - .06), h / 2, sz * (d / 2 - .06)));
-  return g;
-}
-
-// Atrezo de cada stand, en coordenadas del stand con el eje X local apuntando hacia el pasillo central.
-function prop(game: Game) {
-  const g = new THREE.Group();
-  const dark = new THREE.MeshStandardMaterial({ color: 0x1b1b1b, roughness: .6, metalness: .2 });
-  const red = new THREE.MeshStandardMaterial({ color: RED, roughness: .5 });
-  const white = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, roughness: .6 });
-  const metal = new THREE.MeshStandardMaterial({ color: 0x9a9a9a, roughness: .35, metalness: .8 });
-  const cyl = (r: number, h: number, mat: THREE.Material, x: number, y: number, z: number) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, h, 24), mat); m.position.set(x, y, z); m.castShadow = true; return m; };
-  const face = (m: THREE.Object3D, x: number, y: number, z: number) => { m.rotation.y = Math.PI / 2; m.position.set(x, y, z); return m; }; // mirando al pasillo
-
-  if (game === 'darts') {
-    const board = canvasTexture(256, 256, c => {
-      const rings = ['#111', '#eb0028', '#f2e8d0', '#111', '#1d8a3a', '#f2e8d0', '#eb0028'];
-      rings.forEach((col, i) => { c.fillStyle = col; c.beginPath(); c.arc(128, 128, 128 - i * 17, 0, Math.PI * 2); c.fill(); });
-      c.strokeStyle = 'rgba(200,200,200,.5)'; c.lineWidth = 1.5;
-      for (let i = 0; i < 20; i++) { const a = (i / 20) * Math.PI * 2; c.beginPath(); c.moveTo(128, 128); c.lineTo(128 + Math.cos(a) * 128, 128 + Math.sin(a) * 128); c.stroke(); }
-    });
-    const disc = new THREE.Mesh(new THREE.CylinderGeometry(.26, .26, .05, 48), [dark, new THREE.MeshStandardMaterial({ map: board, roughness: .8 }), dark]);
-    disc.rotation.z = -Math.PI / 2; disc.position.set(.05, 1.73, 0);
-    g.add(box(.6, .03, .6, dark, -.1, .015, 0), cyl(.03, 1.75, metal, -.1, .9, 0), box(.06, .7, .7, dark, 0, 1.73, 0), disc);
-    g.add(box(.05, .01, 1.2, red, 2.2, .07, 0)); // línea de lanzamiento
-    for (const z of [-.05, .04, .1]) { const dart = cyl(.008, .14, red, .12, 1.7 + z, z); dart.rotation.z = Math.PI / 2; g.add(dart); }
-  } else if (game === 'vr') {
-    g.add(cyl(.18, 1, white, 0, .5, -.5), box(.24, .11, .14, dark, 0, 1.07, -.5), box(.02, .05, .1, metal, .13, 1.07, -.5));
-    const mat = new THREE.Mesh(new THREE.RingGeometry(.65, .75, 48), red); mat.rotation.x = -Math.PI / 2; mat.position.set(.9, .07, .3); g.add(mat);
-    g.add(cyl(.03, 1.6, metal, -.2, .8, .7), face(screen(1, .62, gameScreen('VR', '#ff4d6d')), -.16, 1.8, .7));
-  } else if (game === 'arcade') {
-    g.add(box(.7, 1.75, .75, dark, 0, .875, 0), box(.3, .08, .74, red, .45, 1.02, 0));
-    g.add(face(screen(.6, .48, gameScreen('ARCADE', '#ffd23f')), .36, 1.45, 0));
-    g.add(cyl(.015, .1, metal, .5, 1.1, -.15), cyl(.035, .03, red, .5, 1.16, -.15));
-    for (const z of [.05, .15, .25]) g.add(cyl(.03, .02, white, .5, 1.07, z));
-    g.add(box(.72, .2, .77, red, 0, 1.85, 0));
-  } else if (game === 'foosball') {
-    const t = table(.8, 1.3, .85, new THREE.MeshStandardMaterial({ color: 0x1f7a3a, roughness: .7 }), dark); t.position.x = .7; g.add(t);
-    g.add(box(.82, .14, .06, dark, .7, .94, .67), box(.82, .14, .06, dark, .7, .94, -.67), box(.06, .14, 1.36, dark, .3, .94, 0), box(.06, .14, 1.36, dark, 1.1, .94, 0));
-    for (let i = 0; i < 4; i++) {
-      const z = -.45 + i * .3, rod = cyl(.012, 1.2, metal, .7, .98, z); rod.rotation.z = Math.PI / 2; g.add(rod);
-      for (const x of [.5, .7, .9]) g.add(box(.05, .14, .04, i % 2 ? red : white, x, .95, z));
-    }
-  } else if (game === 'racing') {
-    // Simulador de carreras: chasis de perfil de aluminio, baquet, volante con levas, pedalera, palanca y tres pantallas envolventes.
-    // El piloto mira hacia +Z: desde el pasillo se le ve de perfil.
-    const alu = new THREE.MeshStandardMaterial({ color: 0x2a2a2e, roughness: .4, metalness: .7 });
-    const seatM = new THREE.MeshStandardMaterial({ color: 0x151515, roughness: .9 });
-    for (const x of [.55, 1.15]) g.add(box(.06, .08, 1.75, alu, x, .04, -.05));
-    for (const z of [-.85, -.25, .55]) g.add(box(.66, .06, .06, alu, .85, .05, z));
-    // Baquet: asiento, respaldo inclinado, laterales y reposacabezas, con costuras rojas.
-    g.add(box(.36, .2, .2, alu, .85, .18, -.5));
-    const seat = new THREE.Group(); seat.position.set(.85, .32, -.5);
-    seat.add(box(.48, .1, .5, seatM, 0, .05, 0));
-    for (const x of [-.22, .22]) seat.add(box(.08, .14, .5, red, x, .12, 0));
-    const back = new THREE.Group(); back.position.set(0, .08, -.25); back.rotation.x = -.28;
-    back.add(box(.48, .78, .1, seatM, 0, .39, 0));
-    for (const x of [-.22, .22]) back.add(box(.08, .7, .16, red, x, .37, .03));
-    back.add(box(.26, .16, .1, seatM, 0, .86, 0), box(.2, .03, .11, red, 0, .7, 0));
-    seat.add(back); g.add(seat);
-    // Columna, volante (llanta con parte plana, tres radios, centro rojo) y levas.
-    g.add(box(.08, .55, .08, alu, .85, .3, .22), box(.08, .08, .22, alu, .85, .6, .14));
-    const wheel = new THREE.Group(); wheel.position.set(.85, .78, .06); wheel.rotation.x = -.35;
-    wheel.add(new THREE.Mesh(new THREE.TorusGeometry(.16, .022, 10, 32, Math.PI * 1.65).rotateZ(-Math.PI * .325 - Math.PI / 2), seatM));
-    wheel.add(box(.2, .03, .03, seatM, 0, -.135, 0), box(.32, .04, .03, seatM, 0, 0, 0), box(.04, .14, .03, seatM, 0, -.07, 0));
-    wheel.add(cyl(.05, .04, red, 0, 0, .01).rotateX(Math.PI / 2), box(.03, .09, .01, metal, -.13, .05, -.03), box(.03, .09, .01, metal, .13, .05, -.03));
-    g.add(wheel);
-    // Pedalera inclinada con tres pedales.
-    const pedals = new THREE.Group(); pedals.position.set(.85, .12, .5); pedals.rotation.x = .5;
-    pedals.add(box(.44, .02, .26, alu, 0, 0, 0));
-    for (const x of [-.13, 0, .13]) pedals.add(box(.07, .015, .12, metal, x, .02, .02));
-    g.add(pedals);
-    g.add(cyl(.012, .22, metal, 1.13, .55, -.3), new THREE.Mesh(new THREE.SphereGeometry(.03, 12, 10), red).translateX(1.13).translateY(.67).translateZ(-.3));
-    // Tres pantallas en arco sobre su soporte.
-    const road = (c: CanvasRenderingContext2D) => {
-      const sky = c.createLinearGradient(0, 0, 0, 150); sky.addColorStop(0, '#0b1d3a'); sky.addColorStop(1, '#ff6a3d'); c.fillStyle = sky; c.fillRect(0, 0, 512, 150);
-      c.fillStyle = '#1d1d1d'; c.fillRect(0, 150, 512, 170);
-      c.fillStyle = '#3a3a3a'; c.beginPath(); c.moveTo(236, 150); c.lineTo(276, 150); c.lineTo(470, 320); c.lineTo(42, 320); c.fill();
-      for (let i = 0; i < 8; i++) { c.fillStyle = i % 2 ? '#eb0028' : '#fff'; const y = 150 + i * 21; c.fillRect(236 - (y - 150) * 1.14 - 14, y, 14, 21); c.fillRect(276 + (y - 150) * 1.14, y, 14, 21); }
-      c.fillStyle = '#fff'; for (let i = 0; i < 4; i++) c.fillRect(254, 160 + i * 42, 4 + i * 2, 20 + i * 4);
-      c.fillStyle = '#eb0028'; c.fillRect(220, 236, 72, 34); c.fillStyle = '#111'; c.fillRect(226, 270, 16, 10); c.fillRect(270, 270, 16, 10);
-    };
-    const mount = new THREE.Group(); mount.position.set(.85, 0, .95);
-    mount.add(box(.5, .04, .4, alu, 0, .02, 0), box(.06, 1.02, .06, alu, 0, .51, 0), box(1.9, .05, .05, alu, 0, 1.05, -.02));
-    for (const [x, ry] of [[-.78, -.62], [0, 0], [.78, .62]] as [number, number][]) {
-      const scr = new THREE.Group(); scr.position.set(x, 1.05, x ? -.18 : 0); scr.rotation.y = Math.PI + ry;
-      scr.add(box(.78, .46, .03, seatM, 0, 0, -.02));
-      const img = screen(.74, .42, road); img.position.z = .001; scr.add(img);
-      mount.add(scr);
-    }
-    g.add(mount);
-  } else if (game === 'hoops') {
-    // Canasta recreativa: rampa con bolas, laterales de red, tablero con aro y red, y marcador.
-    const orange = new THREE.MeshStandardMaterial({ color: 0xe8681a, roughness: .7 });
-    const net = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
-    const side = new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: .15, roughness: .1 });
-    g.add(box(.5, .85, .9, dark, 1.45, .425, 0), box(.52, .08, .92, red, 1.45, .89, 0)); // mueble delantero
-    const ramp = box(1.35, .04, .86, new THREE.MeshStandardMaterial({ color: 0x8a5a2b, roughness: .6 }), .78, 1.05, 0); ramp.rotation.z = -.22; g.add(ramp);
-    for (const z of [-.44, .44]) { const glass = box(1.35, .55, .02, side, .78, 1.33, z); glass.rotation.z = -.22; g.add(glass); }
-    for (const z of [-.44, .44]) g.add(box(.05, 2.3, .05, metal, .12, 1.15, z));
-    g.add(box(.04, .72, .95, white, .17, 2.05, 0), box(.045, .26, .34, red, .17, 1.92, 0), box(.05, .2, .26, white, .17, 1.92, 0));
-    const hoop = new THREE.Mesh(new THREE.TorusGeometry(.16, .014, 8, 32), orange); hoop.rotation.x = Math.PI / 2; hoop.position.set(.38, 1.78, 0); g.add(hoop);
-    const netM = new THREE.Mesh(new THREE.CylinderGeometry(.16, .1, .28, 12, 3, true), net); netM.position.set(.38, 1.64, 0); g.add(netM);
-    g.add(box(.06, .26, .95, red, .17, 2.54, 0), face(screen(.86, .2, c => { c.fillStyle = '#000'; c.fillRect(0, 0, 512, 320); c.fillStyle = '#ffd23f'; c.font = '800 190px Inter, Arial, sans-serif'; c.fillText('88', 60, 250); c.fillStyle = '#eb0028'; c.fillText('24', 290, 250); }), .2, 2.54, 0));
-    for (const [x, z] of [[1.2, -.25], [1.2, 0], [1.2, .25], [1.05, -.12], [1.05, .14], [.4, 0]] as [number, number][]) {
-      const ball = new THREE.Mesh(new THREE.SphereGeometry(.11, 20, 14), orange);
-      ball.position.set(x, x === .4 ? 2.05 : 1.05 - (x - .78) * .223 + .13, z); // apoyadas en la rampa; una en el aire, entrando g.add(ball);
-    }
-  } else {
-    // Máquina de gancho: mueble, urna de cristal con premios y la pinza.
-    g.add(box(.8, .9, .8, dark, .4, .45, 0), box(.82, .16, .82, red, .4, 2.02, 0));
-    const glass = new THREE.Mesh(new THREE.BoxGeometry(.78, 1, .78), new THREE.MeshStandardMaterial({ color: 0xddeeff, transparent: true, opacity: .18, roughness: .05 }));
-    glass.position.set(.4, 1.42, 0); g.add(glass);
-    const cols = [0xeb0028, 0xffd23f, 0x2f80ed, 0xffffff, 0x1d8a3a];
-    for (let i = 0; i < 14; i++) { const ball = new THREE.Mesh(new THREE.SphereGeometry(.07, 12, 10), new THREE.MeshStandardMaterial({ color: cols[i % 5], roughness: .8 })); ball.position.set(.12 + (i % 4) * .18, .97 + Math.floor(i / 4) * .06, -.27 + ((i * 7) % 5) * .13); g.add(ball); }
-    g.add(cyl(.008, .5, metal, .45, 1.65, .05), box(.1, .06, .1, metal, .45, 1.38, .05));
-  }
-  g.traverse(o => { if (o instanceof THREE.Mesh) { o.castShadow = o.receiveShadow = true; } });
-  return g;
-}
-
-// Stands a ambos lados de la sala, bajo la galería, mirando a la máquina, cada uno con su juego.
+// Stands a ambos lados de la sala, bajo la galería, mirando a la máquina.
 function stands(scene: THREE.Scene, list: Stand[], slot: string, invalidate: () => void) {
   const white = new THREE.MeshStandardMaterial({ color: 0xf2f2f2, roughness: .6 });
   const carpet = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 1 });
@@ -419,15 +281,8 @@ function stands(scene: THREE.Scene, list: Stand[], slot: string, invalidate: () 
     const panel = new THREE.Mesh(new THREE.PlaneGeometry(w, w * .75), new THREE.MeshStandardMaterial({ map: panelTexture(stand, slot, invalidate), roughness: .7 }));
     panel.rotation.y = -side * Math.PI / 2; panel.position.set(.06 * -side, 1.1 + w * .375, 0);
     g.add(box(.1, 1.1 + w * .75 + .1, w + .1, white, 0, (1.1 + w * .75 + .1) / 2, 0), panel);
-    // Con juego, el mostrador va a un lado y el juego ocupa el resto; sin juego, el mostrador va centrado.
-    const cz = stand.game ? -w * .3 : 0, cw = stand.game ? w * .32 : w * .55;
-    g.add(box(.6, 1.05, cw, white, side * -1.3, .525, cz));
-    g.add(box(.62, .05, cw + .04, new THREE.MeshStandardMaterial({ color: RED, roughness: .5 }), side * -1.3, 1.07, cz));
-    if (stand.game) {
-      // El atrezo se modela con +X hacia el pasillo: en el lado izquierdo (side = -1) ya mira bien; en el derecho se gira 180°.
-      const p = prop(stand.game); p.position.set(side * -.25, 0, w * .18); if (side > 0) p.rotation.y = Math.PI;
-      g.add(p);
-    }
+    g.add(box(.6, 1.05, w * .55, white, side * -1.3, .525, 0));
+    g.add(box(.62, .05, w * .55 + .04, new THREE.MeshStandardMaterial({ color: RED, roughness: .5 }), side * -1.3, 1.07, 0));
     g.position.set(x, 0, z);
     scene.add(g);
   });

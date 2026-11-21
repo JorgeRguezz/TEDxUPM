@@ -35,6 +35,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
     <div className="cs-end">
       <p className="cs-legal">This independent TEDx event is operated under license from TED.</p>
       <nav className="cs-social" aria-label={p.social}>
+        <a href={`mailto:${event.email}`}>{event.email}</a>
         <a href={event.instagram} target="_blank" rel="noreferrer">
           <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" strokeWidth="2" /><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" strokeWidth="2" /><circle cx="17.3" cy="6.7" r="1.2" /></svg>
           Instagram ↗
